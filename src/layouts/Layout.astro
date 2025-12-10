@@ -925,8 +925,8 @@ const { seo = {} } = Astro.props;
                 opacity: 1;
                 visibility: visible;
                 transition:
-                    opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
-                    visibility 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+                    opacity 2s cubic-bezier(0.4, 0, 0.2, 1),
+                    visibility 2s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .splash-screen.hide {
@@ -942,7 +942,7 @@ const { seo = {} } = Astro.props;
                 text-align: center;
                 animation: fadeInUp 0.8s ease-out;
                 transition:
-                    transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 2s cubic-bezier(0.4, 0, 0.2, 1),
                     opacity 0.8s ease-out;
             }
 
@@ -957,7 +957,7 @@ const { seo = {} } = Astro.props;
                 border-radius: 24px;
                 box-shadow: 0 20px 60px rgba(0, 104, 55, 0.2);
                 animation: pulse-logo 2s ease-in-out infinite;
-                transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .splash-text {
@@ -1036,41 +1036,66 @@ const { seo = {} } = Astro.props;
         </style>
 
         <script is:inline>
-            // Splash Screen Controller
+            // Splash Screen Controller - Robust View Transitions Support
             (function () {
-                const splash = document.getElementById("splash-screen");
-                const splashShown = sessionStorage.getItem("splashShown");
+                function handleSplashScreen() {
+                    const splash = document.getElementById("splash-screen");
+                    if (!splash) return;
 
-                // Check if this is a page reload
-                const navEntries = performance.getEntriesByType("navigation");
-                const isReload =
-                    navEntries.length > 0 && navEntries[0].type === "reload";
+                    // CRITICAL: Check sessionStorage FIRST before any DOM operations
+                    const splashShown = sessionStorage.getItem("splashShown");
 
-                if (splashShown || isReload) {
-                    // Already shown in this session or page reload
-                    if (splash) {
+                    // If already shown this session, hide immediately and never show again
+                    if (splashShown === "true") {
                         splash.style.display = "none";
+                        return;
                     }
-                } else {
-                    // First visit in this browser session
+
+                    // Check if this is a page reload
+                    const navEntries =
+                        performance.getEntriesByType("navigation");
+                    const isReload =
+                        navEntries.length > 0 &&
+                        navEntries[0].type === "reload";
+
+                    if (isReload) {
+                        splash.style.display = "none";
+                        sessionStorage.setItem("splashShown", "true");
+                        return;
+                    }
+
+                    // This is the first visit - show splash
                     document.body.classList.add("splash-active");
 
                     // Hide splash after 3 seconds
                     setTimeout(function () {
-                        if (splash) {
-                            splash.classList.add("hide");
-                            document.body.classList.remove("splash-active");
+                        splash.classList.add("hide");
+                        document.body.classList.remove("splash-active");
 
-                            // Remove from DOM after animation
-                            setTimeout(function () {
-                                splash.style.display = "none";
-                            }, 1500);
-                        }
+                        // Mark as shown AFTER starting the hide animation
+                        sessionStorage.setItem("splashShown", "true");
+
+                        // Remove from DOM after animation (2 seconds fade out)
+                        setTimeout(function () {
+                            splash.style.display = "none";
+                        }, 2000);
                     }, 3000);
-
-                    // Mark as shown for this session
-                    sessionStorage.setItem("splashShown", "true");
                 }
+
+                // Run on initial page load
+                handleSplashScreen();
+
+                // Also listen to Astro's page load event for View Transitions
+                document.addEventListener("astro:page-load", function () {
+                    const splash = document.getElementById("splash-screen");
+                    // During View Transitions, always hide splash if it exists
+                    if (
+                        splash &&
+                        sessionStorage.getItem("splashShown") === "true"
+                    ) {
+                        splash.style.display = "none";
+                    }
+                });
             })();
         </script>
 
