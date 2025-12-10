@@ -1,30 +1,127 @@
 ---
 // BackgroundCarousel.astro - Elegant horizontal scrolling background image carousel
 // Displays 8 images with subtle opacity as a decorative background element
+// Optimized for performance with lazy loading
 ---
 
 <div class="background-carousel-wrapper">
     <div class="background-carousel">
         <div class="carousel-track">
-            <!-- First set of images -->
-            <img src="/images/IMG_2580.jpeg" alt="" loading="eager" />
-            <img src="/images/IMG_2948.jpeg" alt="" loading="eager" />
-            <img src="/images/IMG_3623.jpeg" alt="" loading="eager" />
-            <img src="/images/IMG_3843.JPG" alt="" loading="eager" />
-            <img src="/images/IMG_4550.JPG" alt="" loading="eager" />
-            <img src="/images/IMG_4551.JPG" alt="" loading="eager" />
-            <img src="/images/IMG_5241.JPG" alt="" loading="eager" />
-            <img src="/images/IMG_5394.JPG" alt="" loading="eager" />
+            <!-- First set of images - lazy loaded, low priority -->
+            <img
+                src="/images/IMG_2580.jpeg"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_2948.jpeg"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_3623.jpeg"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_3843.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_4550.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_4551.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_5241.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_5394.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
 
             <!-- Duplicate set for seamless loop -->
-            <img src="/images/IMG_2580.jpeg" alt="" loading="eager" />
-            <img src="/images/IMG_2948.jpeg" alt="" loading="eager" />
-            <img src="/images/IMG_3623.jpeg" alt="" loading="eager" />
-            <img src="/images/IMG_3843.JPG" alt="" loading="eager" />
-            <img src="/images/IMG_4550.JPG" alt="" loading="eager" />
-            <img src="/images/IMG_4551.JPG" alt="" loading="eager" />
-            <img src="/images/IMG_5241.JPG" alt="" loading="eager" />
-            <img src="/images/IMG_5394.JPG" alt="" loading="eager" />
+            <img
+                src="/images/IMG_2580.jpeg"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_2948.jpeg"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_3623.jpeg"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_3843.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_4550.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_4551.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_5241.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/IMG_5394.JPG"
+                alt=""
+                loading="lazy"
+                fetchpriority="low"
+                decoding="async"
+            />
         </div>
     </div>
     <!-- Fade overlay for elegant edges -->
@@ -41,6 +138,10 @@
         overflow: hidden;
         z-index: -1;
         pointer-events: none;
+        /* Performance optimization */
+        content-visibility: auto;
+        contain-intrinsic-size: 100% 40vh;
+        contain: strict;
     }
 
     .background-carousel {
@@ -53,8 +154,11 @@
         display: flex;
         height: 100%;
         width: max-content;
+        /* GPU-accelerated animation using transform3d */
         animation: scroll 60s linear infinite;
         will-change: transform;
+        transform: translateZ(0);
+        backface-visibility: hidden;
     }
 
     .carousel-track img {
@@ -64,6 +168,8 @@
         opacity: 0.35;
         filter: grayscale(20%);
         display: block;
+        /* Prevent layout shifts */
+        aspect-ratio: 4/3;
     }
 
     /* Fade overlay - only at the bottom for smooth transition */
@@ -84,10 +190,10 @@
 
     @keyframes scroll {
         0% {
-            transform: translateX(0);
+            transform: translate3d(0, 0, 0);
         }
         100% {
-            transform: translateX(-50%);
+            transform: translate3d(-50%, 0, 0);
         }
     }
 
@@ -102,6 +208,7 @@
     @media (max-width: 768px) {
         .background-carousel-wrapper {
             height: 30vh;
+            contain-intrinsic-size: 100% 30vh;
         }
         .carousel-track img {
             opacity: 0.18;
