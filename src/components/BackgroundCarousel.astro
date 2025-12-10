@@ -165,11 +165,10 @@
         height: 100%;
         width: auto;
         object-fit: cover;
+        object-position: center center;
         opacity: 0.35;
         filter: grayscale(20%);
         display: block;
-        /* Prevent layout shifts */
-        aspect-ratio: 4/3;
     }
 
     /* Fade overlay - only at the bottom for smooth transition */
@@ -204,14 +203,16 @@
         }
     }
 
-    /* Smaller height on mobile */
+    /* Mobile: larger display area */
     @media (max-width: 768px) {
         .background-carousel-wrapper {
-            height: 30vh;
-            contain-intrinsic-size: 100% 30vh;
+            height: 50vh;
+            contain-intrinsic-size: 100% 50vh;
         }
         .carousel-track img {
-            opacity: 0.18;
+            opacity: 0.25;
+            object-fit: cover;
+            object-position: center center;
         }
     }
 </style>
