@@ -547,8 +547,9 @@ const { seo = {} } = Astro.props;
             }
 
             /* Touch Target Size Optimization - WCAG 2.2 */
+            /* Exclude header nav links */
             button,
-            a,
+            a:not(nav a):not(header a),
             input[type="submit"],
             input[type="button"] {
                 min-height: 44px;
@@ -1116,7 +1117,10 @@ const { seo = {} } = Astro.props;
                     </a>
 
                     <!-- Desktop Navigation -->
-                    <nav class="hidden md:flex items-center" style="gap: 2rem;">
+                    <nav
+                        class="hidden md:flex items-center"
+                        style="gap: 1.5rem;"
+                    >
                         <!-- About Dropdown -->
                         <div class="relative dropdown-container">
                             <button
@@ -1201,23 +1205,17 @@ const { seo = {} } = Astro.props;
                             href="/media"
                             class="text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
                             >Media</a
-                        >
-
-                        <!-- FAQ -->
+                        ><!-- FAQ -->
                         <a
                             href="/faq"
                             class="text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
                             >FAQ</a
-                        >
-
-                        <!-- Sponsors -->
+                        ><!-- Sponsors -->
                         <a
                             href="/sponsors"
                             class="text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
                             >Sponsors</a
-                        >
-
-                        <!-- Contact -->
+                        ><!-- Contact -->
                         <a
                             href="/contact"
                             class="text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
@@ -1567,6 +1565,16 @@ const { seo = {} } = Astro.props;
                         href="/media"
                         style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
                         class="hover:text-[#006837]">Media</a
+                    >
+                    <a
+                        href="/faq"
+                        style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
+                        class="hover:text-[#006837]">FAQ</a
+                    >
+                    <a
+                        href="/sponsors"
+                        style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
+                        class="hover:text-[#006837]">Sponsors</a
                     >
                     <a
                         href="/contact"
