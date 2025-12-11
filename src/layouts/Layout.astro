@@ -77,84 +77,70 @@ const { seo = {} } = Astro.props;
             }
         </style>
 
-        <!-- NProgress Styles (inline for fast loading) -->
+        <!-- Lightweight Progress Bar (no external dependencies) -->
         <style>
-            /* NProgress Loading Bar */
-            #nprogress {
-                pointer-events: none;
-            }
-            #nprogress .bar {
-                background: #006837;
+            /* Ultra-light CSS-only progress bar */
+            #page-progress {
                 position: fixed;
-                z-index: 9999;
                 top: 0;
                 left: 0;
-                width: 100%;
+                width: 0%;
                 height: 3px;
+                background: linear-gradient(90deg, #006837, #00a855);
+                z-index: 99999;
+                transition: width 0.1s ease-out;
+                box-shadow: 0 0 10px rgba(0, 104, 55, 0.5);
             }
-            #nprogress .peg {
-                display: block;
-                position: absolute;
-                right: 0px;
-                width: 100px;
-                height: 100%;
-                box-shadow:
-                    0 0 10px #006837,
-                    0 0 5px #006837;
-                opacity: 1;
-                transform: rotate(3deg) translate(0px, -4px);
+            #page-progress.active {
+                width: 30%;
+                animation: progress-trickle 0.5s ease-out forwards;
             }
-            #nprogress .spinner {
-                display: block;
-                position: fixed;
-                z-index: 9999;
-                top: 15px;
-                right: 15px;
+            #page-progress.complete {
+                width: 100%;
+                transition:
+                    width 0.15s ease-out,
+                    opacity 0.3s ease-out 0.15s;
+                opacity: 0;
             }
-            #nprogress .spinner-icon {
-                width: 18px;
-                height: 18px;
-                box-sizing: border-box;
-                border: solid 2px transparent;
-                border-top-color: #006837;
-                border-left-color: #006837;
-                border-radius: 50%;
-                animation: nprogress-spinner 400ms linear infinite;
-            }
-            .nprogress-custom-parent {
-                overflow: hidden;
-                position: relative;
-            }
-            .nprogress-custom-parent #nprogress .spinner,
-            .nprogress-custom-parent #nprogress .bar {
-                position: absolute;
-            }
-            @keyframes nprogress-spinner {
+            @keyframes progress-trickle {
                 0% {
-                    transform: rotate(0deg);
+                    width: 30%;
                 }
                 100% {
-                    transform: rotate(360deg);
+                    width: 80%;
                 }
             }
         </style>
 
-        <!-- NProgress Script (load early for page transitions) -->
         <script is:inline>
-            // Import NProgress from CDN for minimal bundle impact
+            // Lightweight progress bar - no external dependencies
             (function () {
-                const script = document.createElement("script");
-                script.src = "https://unpkg.com/nprogress@0.2.0/nprogress.js";
-                script.onload = function () {
-                    if (typeof NProgress !== "undefined") {
-                        NProgress.configure({
-                            showSpinner: false,
-                            trickleSpeed: 200,
-                            minimum: 0.08,
-                        });
-                    }
-                };
-                document.head.appendChild(script);
+                // Create progress element immediately
+                const progress = document.createElement("div");
+                progress.id = "page-progress";
+                document.documentElement.appendChild(progress);
+
+                // Astro View Transitions integration
+                document.addEventListener("astro:before-preparation", () => {
+                    progress.classList.remove("complete");
+                    progress.classList.add("active");
+                });
+
+                document.addEventListener("astro:after-swap", () => {
+                    progress.classList.remove("active");
+                    progress.classList.add("complete");
+                });
+
+                document.addEventListener("astro:page-load", () => {
+                    progress.classList.remove("active");
+                    progress.classList.add("complete");
+                    // Reset after animation
+                    setTimeout(() => {
+                        progress.classList.remove("complete");
+                        progress.style.width = "0%";
+                        progress.style.opacity = "1";
+                    }, 500);
+                });
             })();
         </script>
 
@@ -187,20 +173,55 @@ const { seo = {} } = Astro.props;
             }
         </script>
         <style is:global>
-            /* ===== View Transitions API Enhancements ===== */
-            /* Shared elements for smooth transitions between pages */
-            h1,
-            .page-title {
-                view-transition-name: page-title;
+            /* ===== Ultra-Fast View Transitions ===== */
+
+            /* Instant fade - 50ms */
+            @keyframes instant-fade-out {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
             }
 
+            @keyframes instant-fade-in {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            /* Root transition - nearly instant */
+            ::view-transition-old(root) {
+                animation: instant-fade-out 50ms ease-out forwards;
+            }
+
+            ::view-transition-new(root) {
+                animation: instant-fade-in 80ms ease-out forwards;
+            }
+
+            /* Breadcrumb - instant */
             .breadcrumb-nav {
                 view-transition-name: breadcrumb;
+            }
+
+            ::view-transition-old(breadcrumb),
+            ::view-transition-new(breadcrumb) {
+                animation-duration: 50ms;
             }
 
             /* Prevent overflow during transitions */
             ::view-transition-image-pair(*) {
                 overflow: hidden;
+            }
+
+            /* All groups - instant */
+            ::view-transition-group(*) {
+                animation-duration: 80ms;
+                animation-timing-function: ease-out;
             }
 
             /* Enhanced motion sensitivity support */
@@ -209,6 +230,7 @@ const { seo = {} } = Astro.props;
                 ::view-transition-old(*),
                 ::view-transition-new(*) {
                     animation: none !important;
+                    animation-duration: 0ms !important;
                 }
             }
 
@@ -927,8 +949,15 @@ const { seo = {} } = Astro.props;
                 opacity: 1;
                 visibility: visible;
                 transition:
-                    opacity 2s cubic-bezier(0.4, 0, 0.2, 1),
-                    visibility 2s cubic-bezier(0.4, 0, 0.2, 1);
+                    opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
+                    visibility 1s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* Instant hide - applied by JS before page loads */
+            .splash-screen.splash-hidden {
+                display: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
             }
 
             .splash-screen.hide {
@@ -1040,6 +1069,19 @@ const { seo = {} } = Astro.props;
         <script is:inline>
             // Splash Screen Controller - Robust View Transitions Support
             (function () {
+                // IMMEDIATELY hide splash if already shown (before any DOM parsing)
+                const alreadyShown =
+                    sessionStorage.getItem("splashShown") === "true";
+
+                if (alreadyShown) {
+                    // Inject CSS to hide splash immediately, even before DOM is ready
+                    const style = document.createElement("style");
+                    style.id = "splash-hide-style";
+                    style.textContent =
+                        "#splash-screen { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }";
+                    document.head.appendChild(style);
+                }
+
                 function handleSplashScreen() {
                     const splash = document.getElementById("splash-screen");
                     if (!splash) return;
@@ -1049,7 +1091,8 @@ const { seo = {} } = Astro.props;
 
                     // If already shown this session, hide immediately and never show again
                     if (splashShown === "true") {
-                        splash.style.display = "none";
+                        splash.classList.add("splash-hidden");
+                        splash.remove(); // Completely remove from DOM
                         return;
                     }
 
@@ -1061,7 +1104,8 @@ const { seo = {} } = Astro.props;
                         navEntries[0].type === "reload";
 
                     if (isReload) {
-                        splash.style.display = "none";
+                        splash.classList.add("splash-hidden");
+                        splash.remove();
                         sessionStorage.setItem("splashShown", "true");
                         return;
                     }
@@ -1069,7 +1113,7 @@ const { seo = {} } = Astro.props;
                     // This is the first visit - show splash
                     document.body.classList.add("splash-active");
 
-                    // Hide splash after 3 seconds
+                    // Hide splash after 2 seconds (reduced from 3s)
                     setTimeout(function () {
                         splash.classList.add("hide");
                         document.body.classList.remove("splash-active");
@@ -1077,25 +1121,35 @@ const { seo = {} } = Astro.props;
                         // Mark as shown AFTER starting the hide animation
                         sessionStorage.setItem("splashShown", "true");
 
-                        // Remove from DOM after animation (2 seconds fade out)
+                        // Remove from DOM after animation (1 second fade out)
                         setTimeout(function () {
-                            splash.style.display = "none";
-                        }, 2000);
-                    }, 3000);
+                            splash.remove();
+                        }, 1000);
+                    }, 2000);
                 }
 
                 // Run on initial page load
                 handleSplashScreen();
 
-                // Also listen to Astro's page load event for View Transitions
+                // Handle View Transitions - hide splash BEFORE swap happens
+                document.addEventListener("astro:before-swap", function (e) {
+                    if (sessionStorage.getItem("splashShown") === "true") {
+                        // Completely remove splash from the new document
+                        const newSplash =
+                            e.newDocument.getElementById("splash-screen");
+                        if (newSplash) {
+                            newSplash.remove();
+                        }
+                    }
+                });
+
+                // Also listen to Astro's page load event for View Transitions (backup)
                 document.addEventListener("astro:page-load", function () {
-                    const splash = document.getElementById("splash-screen");
-                    // During View Transitions, always hide splash if it exists
-                    if (
-                        splash &&
-                        sessionStorage.getItem("splashShown") === "true"
-                    ) {
-                        splash.style.display = "none";
+                    if (sessionStorage.getItem("splashShown") === "true") {
+                        const splash = document.getElementById("splash-screen");
+                        if (splash) {
+                            splash.remove();
+                        }
                     }
                 });
             })();
@@ -1104,6 +1158,7 @@ const { seo = {} } = Astro.props;
         <!-- HEADER -->
         <header
             class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200"
+            transition:persist
         >
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
@@ -1358,124 +1413,497 @@ const { seo = {} } = Astro.props;
             }
         </style>
 
-        <!-- Mobile Menu Panel - iOS 26 Liquid Glass Style (60% width, no blocking overlay) -->
+        <!-- Mobile Menu Panel - Premium Glass Design -->
         <div
             id="mobile-menu"
-            class="fixed inset-y-0 right-0 z-50 transform translate-x-full transition-transform duration-300 ease-out md:hidden"
-            style="width: 60%; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%); border-left: 1px solid rgba(255, 255, 255, 0.4); box-shadow: -10px 0 40px rgba(0, 0, 0, 0.08);"
+            class="fixed inset-y-0 right-0 z-50 transform translate-x-full transition-all duration-300 ease-out md:hidden"
+            style="width: 75%;"
+            transition:persist
         >
-            <!-- Header -->
-            <div
-                class="flex h-16 items-center justify-between px-5"
-                style="border-bottom: 1px solid rgba(0, 0, 0, 0.06);"
-            >
-                <span
-                    class="text-base font-semibold"
-                    style="color: rgba(0, 0, 0, 0.8);">Menu</span
-                >
-                <button
-                    id="mobile-menu-close"
-                    class="rounded-full p-2 transition-all duration-200"
-                    style="background: rgba(0, 0, 0, 0.04);"
-                    aria-label="メニューを閉じる"
-                >
-                    <svg
-                        class="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        style="color: rgba(0, 0, 0, 0.5);"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
+            <!-- Gradient Glass Background -->
+            <div class="absolute inset-0 mobile-menu-bg"></div>
 
-            <!-- Menu Content -->
-            <div class="overflow-y-auto h-full pb-24 px-3 py-5">
-                <!-- About Section -->
-                <div class="mb-5">
-                    <p
-                        class="text-xs font-semibold uppercase tracking-widest mb-2 px-3"
-                        style="color: rgba(0, 0, 0, 0.35);"
-                    >
-                        About
-                    </p>
-                    <div class="space-y-0.5">
-                        <a href="/about" class="mobile-menu-link"
-                            >私たちについて</a
-                        >
-                        <a href="/about/history" class="mobile-menu-link"
-                            >設立の経緯</a
-                        >
-                        <a href="/about/members" class="mobile-menu-link"
-                            >メンバー紹介</a
-                        >
-                    </div>
-                </div>
-
-                <!-- Events Section -->
-                <div class="mb-5">
-                    <p
-                        class="text-xs font-semibold uppercase tracking-widest mb-2 px-3"
-                        style="color: rgba(0, 0, 0, 0.35);"
-                    >
-                        Events
-                    </p>
-                    <div class="space-y-0.5">
-                        <a href="/events/upcoming" class="mobile-menu-link"
-                            >開催予定</a
-                        >
-                        <a href="/events/past" class="mobile-menu-link"
-                            >講演会アーカイブ</a
-                        >
-                    </div>
-                </div>
-
-                <!-- Divider -->
+            <!-- Content Container -->
+            <div class="relative h-full flex flex-col">
+                <!-- Header -->
                 <div
-                    class="my-4 mx-3"
-                    style="height: 1px; background: rgba(0, 0, 0, 0.06);"
+                    class="flex h-20 items-center justify-between px-6 mobile-menu-header"
                 >
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#006837] to-[#00a855] flex items-center justify-center shadow-lg"
+                        >
+                            <svg
+                                class="w-4 h-4 text-white"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </div>
+                        <span
+                            class="text-lg font-bold tracking-tight text-gray-900"
+                            >Menu</span
+                        >
+                    </div>
+                    <button
+                        id="mobile-menu-close"
+                        class="mobile-close-btn"
+                        aria-label="メニューを閉じる"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2.5"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
 
-                <!-- Other Links -->
-                <div class="space-y-0.5">
-                    <a href="/media" class="mobile-menu-link">メディア掲載</a>
-                    <a href="/faq" class="mobile-menu-link">よくあるご質問</a>
-                    <a href="/sponsors" class="mobile-menu-link">協賛企業</a>
-                    <a href="/contact" class="mobile-menu-link">お問い合わせ</a>
-                    <a href="/speaker-request" class="mobile-menu-link"
-                        >講演者リクエスト</a
+                <!-- Menu Content -->
+                <div
+                    class="flex-1 overflow-y-auto px-4 py-6 mobile-menu-content"
+                >
+                    <!-- About Section -->
+                    <div class="mb-6 menu-section" style="--delay: 0;">
+                        <div class="flex items-center gap-2 mb-3 px-2">
+                            <svg
+                                class="w-4 h-4 text-[#006837]"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                ></path>
+                            </svg>
+                            <span
+                                class="text-xs font-bold uppercase tracking-[0.2em] text-[#006837]"
+                                >About</span
+                            >
+                        </div>
+                        <div class="space-y-1">
+                            <a href="/about" class="mobile-menu-link">
+                                <span>私たちについて</span>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                            <a href="/about/history" class="mobile-menu-link">
+                                <span>設立の経緯</span>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                            <a href="/about/members" class="mobile-menu-link">
+                                <span>メンバー紹介</span>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Events Section -->
+                    <div class="mb-6 menu-section" style="--delay: 1;">
+                        <div class="flex items-center gap-2 mb-3 px-2">
+                            <svg
+                                class="w-4 h-4 text-[#006837]"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                ></path>
+                            </svg>
+                            <span
+                                class="text-xs font-bold uppercase tracking-[0.2em] text-[#006837]"
+                                >Events</span
+                            >
+                        </div>
+                        <div class="space-y-1">
+                            <a href="/events/upcoming" class="mobile-menu-link">
+                                <span>開催予定</span>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                            <a href="/events/past" class="mobile-menu-link">
+                                <span>講演会アーカイブ</span>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Elegant Divider -->
+                    <div class="my-6 mx-2 flex items-center gap-3">
+                        <div
+                            class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"
+                        >
+                        </div>
+                        <div
+                            class="w-1.5 h-1.5 rounded-full bg-[#006837] opacity-40"
+                        >
+                        </div>
+                        <div
+                            class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"
+                        >
+                        </div>
+                    </div>
+
+                    <!-- Other Links Section -->
+                    <div class="menu-section" style="--delay: 2;">
+                        <div class="flex items-center gap-2 mb-3 px-2">
+                            <svg
+                                class="w-4 h-4 text-[#006837]"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
+                                ></path>
+                            </svg>
+                            <span
+                                class="text-xs font-bold uppercase tracking-[0.2em] text-[#006837]"
+                                >More</span
+                            >
+                        </div>
+                        <div class="space-y-1">
+                            <a href="/media" class="mobile-menu-link">
+                                <span>メディア掲載</span>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                            <a href="/faq" class="mobile-menu-link">
+                                <span>よくあるご質問</span>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                            <a href="/sponsors" class="mobile-menu-link">
+                                <span>協賛企業</span>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                            <a href="/contact" class="mobile-menu-link">
+                                <span>お問い合わせ</span>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                            <a
+                                href="/speaker-request"
+                                class="mobile-menu-link mobile-menu-link-featured"
+                            >
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="w-6 h-6 rounded-lg bg-gradient-to-br from-[#006837] to-[#00a855] flex items-center justify-center"
+                                    >
+                                        <svg
+                                            class="w-3.5 h-3.5 text-white"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                    </div>
+                                    <span>講演者リクエスト</span>
+                                </div>
+                                <svg
+                                    class="link-arrow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path></svg
+                                >
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Brand -->
+                <div class="px-6 py-5 mobile-menu-footer">
+                    <div
+                        class="flex items-center justify-center gap-2 opacity-50"
                     >
+                        <div
+                            class="w-5 h-5 rounded-md bg-[#006837] flex items-center justify-center"
+                        >
+                            <span class="text-white text-[8px] font-bold"
+                                >CS</span
+                            >
+                        </div>
+                        <span class="text-xs font-medium text-gray-500"
+                            >Cedar Society</span
+                        >
+                    </div>
                 </div>
             </div>
         </div>
 
         <style>
-            /* iOS 26 Liquid Glass Mobile Menu Links */
+            /* Premium Mobile Menu Styles */
+            .mobile-menu-bg {
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.95) 0%,
+                    rgba(249, 250, 251, 0.98) 50%,
+                    rgba(255, 255, 255, 0.95) 100%
+                );
+                backdrop-filter: blur(40px) saturate(180%);
+                -webkit-backdrop-filter: blur(40px) saturate(180%);
+                border-left: 1px solid rgba(255, 255, 255, 0.6);
+                box-shadow:
+                    -20px 0 60px rgba(0, 0, 0, 0.1),
+                    -5px 0 20px rgba(0, 0, 0, 0.05),
+                    inset 1px 0 0 rgba(255, 255, 255, 0.5);
+            }
+
+            .mobile-menu-header {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+                background: linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, 0.5),
+                    transparent
+                );
+            }
+
+            .mobile-menu-footer {
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                background: linear-gradient(
+                    to top,
+                    rgba(249, 250, 251, 0.8),
+                    transparent
+                );
+            }
+
+            .mobile-close-btn {
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.04);
+                color: rgba(0, 0, 0, 0.5);
+                transition: all 0.2s ease;
+            }
+
+            .mobile-close-btn:hover {
+                background: rgba(0, 0, 0, 0.08);
+                color: rgba(0, 0, 0, 0.7);
+                transform: rotate(90deg);
+            }
+
+            .mobile-close-btn:active {
+                transform: rotate(90deg) scale(0.95);
+            }
+
             .mobile-menu-link {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 padding: 14px 16px;
-                border-radius: 12px;
-                font-size: 16px;
+                border-radius: 14px;
+                font-size: 15px;
                 font-weight: 500;
-                color: rgba(0, 0, 0, 0.85);
-                transition: all 0.2s ease;
+                color: #374151;
+                letter-spacing: -0.01em;
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
             }
+
+            .mobile-menu-link::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    135deg,
+                    rgba(0, 104, 55, 0.08),
+                    rgba(0, 168, 85, 0.04)
+                );
+                opacity: 0;
+                transition: opacity 0.25s ease;
+                border-radius: 14px;
+            }
+
+            .mobile-menu-link:hover::before,
+            .mobile-menu-link:active::before {
+                opacity: 1;
+            }
+
             .mobile-menu-link:hover,
             .mobile-menu-link:active {
-                background: rgba(0, 104, 55, 0.08);
                 color: #006837;
             }
+
             .mobile-menu-link:active {
                 transform: scale(0.98);
+            }
+
+            .mobile-menu-link .link-arrow {
+                width: 16px;
+                height: 16px;
+                color: #9ca3af;
+                transition: all 0.25s ease;
+                flex-shrink: 0;
+            }
+
+            .mobile-menu-link:hover .link-arrow {
+                color: #006837;
+                transform: translateX(3px);
+            }
+
+            .mobile-menu-link-featured {
+                background: linear-gradient(
+                    135deg,
+                    rgba(0, 104, 55, 0.05),
+                    rgba(0, 168, 85, 0.02)
+                );
+                border: 1px solid rgba(0, 104, 55, 0.1);
+            }
+
+            .mobile-menu-link-featured:hover {
+                border-color: rgba(0, 104, 55, 0.2);
+            }
+
+            /* Menu section animation */
+            .menu-section {
+                opacity: 0;
+                transform: translateX(20px);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition-delay: calc(var(--delay) * 0.1s);
+            }
+
+            #mobile-menu:not(.translate-x-full) .menu-section {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            /* Scrollbar styling */
+            .mobile-menu-content::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            .mobile-menu-content::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            .mobile-menu-content::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.1);
+                border-radius: 4px;
+            }
+
+            .mobile-menu-content::-webkit-scrollbar-thumb:hover {
+                background: rgba(0, 0, 0, 0.2);
             }
         </style>
 
@@ -1485,6 +1913,7 @@ const { seo = {} } = Astro.props;
         </main>
         <footer
             style="padding: 64px 24px; border-top: 1px solid #e5e7eb; background-color: #f9fafb; position: relative; z-index: 10;"
+            transition:persist
         >
             <div style="max-width: 800px; margin: 0 auto; text-align: center;">
                 <!-- Title -->
@@ -1765,11 +2194,11 @@ const { seo = {} } = Astro.props;
             });
         }
 
-        // Close menu on link click
+        // Close menu on link click - instant close for faster navigation
         const menuLinks = freshMobileMenu?.querySelectorAll("a");
         menuLinks?.forEach((link) => {
             link.addEventListener("click", () => {
-                setTimeout(closeMenu, 100);
+                closeMenu(); // Instant close, no delay
             });
         });
 

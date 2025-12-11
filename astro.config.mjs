@@ -11,8 +11,9 @@ export default defineConfig({
     inlineStylesheets: 'auto',
   },
   prefetch: {
-    prefetchAll: true,
-    defaultStrategy: 'viewport',
+    // Use tap-based prefetching - starts on touch/mousedown for fastest response
+    prefetchAll: false,
+    defaultStrategy: 'tap',
   },
   image: {
     service: {
@@ -27,7 +28,8 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     build: {
-      cssCodeSplit: false,
+      // Allow CSS code splitting for smaller initial bundles
+      cssCodeSplit: true,
       minify: 'esbuild',
       rollupOptions: {
         output: {
