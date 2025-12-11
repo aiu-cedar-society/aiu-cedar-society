@@ -1,0 +1,260 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import BreadcrumbSchema from "../../components/BreadcrumbSchema.astro";
+
+// SEO
+const seo = {
+    title: "Speaker Request | AIU Cedar Society",
+    description:
+        "Request a speaker for AIU Cedar Society lecture series. Your suggestions help us plan future lectures.",
+    keywords:
+        "AIU Cedar Society,Speaker Request,Lecture,Guest Speaker,Suggestions",
+};
+
+const breadcrumbItems = [
+    { label: "Home", href: "/en" },
+    { label: "Speaker Request" },
+];
+---
+
+<Layout seo={seo}>
+    <BreadcrumbSchema items={breadcrumbItems} />
+    <div class="bg-gradient-to-b from-gray-50 to-white min-h-screen">
+        <div
+            class="container mx-auto px-4 md:px-6 pt-16 md:pt-20 pb-12 md:pb-20 max-w-3xl"
+        >
+            <Breadcrumb items={breadcrumbItems} />
+            {/* Back Button */}
+            <a
+                href="/en"
+                class="inline-flex items-center text-gray-500 hover:text-[#006837] mb-8 md:mb-12 transition-colors group text-sm font-medium min-h-[44px]"
+            >
+                <svg
+                    class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Home
+            </a>
+
+            {/* Hero Section */}
+            <div class="relative mb-12 md:mb-16">
+                <div class="relative mb-6">
+                    <div class="absolute top-0 left-0 w-px h-full bg-[#006837]">
+                    </div>
+                    <h1
+                        class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight leading-tight pl-6"
+                    >
+                        Speaker <span class="text-[#006837]">Request</span>
+                    </h1>
+                </div>
+                <p
+                    class="text-lg md:text-xl text-gray-600 leading-relaxed pl-6 max-w-2xl"
+                >
+                    Tell us who you'd like to hear from! Your suggestions help
+                    us plan future lectures.
+                </p>
+            </div>
+
+            {/* Request Form Card */}
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-10">
+                <div
+                    class="flex items-center gap-3 mb-8 pb-6 border-b border-gray-200"
+                >
+                    <div
+                        class="w-6 h-6 bg-[#006837] bg-opacity-5 rounded-lg flex items-center justify-center flex-shrink-0"
+                    >
+                        <svg
+                            class="w-4 h-4 text-[#006837]"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <h2
+                        class="text-xl md:text-2xl font-bold text-gray-900 tracking-tight"
+                    >
+                        Submit a Request
+                    </h2>
+                </div>
+
+                <form
+                    action="https://formspree.io/f/xrbnkjrp"
+                    method="POST"
+                    class="space-y-6"
+                >
+                    {/* Hidden fields */}
+                    <input
+                        type="hidden"
+                        name="_subject"
+                        value="[Speaker Request] New Request Received"
+                    />
+                    <input
+                        type="hidden"
+                        name="form_type"
+                        value="speaker_request"
+                    />
+                    <input type="hidden" name="language" value="en" />
+
+                    {/* Speaker Name Field */}
+                    <div>
+                        <label
+                            for="speaker"
+                            class="block text-sm font-bold text-gray-700 mb-2"
+                        >
+                            Requested Speaker <span class="text-red-500">*</span
+                            >
+                        </label>
+                        <input
+                            type="text"
+                            id="speaker"
+                            name="speaker"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
+                            placeholder="Speaker's name, title, and affiliation"
+                        />
+                        <p class="mt-2 text-xs text-gray-500">
+                            e.g., Professor John Smith from XYZ University, CEO
+                            Jane Doe of ABC Company
+                        </p>
+                    </div>
+
+                    {/* Reason Field */}
+                    <div>
+                        <label
+                            for="reason"
+                            class="block text-sm font-bold text-gray-700 mb-2"
+                        >
+                            Reason <span class="text-red-500">*</span>
+                        </label>
+                        <textarea
+                            id="reason"
+                            name="reason"
+                            rows="4"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none resize-none"
+                            placeholder="Why would you like to hear from this person?"
+                        ></textarea>
+                    </div>
+
+                    {/* Topic Field */}
+                    <div>
+                        <label
+                            for="topic"
+                            class="block text-sm font-bold text-gray-700 mb-2"
+                        >
+                            Suggested Topic <span
+                                class="text-gray-400 font-normal"
+                                >(Optional)</span
+                            >
+                        </label>
+                        <input
+                            type="text"
+                            id="topic"
+                            name="topic"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
+                            placeholder="What topic would you like them to speak about?"
+                        />
+                    </div>
+
+                    {/* Other Comments Field */}
+                    <div>
+                        <label
+                            for="comments"
+                            class="block text-sm font-bold text-gray-700 mb-2"
+                        >
+                            Other Comments <span
+                                class="text-gray-400 font-normal"
+                                >(Optional)</span
+                            >
+                        </label>
+                        <textarea
+                            id="comments"
+                            name="comments"
+                            rows="3"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none resize-none"
+                            placeholder="Any other requests or comments"
+                        ></textarea>
+                    </div>
+
+                    {/* Honeypot for spam protection */}
+                    <input type="text" name="_gotcha" style="display:none" />
+
+                    {/* Submit Button */}
+                    <div class="pt-4">
+                        <button
+                            type="submit"
+                            class="w-full bg-[#006837] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#005028] transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-transform min-h-[44px] cursor-pointer"
+                        >
+                            Submit Request
+                        </button>
+                    </div>
+
+                    {/* Privacy Notice */}
+                    <p class="text-xs text-gray-500 text-center pt-2">
+                        Your information will only be used for lecture planning
+                        purposes.
+                    </p>
+                </form>
+            </div>
+
+            {/* Additional Info Card */}
+            <div
+                class="mt-8 bg-gray-50 rounded-lg p-6 md:p-8 border border-gray-200"
+            >
+                <h3
+                    class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"
+                >
+                    <svg
+                        class="w-5 h-5 text-[#006837]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                    </svg>
+                    About Requests
+                </h3>
+                <div class="space-y-2 text-sm text-gray-600">
+                    <p>
+                        • Your requests will be considered for future lecture
+                        planning
+                    </p>
+                    <p>
+                        • We may not be able to accommodate all requests, but we
+                        value your input
+                    </p>
+                    <p>• We do not provide individual responses to requests</p>
+                    <p>
+                        • For lecture registration or general inquiries, please
+                        use the <a
+                            href="/en/contact"
+                            class="text-[#006837] hover:underline"
+                            >contact page</a
+                        >
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>

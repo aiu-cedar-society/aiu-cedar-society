@@ -1,0 +1,311 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getUpcomingEvents } from "../../../library/microcms";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import BreadcrumbSchema from "../../../components/BreadcrumbSchema.astro";
+import { formatDateTime } from "../../../i18n/utils";
+
+// Helper to get English content or fallback to Japanese
+const getContent = (en: string | undefined, ja: string) => en || ja;
+
+// Fetch upcoming events
+const response = await getUpcomingEvents();
+const events = response.contents;
+
+// SEO
+const seo = {
+    title: "Upcoming Events | AIU Cedar Society",
+    description:
+        "Upcoming lectures and events hosted by AIU Cedar Society. Join us for lectures by distinguished guests.",
+    keywords: "AIU Cedar Society,Upcoming Events,Lectures,Schedule",
+};
+
+const breadcrumbItems = [
+    { label: "Home", href: "/en" },
+    { label: "Upcoming Events" },
+];
+---
+
+<Layout seo={seo}>
+    <BreadcrumbSchema items={breadcrumbItems} />
+    <div class="bg-gradient-to-b from-gray-50 to-white min-h-screen">
+        <div
+            class="container mx-auto px-4 md:px-6 pt-16 md:pt-20 pb-12 md:pb-20 max-w-5xl"
+        >
+            <Breadcrumb items={breadcrumbItems} />
+            {/* Back Button */}
+            <a
+                href="/en"
+                class="inline-flex items-center text-gray-500 hover:text-[#006837] mb-8 md:mb-12 transition-colors group text-sm font-medium min-h-[44px]"
+            >
+                <svg
+                    class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Home
+            </a>
+
+            {/* Hero Section */}
+            <div class="relative mb-12 md:mb-16">
+                <div class="relative mb-6">
+                    <div class="absolute top-0 left-0 w-px h-full bg-[#006837]">
+                    </div>
+                    <h1
+                        class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight leading-tight pl-6"
+                    >
+                        Upcoming <span class="text-[#006837]">Events</span>
+                    </h1>
+                </div>
+                <p
+                    class="text-lg md:text-xl text-gray-600 leading-relaxed pl-6 max-w-2xl"
+                >
+                    Scheduled lectures and event information
+                </p>
+            </div>
+
+            {/* Upcoming Events */}
+            <div class="bg-white rounded-lg shadow-md p-8 md:p-10 mb-8">
+                <div
+                    class="flex items-center gap-3 mb-8 pb-6 border-b border-gray-200"
+                >
+                    <div
+                        class="w-6 h-6 bg-[#006837] bg-opacity-5 rounded-lg flex items-center justify-center flex-shrink-0"
+                    >
+                        <svg
+                            class="w-4 h-4 text-[#006837]"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <h2
+                        class="text-xl md:text-2xl font-bold text-gray-900 tracking-tight"
+                    >
+                        Scheduled Events
+                    </h2>
+                </div>
+
+                {
+                    events.length > 0 ? (
+                        <div class="space-y-6">
+                            {events.map((event) => (
+                                <div class="border-l-4 border-[#006837] bg-gray-50 p-6 rounded-r-lg">
+                                    <div class="flex items-start gap-4 mb-3">
+                                        <div class="inline-flex items-center gap-2 bg-white border border-gray-200 px-3 py-1.5 rounded-full shadow-sm">
+                                            <svg
+                                                class="w-3.5 h-3.5 text-[#006837]"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                />
+                                            </svg>
+                                            <div class="text-xs font-bold text-[#006837] tracking-wider uppercase">
+                                                {formatDateTime(
+                                                    event.event_date,
+                                                    "en",
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">
+                                        {getContent(
+                                            (event as any).title_en,
+                                            event.title,
+                                        )}
+                                    </h3>
+                                    {event.location && (
+                                        <p class="text-sm text-gray-600 mb-3 flex items-center gap-2">
+                                            <svg
+                                                class="w-4 h-4"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                                />
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                                />
+                                            </svg>
+                                            {getContent(
+                                                (event as any).location_en,
+                                                event.location,
+                                            )}
+                                        </p>
+                                    )}
+                                    <div
+                                        class="prose prose-sm max-w-none text-gray-700"
+                                        set:html={getContent(
+                                            (event as any).description_en,
+                                            event.description,
+                                        )}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div class="text-center py-12">
+                            <svg
+                                class="w-16 h-16 mx-auto mb-6 text-gray-300"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="1.5"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                            </svg>
+                            <p class="text-lg font-medium text-gray-900 mb-2">
+                                No upcoming events at the moment
+                            </p>
+                            <p class="text-sm text-gray-600 mb-8">
+                                New lecture information will be announced here
+                                as soon as it's confirmed.
+                            </p>
+                            <a
+                                href="/en/contact"
+                                class="inline-flex items-center gap-2 bg-[#006837] text-white font-bold px-6 py-3 rounded-lg hover:bg-[#005028] transition-colors shadow-md"
+                            >
+                                <span>Get Event Updates</span>
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"
+                                    />
+                                </svg>
+                            </a>
+                        </div>
+                    )
+                }
+            </div>
+
+            {/* Event Registration Form */}
+            <div class="bg-white rounded-lg shadow-md p-8 md:p-10 mb-8">
+                <div
+                    class="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200"
+                >
+                    <div
+                        class="w-6 h-6 bg-[#006837] bg-opacity-5 rounded-lg flex items-center justify-center flex-shrink-0"
+                    >
+                        <svg
+                            class="w-4 h-4 text-[#006837]"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <h2
+                        class="text-xl md:text-2xl font-bold text-gray-900 tracking-tight"
+                    >
+                        Event Registration
+                    </h2>
+                </div>
+
+                <p class="text-gray-700 mb-6 leading-relaxed">
+                    If you would like to attend our lectures, please register
+                    using the form below.
+                </p>
+
+                {/* Google Forms Embed */}
+                <div
+                    class="relative w-full"
+                    style="padding-bottom: 800px; height: 0; overflow: hidden;"
+                >
+                    <iframe
+                        src="https://docs.google.com/forms/d/e/1FAIpQLSer0kfzkytjIvOhHA2ewUqmmKflm0EqEpl9vxMAn-qf_S8wUg/viewform?embedded=true"
+                        class="absolute top-0 left-0 w-full h-full border-0 rounded-lg"
+                        style="min-height: 800px;"
+                        title="Event Registration Form">Loading…</iframe
+                    >
+                </div>
+
+                <p class="text-xs text-gray-500 mt-4 text-center">
+                    *If the form doesn't display, please access it <a
+                        href="https://docs.google.com/forms/d/e/1FAIpQLSer0kfzkytjIvOhHA2ewUqmmKflm0EqEpl9vxMAn-qf_S8wUg/viewform"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-[#006837] hover:underline">here</a
+                    >.
+                </p>
+            </div>
+
+            {/* Info Card */}
+            <div
+                class="bg-gray-50 rounded-lg p-6 md:p-8 border border-gray-200"
+            >
+                <div class="flex items-start gap-3">
+                    <svg
+                        class="w-6 h-6 text-[#006837] flex-shrink-0 mt-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">
+                            About Our Events
+                        </h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            AIU Cedar Society regularly hosts lectures featuring
+                            distinguished guests. Check the lecture list on our
+                            homepage for the latest event information and
+                            announcements. You can also request event updates
+                            through our contact form.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>

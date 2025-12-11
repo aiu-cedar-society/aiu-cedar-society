@@ -2,7 +2,13 @@
 import "../styles/global.css";
 import SEO from "../components/SEO.astro";
 import SchemaOrganization from "../components/SchemaOrganization.astro";
+import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import { ViewTransitions } from "astro:transitions";
+import {
+    getLangFromUrl,
+    getLocalizedPath,
+    useTranslations,
+} from "../i18n/utils";
 
 interface Props {
     seo?: {
@@ -19,10 +25,34 @@ interface Props {
 }
 
 const { seo = {} } = Astro.props;
+
+// Get current language from URL
+const currentLang = getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
+
+// Helper to get localized path
+const l = (path: string) => getLocalizedPath(path, currentLang);
+
+// Navigation labels based on language
+const nav = {
+    about: currentLang === "en" ? "About" : "About",
+    aboutUs: currentLang === "en" ? "About Us" : "私たちについて",
+    history: currentLang === "en" ? "History" : "設立の経緯",
+    members: currentLang === "en" ? "Members" : "メンバー紹介",
+    events: currentLang === "en" ? "Events" : "Events",
+    upcoming: currentLang === "en" ? "Upcoming Events" : "今後の予定",
+    past: currentLang === "en" ? "Past Lectures" : "過去の講演会",
+    media: "Media",
+    faq: "FAQ",
+    sponsors: "Sponsors",
+    contact: "Contact",
+    speakerRequest:
+        currentLang === "en" ? "Request a Speaker" : "講演者リクエスト",
+};
 ---
 
 <!doctype html>
-<html lang="ja">
+<html lang={currentLang}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
@@ -1157,13 +1187,13 @@ const { seo = {} } = Astro.props;
 
         <!-- HEADER -->
         <header
+            id="site-header"
             class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200"
-            transition:persist
         >
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
                     <!-- Logo -->
-                    <a href="/" class="flex-shrink-0">
+                    <a href={l("/")} class="flex-shrink-0">
                         <span
                             class="text-xl font-bold text-gray-900 hover:text-[#006837] transition-colors"
                         >
@@ -1201,19 +1231,19 @@ const { seo = {} } = Astro.props;
                                 style="z-index: 100;"
                             >
                                 <a
-                                    href="/about"
+                                    href={l("/about")}
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#006837]"
-                                    >私たちについて</a
+                                    >{nav.aboutUs}</a
                                 >
                                 <a
-                                    href="/about/history"
+                                    href={l("/about/history")}
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#006837]"
-                                    >設立の経緯</a
+                                    >{nav.history}</a
                                 >
                                 <a
-                                    href="/about/members"
+                                    href={l("/about/members")}
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#006837]"
-                                    >メンバー紹介</a
+                                    >{nav.members}</a
                                 >
                             </div>
                         </div>
@@ -1243,71 +1273,79 @@ const { seo = {} } = Astro.props;
                                 style="z-index: 100;"
                             >
                                 <a
-                                    href="/events/upcoming"
+                                    href={l("/events/upcoming")}
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#006837]"
-                                    >今後の予定</a
+                                    >{nav.upcoming}</a
                                 >
                                 <a
-                                    href="/events/past"
+                                    href={l("/events/past")}
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#006837]"
-                                    >過去の講演会</a
+                                    >{nav.past}</a
                                 >
                             </div>
                         </div>
 
                         <!-- Media -->
                         <a
-                            href="/media"
+                            href={l("/media")}
                             class="text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
-                            >Media</a
+                            >{nav.media}</a
                         ><!-- FAQ -->
                         <a
-                            href="/faq"
+                            href={l("/faq")}
                             class="text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
-                            >FAQ</a
+                            >{nav.faq}</a
                         ><!-- Sponsors -->
                         <a
-                            href="/sponsors"
+                            href={l("/sponsors")}
                             class="text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
-                            >Sponsors</a
+                            >{nav.sponsors}</a
                         ><!-- Contact -->
                         <a
-                            href="/contact"
+                            href={l("/contact")}
                             class="text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
-                            >Contact</a
+                            >{nav.contact}</a
                         ><!-- Speaker Request -->
                         <a
-                            href="/speaker-request"
+                            href={l("/speaker-request")}
                             class="text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
                             >Request</a
                         >
                     </nav>
 
-                    <!-- Mobile menu button -->
-                    <button
-                        id="mobile-menu-button"
-                        class="md:hidden rounded-md p-2 text-gray-500 hover:text-[#006837] hover:bg-gray-100 transition-colors"
-                        aria-label="メニューを開く"
-                    >
-                        <svg
-                            class="h-6 w-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                    <!-- Language Switcher & Mobile Menu Container -->
+                    <div class="flex items-center gap-2">
+                        <!-- Language Switcher -->
+                        <LanguageSwitcher />
+
+                        <!-- Mobile menu button -->
+                        <button
+                            id="mobile-menu-button"
+                            class="md:hidden rounded-md p-2 text-gray-500 hover:text-[#006837] hover:bg-gray-100 transition-colors"
+                            aria-label={currentLang === "en"
+                                ? "Open menu"
+                                : "メニューを開く"}
                         >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
 
         <style>
-            /* HEADER FORCED SCOPED CSS */
+            /* HEADER RESPONSIVE CSS */
             header {
                 position: fixed !important;
                 top: 0 !important;
@@ -1322,8 +1360,14 @@ const { seo = {} } = Astro.props;
             header > div:first-child {
                 max-width: 1280px !important;
                 margin: 0 auto !important;
-                padding: 0 24px !important;
+                padding: 0 16px !important;
                 height: 100% !important;
+            }
+
+            @media (min-width: 640px) {
+                header > div:first-child {
+                    padding: 0 24px !important;
+                }
             }
 
             header > div:first-child > div:first-child {
@@ -1331,27 +1375,55 @@ const { seo = {} } = Astro.props;
                 align-items: center !important;
                 justify-content: space-between !important;
                 height: 100% !important;
+                gap: 16px !important;
             }
 
-            /* Logo vertical centering */
-            header a:first-child {
+            /* Logo styles */
+            header a.flex-shrink-0 {
                 display: inline-flex !important;
                 align-items: center !important;
                 height: 100% !important;
+                flex-shrink: 0 !important;
             }
 
+            header a.flex-shrink-0 span {
+                font-size: 1.125rem !important;
+                font-weight: 700 !important;
+                white-space: nowrap !important;
+            }
+
+            @media (min-width: 640px) {
+                header a.flex-shrink-0 span {
+                    font-size: 1.25rem !important;
+                }
+            }
+
+            /* Desktop Navigation - show from md (768px) */
             @media (min-width: 768px) {
                 header nav {
                     display: flex !important;
                     align-items: center !important;
                     flex-wrap: nowrap !important;
+                    gap: 16px !important;
+                }
+            }
+
+            /* Increase nav gap on larger screens */
+            @media (min-width: 1024px) {
+                header nav {
+                    gap: 24px !important;
+                }
+            }
+
+            @media (min-width: 1280px) {
+                header nav {
                     gap: 32px !important;
                 }
             }
 
             header nav a,
             header nav .dropdown-button {
-                font-size: 14px !important;
+                font-size: 13px !important;
                 font-weight: 500 !important;
                 color: #4b5563 !important;
                 transition: color 0.2s ease !important;
@@ -1360,6 +1432,15 @@ const { seo = {} } = Astro.props;
                 height: 40px !important;
                 display: inline-flex !important;
                 align-items: center !important;
+                padding: 0 2px !important;
+            }
+
+            @media (min-width: 1024px) {
+                header nav a,
+                header nav .dropdown-button {
+                    font-size: 14px !important;
+                    padding: 0 4px !important;
+                }
             }
 
             header nav a:hover,
@@ -1370,13 +1451,27 @@ const { seo = {} } = Astro.props;
             header nav .dropdown-button {
                 display: inline-flex !important;
                 align-items: center !important;
-                gap: 8px !important;
+                gap: 4px !important;
             }
 
-            header .flex.items-center.space-x-4 {
+            @media (min-width: 1024px) {
+                header nav .dropdown-button {
+                    gap: 6px !important;
+                }
+            }
+
+            /* Right side container (language switcher + mobile button) */
+            header .flex.items-center.gap-2 {
                 display: flex !important;
                 align-items: center !important;
-                gap: 16px !important;
+                gap: 8px !important;
+                flex-shrink: 0 !important;
+            }
+
+            @media (min-width: 640px) {
+                header .flex.items-center.gap-2 {
+                    gap: 12px !important;
+                }
             }
 
             header .dropdown-menu {
@@ -1418,7 +1513,6 @@ const { seo = {} } = Astro.props;
             id="mobile-menu"
             class="fixed inset-y-0 right-0 z-50 transform translate-x-full transition-all duration-300 ease-out md:hidden"
             style="width: 75%;"
-            transition:persist
         >
             <!-- Gradient Glass Background -->
             <div class="absolute inset-0 mobile-menu-bg"></div>
@@ -1476,255 +1570,114 @@ const { seo = {} } = Astro.props;
                     class="flex-1 overflow-y-auto px-4 py-6 mobile-menu-content"
                 >
                     <!-- About Section -->
-                    <div class="mb-6 menu-section" style="--delay: 0;">
-                        <div class="flex items-center gap-2 mb-3 px-2">
-                            <svg
-                                class="w-4 h-4 text-[#006837]"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                ></path>
-                            </svg>
+                    <div class="mb-5 menu-section" style="--delay: 0;">
+                        <div class="px-3 mb-2">
                             <span
-                                class="text-xs font-bold uppercase tracking-[0.2em] text-[#006837]"
-                                >About</span
+                                class="text-xs font-semibold uppercase tracking-wider text-gray-400"
                             >
+                                {
+                                    currentLang === "en"
+                                        ? "About"
+                                        : "私たちについて"
+                                }
+                            </span>
                         </div>
-                        <div class="space-y-1">
-                            <a href="/about" class="mobile-menu-link">
-                                <span>私たちについて</span>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
+                        <div class="space-y-0.5">
+                            <a href={l("/about")} class="mobile-menu-link">
+                                {nav.aboutUs}
                             </a>
-                            <a href="/about/history" class="mobile-menu-link">
-                                <span>設立の経緯</span>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
+                            <a
+                                href={l("/about/history")}
+                                class="mobile-menu-link"
+                            >
+                                {nav.history}
                             </a>
-                            <a href="/about/members" class="mobile-menu-link">
-                                <span>メンバー紹介</span>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
+                            <a
+                                href={l("/about/members")}
+                                class="mobile-menu-link"
+                            >
+                                {nav.members}
                             </a>
                         </div>
                     </div>
 
                     <!-- Events Section -->
-                    <div class="mb-6 menu-section" style="--delay: 1;">
-                        <div class="flex items-center gap-2 mb-3 px-2">
-                            <svg
-                                class="w-4 h-4 text-[#006837]"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                ></path>
-                            </svg>
+                    <div class="mb-5 menu-section" style="--delay: 1;">
+                        <div class="px-3 mb-2">
                             <span
-                                class="text-xs font-bold uppercase tracking-[0.2em] text-[#006837]"
-                                >Events</span
+                                class="text-xs font-semibold uppercase tracking-wider text-gray-400"
                             >
+                                {currentLang === "en" ? "Events" : "イベント"}
+                            </span>
                         </div>
-                        <div class="space-y-1">
-                            <a href="/events/upcoming" class="mobile-menu-link">
-                                <span>開催予定</span>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
-                            </a>
-                            <a href="/events/past" class="mobile-menu-link">
-                                <span>講演会アーカイブ</span>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Elegant Divider -->
-                    <div class="my-6 mx-2 flex items-center gap-3">
-                        <div
-                            class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"
-                        >
-                        </div>
-                        <div
-                            class="w-1.5 h-1.5 rounded-full bg-[#006837] opacity-40"
-                        >
-                        </div>
-                        <div
-                            class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"
-                        >
-                        </div>
-                    </div>
-
-                    <!-- Other Links Section -->
-                    <div class="menu-section" style="--delay: 2;">
-                        <div class="flex items-center gap-2 mb-3 px-2">
-                            <svg
-                                class="w-4 h-4 text-[#006837]"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
+                        <div class="space-y-0.5">
+                            <a
+                                href={l("/events/upcoming")}
+                                class="mobile-menu-link"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-                                ></path>
-                            </svg>
-                            <span
-                                class="text-xs font-bold uppercase tracking-[0.2em] text-[#006837]"
-                                >More</span
-                            >
-                        </div>
-                        <div class="space-y-1">
-                            <a href="/media" class="mobile-menu-link">
-                                <span>メディア掲載</span>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
-                            </a>
-                            <a href="/faq" class="mobile-menu-link">
-                                <span>よくあるご質問</span>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
-                            </a>
-                            <a href="/sponsors" class="mobile-menu-link">
-                                <span>協賛企業</span>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
-                            </a>
-                            <a href="/contact" class="mobile-menu-link">
-                                <span>お問い合わせ</span>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
+                                {nav.upcoming}
                             </a>
                             <a
-                                href="/speaker-request"
-                                class="mobile-menu-link mobile-menu-link-featured"
+                                href={l("/events/past")}
+                                class="mobile-menu-link"
                             >
-                                <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-6 h-6 rounded-lg bg-gradient-to-br from-[#006837] to-[#00a855] flex items-center justify-center"
-                                    >
-                                        <svg
-                                            class="w-3.5 h-3.5 text-white"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M12 4v16m8-8H4"></path>
-                                        </svg>
-                                    </div>
-                                    <span>講演者リクエスト</span>
-                                </div>
-                                <svg
-                                    class="link-arrow"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    ><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 5l7 7-7 7"></path></svg
-                                >
+                                {nav.past}
                             </a>
                         </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="my-4 mx-3 h-px bg-gray-200"></div>
+
+                    <!-- More Links Section -->
+                    <div class="mb-5 menu-section" style="--delay: 2;">
+                        <div class="px-3 mb-2">
+                            <span
+                                class="text-xs font-semibold uppercase tracking-wider text-gray-400"
+                            >
+                                {currentLang === "en" ? "More" : "その他"}
+                            </span>
+                        </div>
+                        <div class="space-y-0.5">
+                            <a href={l("/media")} class="mobile-menu-link">
+                                {currentLang === "en" ? "Media" : "メディア"}
+                            </a>
+                            <a href={l("/faq")} class="mobile-menu-link">
+                                FAQ
+                            </a>
+                            <a href={l("/sponsors")} class="mobile-menu-link">
+                                {currentLang === "en" ? "Sponsors" : "協賛企業"}
+                            </a>
+                            <a href={l("/contact")} class="mobile-menu-link">
+                                {
+                                    currentLang === "en"
+                                        ? "Contact"
+                                        : "お問い合わせ"
+                                }
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Featured: Speaker Request -->
+                    <div class="mt-4 px-2 menu-section" style="--delay: 3;">
+                        <a
+                            href={l("/speaker-request")}
+                            class="mobile-menu-link-cta"
+                        >
+                            <span>{nav.speakerRequest}</span>
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
                     </div>
                 </div>
 
@@ -1807,41 +1760,18 @@ const { seo = {} } = Astro.props;
             }
 
             .mobile-menu-link {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 14px 16px;
-                border-radius: 14px;
+                display: block;
+                padding: 12px 16px;
+                border-radius: 10px;
                 font-size: 15px;
                 font-weight: 500;
                 color: #374151;
-                letter-spacing: -0.01em;
-                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-                position: relative;
-                overflow: hidden;
-            }
-
-            .mobile-menu-link::before {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(
-                    135deg,
-                    rgba(0, 104, 55, 0.08),
-                    rgba(0, 168, 85, 0.04)
-                );
-                opacity: 0;
-                transition: opacity 0.25s ease;
-                border-radius: 14px;
-            }
-
-            .mobile-menu-link:hover::before,
-            .mobile-menu-link:active::before {
-                opacity: 1;
+                transition: all 0.2s ease;
             }
 
             .mobile-menu-link:hover,
             .mobile-menu-link:active {
+                background: rgba(0, 104, 55, 0.06);
                 color: #006837;
             }
 
@@ -1849,30 +1779,28 @@ const { seo = {} } = Astro.props;
                 transform: scale(0.98);
             }
 
-            .mobile-menu-link .link-arrow {
-                width: 16px;
-                height: 16px;
-                color: #9ca3af;
-                transition: all 0.25s ease;
-                flex-shrink: 0;
+            /* CTA Button Style */
+            .mobile-menu-link-cta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 14px 18px;
+                border-radius: 12px;
+                font-size: 15px;
+                font-weight: 600;
+                color: white;
+                background: linear-gradient(135deg, #006837 0%, #00a855 100%);
+                box-shadow: 0 4px 12px rgba(0, 104, 55, 0.25);
+                transition: all 0.2s ease;
             }
 
-            .mobile-menu-link:hover .link-arrow {
-                color: #006837;
-                transform: translateX(3px);
+            .mobile-menu-link-cta:hover {
+                box-shadow: 0 6px 16px rgba(0, 104, 55, 0.35);
+                transform: translateY(-1px);
             }
 
-            .mobile-menu-link-featured {
-                background: linear-gradient(
-                    135deg,
-                    rgba(0, 104, 55, 0.05),
-                    rgba(0, 168, 85, 0.02)
-                );
-                border: 1px solid rgba(0, 104, 55, 0.1);
-            }
-
-            .mobile-menu-link-featured:hover {
-                border-color: rgba(0, 104, 55, 0.2);
+            .mobile-menu-link-cta:active {
+                transform: scale(0.98);
             }
 
             /* Menu section animation */
@@ -1912,8 +1840,8 @@ const { seo = {} } = Astro.props;
             <slot />
         </main>
         <footer
+            id="site-footer"
             style="padding: 64px 24px; border-top: 1px solid #e5e7eb; background-color: #f9fafb; position: relative; z-index: 10;"
-            transition:persist
         >
             <div style="max-width: 800px; margin: 0 auto; text-align: center;">
                 <!-- Title -->
@@ -1926,8 +1854,11 @@ const { seo = {} } = Astro.props;
                 <p
                     style="color: #4b5563; font-size: 0.875rem; line-height: 1.6; margin-bottom: 40px;"
                 >
-                    秋田国際教養大学の学生主導の公認団体。<br />
-                    著名なゲストを招いた講演会を通じて、学生と秋田社会をつなぎます。
+                    {
+                        currentLang === "en"
+                            ? "An officially recognized student-led organization at Akita International University. We connect students and Akita society through lectures featuring distinguished guests."
+                            : "秋田国際教養大学の学生主導の公認団体。著名なゲストを招いた講演会を通じて、学生と秋田社会をつなぎます。"
+                    }
                 </p>
 
                 <!-- Instagram Card -->
@@ -1989,37 +1920,37 @@ const { seo = {} } = Astro.props;
                     style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin-bottom: 32px;"
                 >
                     <a
-                        href="/about"
+                        href={l("/about")}
                         style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
                         class="hover:text-[#006837]">About</a
                     >
                     <a
-                        href="/events/upcoming"
+                        href={l("/events/upcoming")}
                         style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
                         class="hover:text-[#006837]">Events</a
                     >
                     <a
-                        href="/media"
+                        href={l("/media")}
                         style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
                         class="hover:text-[#006837]">Media</a
                     >
                     <a
-                        href="/faq"
+                        href={l("/faq")}
                         style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
                         class="hover:text-[#006837]">FAQ</a
                     >
                     <a
-                        href="/sponsors"
+                        href={l("/sponsors")}
                         style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
                         class="hover:text-[#006837]">Sponsors</a
                     >
                     <a
-                        href="/contact"
+                        href={l("/contact")}
                         style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
                         class="hover:text-[#006837]">Contact</a
                     >
                     <a
-                        href="/speaker-request"
+                        href={l("/speaker-request")}
                         style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
                         class="hover:text-[#006837]">Request</a
                     >

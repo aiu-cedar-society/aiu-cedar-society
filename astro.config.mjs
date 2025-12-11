@@ -7,6 +7,16 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://momo1105.com',
   integrations: [sitemap()],
+
+  // Internationalization (i18n) configuration
+  i18n: {
+    defaultLocale: 'ja',
+    locales: ['ja', 'en'],
+    routing: {
+      prefixDefaultLocale: false, // /about for Japanese, /en/about for English
+    },
+  },
+
   build: {
     inlineStylesheets: 'auto',
   },
