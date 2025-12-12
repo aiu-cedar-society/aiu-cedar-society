@@ -247,30 +247,50 @@ const breadcrumbItems = [
                 </div>
 
                 <p class="text-gray-700 mb-6 leading-relaxed">
-                    If you would like to attend our lectures, please register
-                    using the form below.
+                    If you would like to attend our lectures, please click the
+                    button below to access the registration form.
                 </p>
 
-                {/* Google Forms Embed */}
-                <div
-                    class="relative w-full"
-                    style="padding-bottom: 800px; height: 0; overflow: hidden;"
-                >
-                    <iframe
-                        src="https://docs.google.com/forms/d/e/1FAIpQLSer0kfzkytjIvOhHA2ewUqmmKflm0EqEpl9vxMAn-qf_S8wUg/viewform?embedded=true"
-                        class="absolute top-0 left-0 w-full h-full border-0 rounded-lg"
-                        style="min-height: 800px;"
-                        title="Event Registration Form">Loading…</iframe
-                    >
-                </div>
-
-                <p class="text-xs text-gray-500 mt-4 text-center">
-                    *If the form doesn't display, please access it <a
+                {/* Google Forms Link */}
+                <div class="text-center">
+                    <a
                         href="https://docs.google.com/forms/d/e/1FAIpQLSer0kfzkytjIvOhHA2ewUqmmKflm0EqEpl9vxMAn-qf_S8wUg/viewform"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-[#006837] hover:underline">here</a
-                    >.
+                        class="inline-flex items-center gap-3 bg-[#006837] text-white font-bold px-8 py-4 rounded-lg hover:bg-[#005028] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            ></path>
+                        </svg>
+                        <span>Register for Lectures</span>
+                        <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            ></path>
+                        </svg>
+                    </a>
+                </div>
+
+                <p class="text-xs text-gray-500 mt-4 text-center">
+                    *Opens in a new tab (Google Forms)
                 </p>
             </div>
 
