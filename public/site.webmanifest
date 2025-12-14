@@ -4,9 +4,9 @@
     "description": "秋田とAIU生の可能性をつなぐ講演会シリーズ",
     "icons": [
         {
-            "src": "/favicon.png",
-            "sizes": "1024x1024",
-            "type": "image/png"
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
         }
     ],
     "theme_color": "#006837",

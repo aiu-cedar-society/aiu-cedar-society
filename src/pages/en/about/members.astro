@@ -162,7 +162,11 @@ const breadcrumbItems = [
                                                     (member as any).position_en,
                                                     member.position,
                                                 )}{" "}
-                                                / {member.year}
+                                                /{" "}
+                                                {getContent(
+                                                    (member as any).year_en,
+                                                    member.year,
+                                                )}
                                             </p>
                                             <p class="text-sm text-gray-600">
                                                 {getContent(
@@ -254,7 +258,11 @@ const breadcrumbItems = [
                                                     (member as any).position_en,
                                                     member.position,
                                                 )}{" "}
-                                                / {member.year}
+                                                /{" "}
+                                                {getContent(
+                                                    (member as any).year_en,
+                                                    member.year,
+                                                )}
                                             </p>
                                             <p class="text-sm text-gray-600">
                                                 {getContent(
