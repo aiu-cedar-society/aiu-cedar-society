@@ -23,11 +23,13 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
 ---
 
 <div class="lang-switcher-container" id="lang-switcher">
+    <span class="sr-only">言語を選択</span>
     <button
         class="lang-switcher-button"
         aria-label="Select language"
         aria-expanded="false"
         aria-haspopup="true"
+        aria-controls="lang-dropdown"
     >
         <span class="lang-icon">
             <svg
@@ -66,12 +68,13 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
         </span>
     </button>
 
-    <div class="lang-dropdown" role="menu">
+    <div class="lang-dropdown" role="menu" id="lang-dropdown">
         <a
             href={jaUrl}
             class={`lang-option ${currentLang === "ja" ? "active" : ""}`}
             role="menuitem"
             data-lang="ja"
+            tabindex="-1"
         >
             <span class="lang-option-code">JA</span>
             <span>日本語</span>
@@ -82,6 +85,7 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
             class={`lang-option ${currentLang === "en" ? "active" : ""}`}
             role="menuitem"
             data-lang="en"
+            tabindex="-1"
         >
             <span class="lang-option-code">EN</span>
             <span>English</span>
@@ -94,6 +98,17 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
     .lang-switcher-container {
         position: relative;
         display: inline-block;
+    }
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
 
     .lang-switcher-button {
@@ -255,6 +270,7 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
         let currentContainer = null;
         let outsideClickHandler = null;
         let escapeHandler = null;
+        let keydownHandler = null;
 
         function initLangSwitcher() {
             // Clean up previous listeners if any
@@ -264,6 +280,9 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
             if (escapeHandler) {
                 document.removeEventListener("keydown", escapeHandler);
             }
+            if (keydownHandler) {
+                document.removeEventListener("keydown", keydownHandler);
+            }
 
             const container = document.getElementById("lang-switcher");
             if (!container) return;
@@ -271,6 +290,7 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
             currentContainer = container;
             const button = container.querySelector(".lang-switcher-button");
             const options = container.querySelectorAll(".lang-option");
+            const dropdown = container.querySelector(".lang-dropdown");
 
             // Toggle dropdown - use onclick to avoid duplicate listeners
             if (button) {
@@ -279,6 +299,11 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
                     const isOpen = container.classList.contains("open");
                     container.classList.toggle("open");
                     button.setAttribute("aria-expanded", String(!isOpen));
+                    if (!isOpen) {
+                        // focus first option when opening
+                        const first = options[0];
+                        first?.focus({ preventScroll: true });
+                    }
                 };
             }
 
@@ -296,9 +321,42 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
                 if (e.key === "Escape" && container) {
                     container.classList.remove("open");
                     if (button) button.setAttribute("aria-expanded", "false");
+                    button?.focus({ preventScroll: true });
                 }
             };
             document.addEventListener("keydown", escapeHandler);
+
+            // Keyboard navigation inside dropdown
+            keydownHandler = function (e) {
+                if (!container.classList.contains("open")) return;
+                const focusable = Array.from(options);
+                const idx = focusable.indexOf(document.activeElement);
+                if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    const next = focusable[(idx + 1) % focusable.length];
+                    next?.focus({ preventScroll: true });
+                } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    const prev =
+                        focusable[
+                            (idx - 1 + focusable.length) % focusable.length
+                        ];
+                    prev?.focus({ preventScroll: true });
+                } else if (e.key === "Enter" || e.key === " ") {
+                    if (
+                        document.activeElement?.classList.contains(
+                            "lang-option",
+                        )
+                    ) {
+                        const href =
+                            document.activeElement.getAttribute("href");
+                        if (href) {
+                            window.location.href = href;
+                        }
+                    }
+                }
+            };
+            document.addEventListener("keydown", keydownHandler);
 
             // Save language preference when clicking an option - use onclick
             options.forEach(function (option) {
@@ -306,9 +364,20 @@ const enUrl = "/en" + (basePath === "/" ? "" : basePath);
                     var lang = option.getAttribute("data-lang");
                     if (lang) {
                         localStorage.setItem("preferredLanguage", lang);
+                        container.classList.remove("open");
+                        button?.setAttribute("aria-expanded", "false");
                     }
                 };
             });
+
+            // Annotate preferred language (for potential UI use)
+            const preferred = localStorage.getItem("preferredLanguage");
+            if (preferred && dropdown) {
+                dropdown.setAttribute(
+                    "data-preferred",
+                    preferred === "en" ? "English" : "日本語",
+                );
+            }
         }
 
         // Initialize immediately

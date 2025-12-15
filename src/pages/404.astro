@@ -1,0 +1,37 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const seo = {
+    title: "ページが見つかりません | AIU Cedar Society",
+    description: "お探しのページは存在しません。トップへお戻りください。",
+};
+---
+
+<Layout seo={seo}>
+    <main class="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-6 py-16">
+        <div class="text-center space-y-6 max-w-xl">
+            <p class="text-sm font-semibold text-[#006837] tracking-wide">404</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">
+                お探しのページは見つかりませんでした
+            </h1>
+            <p class="text-gray-600">
+                URLが正しいかご確認いただき、トップページにお戻りください。
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a
+                    href="/"
+                    class="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-[#006837] text-white font-semibold hover:bg-[#005028] transition-colors min-h-[44px]"
+                >
+                    トップに戻る
+                </a>
+                <a
+                    href="/contact"
+                    class="inline-flex items-center justify-center px-5 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:border-[#006837] hover:text-[#006837] transition-colors min-h-[44px]"
+                >
+                    お問い合わせ
+                </a>
+            </div>
+        </div>
+    </main>
+</Layout>
+

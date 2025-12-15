@@ -95,11 +95,13 @@ const breadcrumbItems = [
                     </h2>
                 </div>
 
-                <form
-                    action="https://formspree.io/f/xrbnkjrp"
-                    method="POST"
-                    class="space-y-6"
-                >
+<form
+    id="contact-form"
+    action="https://formspree.io/f/xrbnkjrp"
+    method="POST"
+    class="space-y-6"
+    novalidate
+>
                     {/* Name Field */}
                     <div>
                         <label
@@ -108,14 +110,17 @@ const breadcrumbItems = [
                         >
                             お名前 <span class="text-red-500">*</span>
                         </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
-                            placeholder="山田 太郎"
-                        />
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        aria-required="true"
+                        autocomplete="name"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
+                        placeholder="山田 太郎"
+                    />
+                    <p class="text-sm text-red-600 mt-2 hidden" data-error-for="name"></p>
                     </div>
 
                     {/* Email Field */}
@@ -126,14 +131,17 @@ const breadcrumbItems = [
                         >
                             メールアドレス <span class="text-red-500">*</span>
                         </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
-                            placeholder="example@email.com"
-                        />
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        aria-required="true"
+                        autocomplete="email"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
+                        placeholder="example@email.com"
+                    />
+                    <p class="text-sm text-red-600 mt-2 hidden" data-error-for="email"></p>
                     </div>
 
                     {/* Subject Field */}
@@ -144,14 +152,16 @@ const breadcrumbItems = [
                         >
                             件名 <span class="text-red-500">*</span>
                         </label>
-                        <input
-                            type="text"
-                            id="subject"
-                            name="subject"
-                            required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
-                            placeholder="講演会について"
-                        />
+                    <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        required
+                        aria-required="true"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
+                        placeholder="講演会について"
+                    />
+                    <p class="text-sm text-red-600 mt-2 hidden" data-error-for="subject"></p>
                     </div>
 
                     {/* Message Field */}
@@ -162,14 +172,16 @@ const breadcrumbItems = [
                         >
                             メッセージ <span class="text-red-500">*</span>
                         </label>
-                        <textarea
-                            id="message"
-                            name="message"
-                            rows="6"
-                            required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none resize-none"
-                            placeholder="お問い合わせ内容をご記入ください"
-                        ></textarea>
+                    <textarea
+                        id="message"
+                        name="message"
+                        rows="6"
+                        required
+                        aria-required="true"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none resize-none"
+                        placeholder="お問い合わせ内容をご記入ください"
+                    ></textarea>
+                    <p class="text-sm text-red-600 mt-2 hidden" data-error-for="message"></p>
                     </div>
 
                     {/* Honeypot for spam protection */}
@@ -179,9 +191,31 @@ const breadcrumbItems = [
                     <div class="pt-4">
                         <button
                             type="submit"
-                            class="w-full bg-[#006837] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#005028] transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-transform min-h-[44px] cursor-pointer"
+                            class="w-full bg-[#006837] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#005028] transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-transform min-h-[44px] cursor-pointer flex items-center justify-center gap-2"
+                            data-submit-button
                         >
-                            送信する
+                            <span data-submit-text>送信する</span>
+                            <svg
+                                class="w-5 h-5 animate-spin text-white hidden"
+                                data-submit-spinner
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    class="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    stroke-width="4"
+                                ></circle>
+                                <path
+                                    class="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                ></path>
+                            </svg>
                         </button>
                     </div>
 
@@ -189,6 +223,12 @@ const breadcrumbItems = [
                     <p class="text-xs text-gray-500 text-center pt-2">
                         送信いただいた情報は、お問い合わせ対応のみに使用いたします。
                     </p>
+                    <div
+                        id="form-status"
+                        class="text-sm text-gray-600 text-center pt-3 min-h-[1.5rem]"
+                        role="status"
+                        aria-live="polite"
+                    ></div>
                 </form>
             </div>
 
@@ -226,3 +266,125 @@ const breadcrumbItems = [
         </div>
     </div>
 </Layout>
+
+<script is:inline>
+    // フォーム送信とバリデーションの強化
+    (function () {
+        const form = document.getElementById("contact-form");
+        if (!form) return;
+
+        const statusEl = document.getElementById("form-status");
+        const submitBtn = form.querySelector("[data-submit-button]");
+        const submitText = form.querySelector("[data-submit-text]");
+        const submitSpinner = form.querySelector("[data-submit-spinner]");
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        function setLoading(isLoading) {
+            if (!submitBtn || !submitText || !submitSpinner) return;
+            submitBtn.disabled = isLoading;
+            submitBtn.classList.toggle("opacity-70", isLoading);
+            submitSpinner.classList.toggle("hidden", !isLoading);
+            submitText.textContent = isLoading ? "送信中..." : "送信する";
+        }
+
+        function showError(input, message) {
+            const errorEl = form.querySelector(
+                `[data-error-for="${input.name}"]`,
+            );
+            input.setAttribute("aria-invalid", "true");
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove("hidden");
+            }
+        }
+
+        function clearError(input) {
+            const errorEl = form.querySelector(
+                `[data-error-for="${input.name}"]`,
+            );
+            input.removeAttribute("aria-invalid");
+            if (errorEl) {
+                errorEl.textContent = "";
+                errorEl.classList.add("hidden");
+            }
+        }
+
+        function validate() {
+            let valid = true;
+            const elements = Array.from(
+                form.querySelectorAll("input[required], textarea[required]"),
+            );
+            elements.forEach((el) => {
+                clearError(el);
+                if (!el.value.trim()) {
+                    showError(el, "必須項目です。");
+                    valid = false;
+                    return;
+                }
+                if (el.type === "email" && !emailPattern.test(el.value)) {
+                    showError(el, "メールアドレスの形式が正しくありません。");
+                    valid = false;
+                }
+            });
+            return valid;
+        }
+
+        // 入力時のリアルタイムバリデーション
+        form.addEventListener("input", (e) => {
+            const target = e.target;
+            if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
+            clearError(target);
+        });
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (!validate()) {
+                statusEl.textContent = "入力内容を確認してください。";
+                statusEl.classList.remove("text-green-700");
+                statusEl.classList.add("text-red-600");
+                return;
+            }
+
+            setLoading(true);
+            statusEl.textContent = "送信中です...";
+            statusEl.classList.remove("text-red-600");
+            statusEl.classList.add("text-gray-600");
+
+            const formData = new FormData(form);
+            try {
+                const res = await fetch(form.action, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        Accept: "application/json",
+                    },
+                });
+
+                if (res.ok) {
+                    form.reset();
+                    statusEl.textContent = "送信しました。ご連絡ありがとうございます。";
+                    statusEl.classList.remove("text-red-600");
+                    statusEl.classList.add("text-green-700");
+                    if (window.showToast) {
+                        window.showToast("送信しました。ご連絡ありがとうございます。", "success");
+                    }
+                } else {
+                    throw new Error("送信に失敗しました。");
+                }
+            } catch (error) {
+                console.error(error);
+                statusEl.textContent =
+                    "送信に失敗しました。お手数ですが再度お試しください。";
+                statusEl.classList.remove("text-green-700");
+                statusEl.classList.add("text-red-600");
+                if (window.showToast) {
+                    window.showToast("送信に失敗しました。再度お試しください。", "error");
+                }
+            } finally {
+                setLoading(false);
+            }
+        });
+    })();
+</script>

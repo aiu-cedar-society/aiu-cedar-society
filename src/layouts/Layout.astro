@@ -1542,7 +1542,7 @@ const nav = {
         <div
             id="mobile-menu"
             class="fixed inset-y-0 right-0 z-50 transform translate-x-full transition-all duration-300 ease-out md:hidden"
-            style="width: 75%;"
+            style="width: 75%; transition-duration: 250ms;"
         >
             <!-- Gradient Glass Background -->
             <div class="absolute inset-0 mobile-menu-bg"></div>
@@ -2029,10 +2029,15 @@ const nav = {
         <a
             href="#top"
             id="back-to-top"
+            title="トップに戻る"
             style="position: fixed !important; bottom: 1.5rem !important; right: 1.5rem !important; z-index: 50 !important;"
-            class="w-12 h-12 bg-[#006837] text-white rounded-full flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-[#005028] shadow-lg hover:shadow-xl"
+            class="w-12 h-12 bg-[#006837] text-white rounded-full flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-[#005028] shadow-lg hover:shadow-xl relative overflow-hidden"
             aria-label="トップに戻る"
         >
+            <span
+                class="absolute inset-0 rounded-full pointer-events-none progress-ring"
+                aria-hidden="true"
+            ></span>
             <svg
                 class="w-5 h-5"
                 fill="none"
@@ -2046,6 +2051,67 @@ const nav = {
                     d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
             </svg>
         </a>
+
+        <!-- Lightweight page loading indicator -->
+        <div
+            id="page-loading-indicator"
+            class="fixed bottom-4 left-4 z-[60] pointer-events-none opacity-0 translate-y-2 transition-all duration-150 bg-black/70 text-white text-xs font-medium px-3 py-2 rounded-full flex items-center gap-2 shadow-lg"
+            role="status"
+            aria-live="polite"
+        >
+            <svg
+                class="w-4 h-4 animate-spin text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+            >
+                <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                ></circle>
+                <path
+                    class="opacity-75"
+                    d="M4 12a8 8 0 018-8"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                ></path>
+            </svg>
+            <span>読み込み中...</span>
+        </div>
+
+        <style>
+            /* Back to Top - progress ring */
+            #back-to-top .progress-ring {
+                background: conic-gradient(
+                    rgba(255, 255, 255, 0.25) calc(var(--scroll-progress, 0) * 1%),
+                    rgba(255, 255, 255, 0.08) 0
+                );
+                transition: background 120ms ease;
+            }
+            #back-to-top::after {
+                content: attr(title);
+                position: absolute;
+                bottom: 110%;
+                right: 50%;
+                transform: translateX(50%);
+                background: rgba(0, 0, 0, 0.75);
+                color: white;
+                padding: 6px 8px;
+                border-radius: 6px;
+                font-size: 11px;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.15s ease;
+                white-space: nowrap;
+            }
+            #back-to-top:hover::after {
+                opacity: 1;
+            }
+        </style>
 
         <!-- Performance Optimization Scripts -->
         <script>
@@ -2161,6 +2227,37 @@ const nav = {
                 closeMenu(); // Instant close, no delay
             });
         });
+
+        // Swipe to close
+        let startX = null;
+        const threshold = 40;
+        freshMobileMenu?.addEventListener(
+            "touchstart",
+            (e) => {
+                startX = e.touches[0].clientX;
+            },
+            { passive: true },
+        );
+        freshMobileMenu?.addEventListener(
+            "touchmove",
+            (e) => {
+                if (startX === null) return;
+                const deltaX = e.touches[0].clientX - startX;
+                // Right-to-left swipe on the drawer closes it
+                if (deltaX < -threshold) {
+                    closeMenu();
+                    startX = null;
+                }
+            },
+            { passive: true },
+        );
+        freshMobileMenu?.addEventListener(
+            "touchend",
+            () => {
+                startX = null;
+            },
+            { passive: true },
+        );
 
         // Close on escape key
         const escapeHandler = (e) => {
@@ -2293,17 +2390,65 @@ const nav = {
         }
     });
 
+    // Page loading indicator (avoid flicker with small delay)
+    (function () {
+        const indicator = document.getElementById("page-loading-indicator");
+        if (!indicator) return;
+        let showTimer = null;
+        let hideTimer = null;
+
+        const show = () => {
+            if (hideTimer) {
+                clearTimeout(hideTimer);
+                hideTimer = null;
+            }
+            showTimer = setTimeout(() => {
+                indicator.classList.remove("opacity-0", "translate-y-2");
+                indicator.classList.add("opacity-100", "translate-y-0");
+            }, 120); // small delay to prevent flash on very fast navigations
+        };
+
+        const hide = () => {
+            if (showTimer) {
+                clearTimeout(showTimer);
+                showTimer = null;
+            }
+            hideTimer = setTimeout(() => {
+                indicator.classList.add("opacity-0", "translate-y-2");
+                indicator.classList.remove("opacity-100", "translate-y-0");
+            }, 80);
+        };
+
+        document.addEventListener("astro:before-preparation", show);
+        document.addEventListener("astro:after-swap", hide);
+        document.addEventListener("astro:page-load", hide);
+    })();
+
     // Back to Top Button Handler
     window.addEventListener(
         "scroll",
         function () {
             const backToTopBtn = document.getElementById("back-to-top");
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.remove("opacity-0", "invisible");
-                backToTopBtn.classList.add("opacity-100", "visible");
-            } else {
-                backToTopBtn.classList.add("opacity-0", "invisible");
-                backToTopBtn.classList.remove("opacity-100", "visible");
+            if (backToTopBtn) {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.remove("opacity-0", "invisible");
+                    backToTopBtn.classList.add("opacity-100", "visible");
+                } else {
+                    backToTopBtn.classList.add("opacity-0", "invisible");
+                    backToTopBtn.classList.remove("opacity-100", "visible");
+                }
+
+                const doc = document.documentElement;
+                const max =
+                    doc.scrollHeight - doc.clientHeight || 1;
+                const progress = Math.min(
+                    100,
+                    Math.max(0, (window.scrollY / max) * 100),
+                );
+                backToTopBtn.style.setProperty(
+                    "--scroll-progress",
+                    progress.toString(),
+                );
             }
         },
         { passive: true },
