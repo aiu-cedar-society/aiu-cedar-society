@@ -90,9 +90,11 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Contact" }];
                 </div>
 
                 <form
+                    id="contact-form"
                     action="https://formspree.io/f/xrbnkjrp"
                     method="POST"
                     class="space-y-6"
+                    novalidate
                 >
                     {/* Hidden field for language */}
                     <input type="hidden" name="language" value="en" />
@@ -110,9 +112,15 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Contact" }];
                             id="name"
                             name="name"
                             required
+                            aria-required="true"
+                            autocomplete="name"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
                             placeholder="John Smith"
                         />
+                        <p
+                            class="text-sm text-red-600 mt-2 hidden"
+                            data-error-for="name"
+                        ></p>
                     </div>
 
                     {/* Email Field */}
@@ -128,9 +136,15 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Contact" }];
                             id="email"
                             name="email"
                             required
+                            aria-required="true"
+                            autocomplete="email"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
                             placeholder="example@email.com"
                         />
+                        <p
+                            class="text-sm text-red-600 mt-2 hidden"
+                            data-error-for="email"
+                        ></p>
                     </div>
 
                     {/* Subject Field */}
@@ -146,9 +160,14 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Contact" }];
                             id="subject"
                             name="subject"
                             required
+                            aria-required="true"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
                             placeholder="About lectures"
                         />
+                        <p
+                            class="text-sm text-red-600 mt-2 hidden"
+                            data-error-for="subject"
+                        ></p>
                     </div>
 
                     {/* Message Field */}
@@ -164,8 +183,13 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Contact" }];
                             name="message"
                             rows="6"
                             required
+                            aria-required="true"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none resize-none"
                             placeholder="Please enter your message"></textarea>
+                        <p
+                            class="text-sm text-red-600 mt-2 hidden"
+                            data-error-for="message"
+                        ></p>
                     </div>
 
                     {/* Honeypot for spam protection */}
@@ -175,9 +199,31 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Contact" }];
                     <div class="pt-4">
                         <button
                             type="submit"
-                            class="w-full bg-[#006837] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#005028] transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-transform min-h-[44px] cursor-pointer"
+                            class="w-full bg-[#006837] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#005028] transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-transform min-h-[44px] cursor-pointer flex items-center justify-center gap-2"
+                            data-submit-button
                         >
-                            Submit
+                            <span data-submit-text>Submit</span>
+                            <svg
+                                class="w-5 h-5 animate-spin text-white hidden"
+                                data-submit-spinner
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    class="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    stroke-width="4"
+                                ></circle>
+                                <path
+                                    class="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                ></path>
+                            </svg>
                         </button>
                     </div>
 
@@ -186,6 +232,12 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Contact" }];
                         Your information will only be used to respond to your
                         inquiry.
                     </p>
+                    <div
+                        id="form-status"
+                        class="text-sm text-gray-600 text-center pt-3 min-h-[1.5rem]"
+                        role="status"
+                        aria-live="polite"
+                    ></div>
                 </form>
             </div>
 
@@ -226,3 +278,180 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Contact" }];
         </div>
     </div>
 </Layout>
+
+<script is:inline>
+    // Contact Form (EN): prevent redirect by submitting via fetch to Formspree
+    (function () {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        function initContactForm() {
+            const form = document.getElementById("contact-form");
+            if (!form) return;
+
+            // Avoid double-binding if init runs multiple times
+            if (form.dataset.enhanced === "true") return;
+            form.dataset.enhanced = "true";
+
+            const statusEl = document.getElementById("form-status");
+            const submitBtn = form.querySelector("[data-submit-button]");
+            const submitText = form.querySelector("[data-submit-text]");
+            const submitSpinner = form.querySelector("[data-submit-spinner]");
+
+            function setLoading(isLoading) {
+                if (!submitBtn || !submitText || !submitSpinner) return;
+                submitBtn.disabled = isLoading;
+                submitBtn.classList.toggle("opacity-70", isLoading);
+                submitSpinner.classList.toggle("hidden", !isLoading);
+                submitText.textContent = isLoading ? "Submitting..." : "Submit";
+            }
+
+                function showCompletionModal(title, message, type = "success") {
+                    try {
+                        if (typeof window.showFormModal === "function") {
+                            window.showFormModal(title, message, type);
+                            return;
+                        }
+                    } catch (e) {
+                        // fall through to DOM fallback
+                    }
+
+                    const modal = document.getElementById("form-modal");
+                    const titleEl = document.getElementById("form-modal-title");
+                    const messageEl =
+                        document.getElementById("form-modal-message");
+                    if (!modal || !titleEl || !messageEl) return;
+
+                    modal.setAttribute("data-type", type);
+                    titleEl.textContent = title;
+                    messageEl.textContent = message;
+                    modal.classList.remove("hidden");
+                    modal.setAttribute("aria-hidden", "false");
+                    document.body.classList.add("form-modal-open");
+                }
+
+            function showError(input, message) {
+                const errorEl = form.querySelector(
+                    `[data-error-for="${input.name}"]`,
+                );
+                input.setAttribute("aria-invalid", "true");
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.classList.remove("hidden");
+                }
+            }
+
+            function clearError(input) {
+                const errorEl = form.querySelector(
+                    `[data-error-for="${input.name}"]`,
+                );
+                input.removeAttribute("aria-invalid");
+                if (errorEl) {
+                    errorEl.textContent = "";
+                    errorEl.classList.add("hidden");
+                }
+            }
+
+            function validate() {
+                let valid = true;
+                const elements = Array.from(
+                    form.querySelectorAll("input[required], textarea[required]"),
+                );
+                elements.forEach((el) => {
+                    clearError(el);
+                    if (!el.value.trim()) {
+                        showError(el, "This field is required.");
+                        valid = false;
+                        return;
+                    }
+                    if (el.type === "email" && !emailPattern.test(el.value)) {
+                        showError(el, "Please enter a valid email address.");
+                        valid = false;
+                    }
+                });
+                return valid;
+            }
+
+            form.addEventListener("input", (e) => {
+                const target = e.target;
+                if (
+                    !(
+                        target instanceof HTMLInputElement ||
+                        target instanceof HTMLTextAreaElement
+                    )
+                )
+                    return;
+                clearError(target);
+            });
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (!validate()) {
+                    if (statusEl) {
+                        statusEl.textContent = "Please check your input.";
+                        statusEl.classList.remove("text-green-700");
+                        statusEl.classList.add("text-red-600");
+                    }
+                    return;
+                }
+
+                setLoading(true);
+                if (statusEl) {
+                    statusEl.textContent = "Submitting...";
+                    statusEl.classList.remove("text-red-600");
+                    statusEl.classList.add("text-gray-600");
+                }
+
+                const formData = new FormData(form);
+                try {
+                    const res = await fetch(form.action, {
+                        method: "POST",
+                        body: formData,
+                        headers: { Accept: "application/json" },
+                    });
+
+                    if (res.ok) {
+                        form.reset();
+                        if (statusEl) {
+                            statusEl.textContent =
+                                "Submitted. Thank you for contacting us.";
+                            statusEl.classList.remove("text-red-600");
+                            statusEl.classList.add("text-green-700");
+                        }
+                        if (window.showToast) {
+                            window.showToast(
+                                "Submitted. Thank you for contacting us.",
+                                "success",
+                            );
+                        }
+                        showCompletionModal(
+                            "Submission complete",
+                            "We received your message. We typically respond within 2–3 business days.",
+                            "success",
+                        );
+                    } else {
+                        throw new Error("Submission failed.");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    if (statusEl) {
+                        statusEl.textContent =
+                            "Submission failed. Please try again.";
+                        statusEl.classList.remove("text-green-700");
+                        statusEl.classList.add("text-red-600");
+                    }
+                    if (window.showToast) {
+                        window.showToast(
+                            "Submission failed. Please try again.",
+                            "error",
+                        );
+                    }
+                } finally {
+                    setLoading(false);
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", initContactForm);
+        document.addEventListener("astro:page-load", initContactForm);
+    })();
+</script>

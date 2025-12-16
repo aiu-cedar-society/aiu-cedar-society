@@ -41,7 +41,7 @@ const breadcrumbItems = [
                         stroke-width="2"
                         d="M15 19l-7-7 7-7"></path>
                 </svg>
-                トップに戻る
+                ホームへ
             </a>
 
             {/* Hero Section */}
@@ -281,6 +281,30 @@ const breadcrumbItems = [
         const emailPattern =
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+        function showCompletionModal(title, message, type = "success") {
+            try {
+                if (typeof window.showFormModal === "function") {
+                    window.showFormModal(title, message, type);
+                    return;
+                }
+            } catch (e) {
+                // fall through to DOM fallback
+            }
+
+            // DOM fallback (guaranteed if Layout modal exists)
+            const modal = document.getElementById("form-modal");
+            const titleEl = document.getElementById("form-modal-title");
+            const messageEl = document.getElementById("form-modal-message");
+            if (!modal || !titleEl || !messageEl) return;
+
+            modal.setAttribute("data-type", type);
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("form-modal-open");
+        }
+
         function setLoading(isLoading) {
             if (!submitBtn || !submitText || !submitSpinner) return;
             submitBtn.disabled = isLoading;
@@ -370,6 +394,11 @@ const breadcrumbItems = [
                     if (window.showToast) {
                         window.showToast("送信しました。ご連絡ありがとうございます。", "success");
                     }
+                    showCompletionModal(
+                        "送信が完了しました",
+                        "お問い合わせを受け付けました。通常、2〜3営業日以内にご返信いたします。",
+                        "success",
+                    );
                 } else {
                     throw new Error("送信に失敗しました。");
                 }

@@ -1276,6 +1276,7 @@ const nav = {
                             <button
                                 class="dropdown-button nav-link inline-flex items-center text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
                                 style="gap: 0.375rem;"
+                                data-active={isActive("/about")}
                             >
                                 About
                                 <svg
@@ -1318,6 +1319,7 @@ const nav = {
                             <button
                                 class="dropdown-button nav-link inline-flex items-center text-gray-600 hover:text-[#006837] text-sm font-medium transition-colors"
                                 style="gap: 0.375rem;"
+                                data-active={isActive("/events")}
                             >
                                 Events
                                 <svg
@@ -2182,6 +2184,189 @@ const nav = {
             <span>読み込み中...</span>
         </div>
 
+        <!-- Toast container (required for window.showToast) -->
+        <div
+            id="toast-container"
+            class="toast-container"
+            aria-live="polite"
+            aria-relevant="additions text"
+        ></div>
+
+        <!-- Form Result Modal (center popup) -->
+        <div id="form-modal" class="form-modal hidden" aria-hidden="true">
+            <div
+                id="form-modal-backdrop"
+                class="form-modal-backdrop"
+                data-form-modal-close
+                aria-hidden="true"
+            ></div>
+            <div
+                class="form-modal-panel"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="form-modal-title"
+                aria-describedby="form-modal-message"
+            >
+                <div class="form-modal-header">
+                    <div class="form-modal-icon" aria-hidden="true">✓</div>
+                    <button
+                        id="form-modal-close"
+                        class="form-modal-close"
+                        type="button"
+                        data-form-modal-close
+                        aria-label={currentLang === "en" ? "Close" : "閉じる"}
+                    >
+                        ×
+                    </button>
+                </div>
+                <h3 id="form-modal-title" class="form-modal-title">
+                    送信が完了しました
+                </h3>
+                <p id="form-modal-message" class="form-modal-message">
+                    送信が完了しました。ありがとうございます。
+                </p>
+                <div class="form-modal-actions">
+                    <button
+                        id="form-modal-ok"
+                        class="form-modal-ok"
+                        type="button"
+                        data-form-modal-close
+                    >
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ensure modal API exists even if other large inline scripts fail -->
+        <script is:inline>
+            (function () {
+                // ---------------------------
+                // Toast API (safe fallback)
+                // ---------------------------
+                if (typeof window.showToast !== "function") {
+                    window.showToast = function (message, type = "success") {
+                        const container =
+                            document.getElementById("toast-container");
+                        if (!container) return;
+
+                        const toast = document.createElement("div");
+                        toast.className = `toast toast-${type}`;
+                        toast.setAttribute("role", "alert");
+                        toast.setAttribute("aria-live", "polite");
+
+                        const icons = {
+                            success: "✓",
+                            error: "✕",
+                            info: "ℹ",
+                        };
+
+                        toast.innerHTML = `
+                            <div class="toast-icon" style="color: ${
+                                type === "success"
+                                    ? "#10b981"
+                                    : type === "error"
+                                        ? "#ef4444"
+                                        : "#3b82f6"
+                            }; font-size: 18px; font-weight: bold;">
+                                ${icons[type] || icons.info}
+                            </div>
+                            <div class="toast-message">${message}</div>
+                        `;
+
+                        container.appendChild(toast);
+                        setTimeout(() => toast.classList.add("show"), 50);
+                        setTimeout(() => {
+                            toast.classList.remove("show");
+                            setTimeout(() => toast.remove(), 250);
+                        }, 3000);
+                    };
+                }
+
+                // ---------------------------
+                // Form modal API (guaranteed)
+                // ---------------------------
+                if (typeof window.showFormModal === "function") return;
+
+                function isOpen() {
+                    const modal = document.getElementById("form-modal");
+                    return modal && !modal.classList.contains("hidden");
+                }
+
+                function open(title, message, type) {
+                    const modal = document.getElementById("form-modal");
+                    const titleEl = document.getElementById("form-modal-title");
+                    const messageEl =
+                        document.getElementById("form-modal-message");
+                    const okBtn = document.getElementById("form-modal-ok");
+
+                    if (!modal || !titleEl || !messageEl) return;
+
+                    const active = document.activeElement;
+                    document.body.dataset.formModalReturnFocus =
+                        active && active.id ? active.id : "";
+
+                    modal.setAttribute("data-type", type || "success");
+                    titleEl.textContent = title || "送信が完了しました";
+                    messageEl.textContent =
+                        message || "送信が完了しました。ありがとうございます。";
+
+                    modal.classList.remove("hidden");
+                    modal.setAttribute("aria-hidden", "false");
+                    document.body.classList.add("form-modal-open");
+
+                    setTimeout(() => {
+                        okBtn?.focus?.({ preventScroll: true });
+                    }, 0);
+                }
+
+                function close() {
+                    const modal = document.getElementById("form-modal");
+                    if (!modal) return;
+                    modal.classList.add("hidden");
+                    modal.setAttribute("aria-hidden", "true");
+                    document.body.classList.remove("form-modal-open");
+
+                    const returnId = document.body.dataset.formModalReturnFocus;
+                    if (returnId) {
+                        document
+                            .getElementById(returnId)
+                            ?.focus?.({ preventScroll: true });
+                    }
+                    document.body.dataset.formModalReturnFocus = "";
+                }
+
+                window.showFormModal = function (
+                    title,
+                    message,
+                    type = "success",
+                ) {
+                    open(title, message, type);
+                };
+                window.hideFormModal = close;
+
+                if (window.__formModalDelegated) return;
+                window.__formModalDelegated = true;
+
+                document.addEventListener("click", (e) => {
+                    const t = e.target;
+                    const closeEl = t?.closest?.("[data-form-modal-close]");
+                    if (closeEl) {
+                        e.preventDefault();
+                        close();
+                    }
+                });
+
+                document.addEventListener("keydown", (e) => {
+                    if (!isOpen()) return;
+                    if (e.key === "Escape") {
+                        e.preventDefault();
+                        close();
+                    }
+                });
+            })();
+        </script>
+
         <style>
             /* Back to Top - progress ring */
             #back-to-top .progress-ring {
@@ -2209,6 +2394,163 @@ const nav = {
             }
             #back-to-top:hover::after {
                 opacity: 1;
+            }
+        </style>
+
+        <style>
+            /* ===== Form Modal Styles ===== */
+            body.form-modal-open {
+                overflow: hidden;
+            }
+
+            .form-modal.hidden {
+                display: none;
+            }
+
+            .form-modal {
+                position: fixed;
+                inset: 0;
+                z-index: 100000;
+                display: grid;
+                place-items: center;
+                padding: 24px;
+            }
+
+            .form-modal-backdrop {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.45);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+
+            .form-modal-panel {
+                position: relative;
+                width: min(560px, calc(100vw - 48px));
+                border-radius: 16px;
+                background: #ffffff;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                box-shadow:
+                    0 24px 64px rgba(0, 0, 0, 0.25),
+                    0 0 0 1px rgba(0, 0, 0, 0.05);
+                padding: 22px 22px 18px;
+                transform: translateY(0);
+                animation: form-modal-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            @keyframes form-modal-in {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px) scale(0.98);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            .form-modal-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 10px;
+            }
+
+            .form-modal-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 12px;
+                display: grid;
+                place-items: center;
+                background: rgba(0, 104, 55, 0.12);
+                color: #006837;
+                font-weight: 800;
+                font-size: 18px;
+            }
+
+            .form-modal-close {
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+                background: rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                color: rgba(0, 0, 0, 0.55);
+                font-size: 22px;
+                line-height: 1;
+                cursor: pointer;
+                transition: background 150ms ease, transform 150ms ease;
+            }
+            .form-modal-close:hover {
+                background: rgba(0, 0, 0, 0.08);
+                transform: rotate(90deg);
+            }
+
+            .form-modal-title {
+                margin: 0 0 6px;
+                font-size: 1.25rem;
+                line-height: 1.3;
+                font-weight: 800;
+                color: #111827;
+                letter-spacing: -0.01em;
+            }
+
+            .form-modal-message {
+                margin: 0;
+                color: #4b5563;
+                line-height: 1.7;
+                font-size: 0.95rem;
+            }
+
+            .form-modal-actions {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 16px;
+            }
+
+            .form-modal-ok {
+                min-height: 44px;
+                padding: 10px 16px;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #006837, #00a855);
+                color: white;
+                font-weight: 700;
+                border: none;
+                cursor: pointer;
+                box-shadow: 0 6px 16px rgba(0, 104, 55, 0.25);
+                transition: transform 150ms ease, box-shadow 150ms ease;
+            }
+            .form-modal-ok:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 10px 22px rgba(0, 104, 55, 0.32);
+            }
+
+            [data-theme="dark"] .form-modal-panel {
+                background: #111827;
+                border-color: rgba(255, 255, 255, 0.08);
+            }
+            [data-theme="dark"] .form-modal-title {
+                color: #f9fafb;
+            }
+            [data-theme="dark"] .form-modal-message {
+                color: #d1d5db;
+            }
+            [data-theme="dark"] .form-modal-close {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.12);
+                color: rgba(255, 255, 255, 0.75);
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .form-modal-panel {
+                    animation: none;
+                }
+                .form-modal-close:hover {
+                    transform: none;
+                }
+                .form-modal-ok:hover {
+                    transform: none;
+                }
             }
         </style>
 
@@ -2481,6 +2823,88 @@ const nav = {
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     };
+
+    // ===========================================================
+    // Form Result Modal (center popup) - clearer completion message
+    // Works across Astro View Transitions via event delegation.
+    // ===========================================================
+    (function () {
+        function isOpen() {
+            const modal = document.getElementById("form-modal");
+            return modal && !modal.classList.contains("hidden");
+        }
+
+        function open(title, message, type) {
+            const modal = document.getElementById("form-modal");
+            const titleEl = document.getElementById("form-modal-title");
+            const messageEl = document.getElementById("form-modal-message");
+            const okBtn = document.getElementById("form-modal-ok");
+
+            if (!modal || !titleEl || !messageEl) return;
+
+            // Remember focus per open (stored on body dataset)
+            const active = document.activeElement;
+            if (active && active.id) {
+                document.body.dataset.formModalReturnFocus = active.id;
+            } else {
+                document.body.dataset.formModalReturnFocus = "";
+            }
+
+            modal.setAttribute("data-type", type || "success");
+            titleEl.textContent = title || "送信が完了しました";
+            messageEl.textContent =
+                message || "送信が完了しました。ありがとうございます。";
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("form-modal-open");
+
+            setTimeout(() => {
+                okBtn?.focus?.({ preventScroll: true });
+            }, 0);
+        }
+
+        function close() {
+            const modal = document.getElementById("form-modal");
+            if (!modal) return;
+            modal.classList.add("hidden");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("form-modal-open");
+
+            const returnId = document.body.dataset.formModalReturnFocus;
+            if (returnId) {
+                const el = document.getElementById(returnId);
+                el?.focus?.({ preventScroll: true });
+            }
+            document.body.dataset.formModalReturnFocus = "";
+        }
+
+        // Expose for page-level form scripts
+        window.showFormModal = function (title, message, type = "success") {
+            open(title, message, type);
+        };
+        window.hideFormModal = close;
+
+        // Bind delegated handlers only once per session
+        if (window.__formModalDelegated) return;
+        window.__formModalDelegated = true;
+
+        document.addEventListener("click", (e) => {
+            const target = e.target;
+            const closeEl = target?.closest?.("[data-form-modal-close]");
+            if (closeEl) {
+                e.preventDefault();
+                close();
+            }
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (!isOpen()) return;
+            if (e.key === "Escape") {
+                e.preventDefault();
+                close();
+            }
+        });
+    })();
 
     // View Transitions API with NProgress Integration
     document.addEventListener("astro:before-preparation", () => {

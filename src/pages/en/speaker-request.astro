@@ -94,9 +94,11 @@ const breadcrumbItems = [
                 </div>
 
                 <form
+                    id="speaker-request-form"
                     action="https://formspree.io/f/xrbnkjrp"
                     method="POST"
                     class="space-y-6"
+                    novalidate
                 >
                     {/* Hidden fields */}
                     <input
@@ -125,9 +127,15 @@ const breadcrumbItems = [
                             id="speaker"
                             name="speaker"
                             required
+                            aria-required="true"
+                            autocomplete="organization"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none"
                             placeholder="Speaker's name, title, and affiliation"
                         />
+                        <p
+                            class="text-sm text-red-600 mt-2 hidden"
+                            data-error-for="speaker"
+                        ></p>
                         <p class="mt-2 text-xs text-gray-500">
                             e.g., Professor John Smith from XYZ University, CEO
                             Jane Doe of ABC Company
@@ -147,9 +155,14 @@ const breadcrumbItems = [
                             name="reason"
                             rows="4"
                             required
+                            aria-required="true"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#006837] focus:border-transparent transition-all outline-none resize-none"
                             placeholder="Why would you like to hear from this person?"
                         ></textarea>
+                        <p
+                            class="text-sm text-red-600 mt-2 hidden"
+                            data-error-for="reason"
+                        ></p>
                     </div>
 
                     {/* Topic Field */}
@@ -199,9 +212,31 @@ const breadcrumbItems = [
                     <div class="pt-4">
                         <button
                             type="submit"
-                            class="w-full bg-[#006837] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#005028] transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-transform min-h-[44px] cursor-pointer"
+                            class="w-full bg-[#006837] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#005028] transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-transform min-h-[44px] cursor-pointer flex items-center justify-center gap-2"
+                            data-submit-button
                         >
-                            Submit Request
+                            <span data-submit-text>Submit Request</span>
+                            <svg
+                                class="w-5 h-5 animate-spin text-white hidden"
+                                data-submit-spinner
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    class="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    stroke-width="4"
+                                ></circle>
+                                <path
+                                    class="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                ></path>
+                            </svg>
                         </button>
                     </div>
 
@@ -210,6 +245,12 @@ const breadcrumbItems = [
                         Your information will only be used for lecture planning
                         purposes.
                     </p>
+                    <div
+                        id="form-status"
+                        class="text-sm text-gray-600 text-center pt-3 min-h-[1.5rem]"
+                        role="status"
+                        aria-live="polite"
+                    ></div>
                 </form>
             </div>
 
@@ -258,3 +299,171 @@ const breadcrumbItems = [
         </div>
     </div>
 </Layout>
+
+<script is:inline>
+    // Speaker Request: validation + async submit + toast (parity with Contact UX)
+    (function () {
+        function initSpeakerRequestForm() {
+            const form = document.getElementById("speaker-request-form");
+            if (!form) return;
+
+            const statusEl = document.getElementById("form-status");
+            const submitBtn = form.querySelector("[data-submit-button]");
+            const submitText = form.querySelector("[data-submit-text]");
+            const submitSpinner = form.querySelector("[data-submit-spinner]");
+
+            function setLoading(isLoading) {
+                if (!submitBtn || !submitText || !submitSpinner) return;
+                submitBtn.disabled = isLoading;
+                submitBtn.classList.toggle("opacity-70", isLoading);
+                submitSpinner.classList.toggle("hidden", !isLoading);
+                submitText.textContent = isLoading
+                    ? "Submitting..."
+                    : "Submit Request";
+            }
+
+            function showCompletionModal(title, message, type = "success") {
+                try {
+                    if (typeof window.showFormModal === "function") {
+                        window.showFormModal(title, message, type);
+                        return;
+                    }
+                } catch (e) {
+                    // fall through to DOM fallback
+                }
+
+                const modal = document.getElementById("form-modal");
+                const titleEl = document.getElementById("form-modal-title");
+                const messageEl =
+                    document.getElementById("form-modal-message");
+                if (!modal || !titleEl || !messageEl) return;
+
+                modal.setAttribute("data-type", type);
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                modal.classList.remove("hidden");
+                modal.setAttribute("aria-hidden", "false");
+                document.body.classList.add("form-modal-open");
+            }
+
+            function showError(input, message) {
+                const errorEl = form.querySelector(
+                    `[data-error-for="${input.name}"]`,
+                );
+                input.setAttribute("aria-invalid", "true");
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.classList.remove("hidden");
+                }
+            }
+
+            function clearError(input) {
+                const errorEl = form.querySelector(
+                    `[data-error-for="${input.name}"]`,
+                );
+                input.removeAttribute("aria-invalid");
+                if (errorEl) {
+                    errorEl.textContent = "";
+                    errorEl.classList.add("hidden");
+                }
+            }
+
+            function validate() {
+                let valid = true;
+                const requiredEls = Array.from(
+                    form.querySelectorAll("input[required], textarea[required]"),
+                );
+                requiredEls.forEach((el) => {
+                    clearError(el);
+                    if (!el.value.trim()) {
+                        showError(el, "This field is required.");
+                        valid = false;
+                    }
+                });
+                return valid;
+            }
+
+            form.addEventListener("input", (e) => {
+                const target = e.target;
+                if (
+                    !(
+                        target instanceof HTMLInputElement ||
+                        target instanceof HTMLTextAreaElement
+                    )
+                )
+                    return;
+                clearError(target);
+            });
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (!validate()) {
+                    if (statusEl) {
+                        statusEl.textContent = "Please check your input.";
+                        statusEl.classList.remove("text-green-700");
+                        statusEl.classList.add("text-red-600");
+                    }
+                    return;
+                }
+
+                setLoading(true);
+                if (statusEl) {
+                    statusEl.textContent = "Submitting...";
+                    statusEl.classList.remove("text-red-600");
+                    statusEl.classList.add("text-gray-600");
+                }
+
+                const formData = new FormData(form);
+                try {
+                    const res = await fetch(form.action, {
+                        method: "POST",
+                        body: formData,
+                        headers: { Accept: "application/json" },
+                    });
+
+                    if (res.ok) {
+                        form.reset();
+                        if (statusEl) {
+                            statusEl.textContent =
+                                "Submitted. Thank you for your request!";
+                            statusEl.classList.remove("text-red-600");
+                            statusEl.classList.add("text-green-700");
+                        }
+                        if (window.showToast) {
+                            window.showToast(
+                                "Submitted. Thank you for your request!",
+                                "success",
+                            );
+                        }
+                        showCompletionModal(
+                            "Submission complete",
+                            "We received your speaker request. Thank you for your suggestion!",
+                            "success",
+                        );
+                    } else {
+                        throw new Error("Submission failed.");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    if (statusEl) {
+                        statusEl.textContent =
+                            "Submission failed. Please try again.";
+                        statusEl.classList.remove("text-green-700");
+                        statusEl.classList.add("text-red-600");
+                    }
+                    if (window.showToast) {
+                        window.showToast(
+                            "Submission failed. Please try again.",
+                            "error",
+                        );
+                    }
+                } finally {
+                    setLoading(false);
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", initSpeakerRequestForm);
+        document.addEventListener("astro:page-load", initSpeakerRequestForm);
+    })();
+</script>
