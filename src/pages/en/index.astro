@@ -309,10 +309,9 @@ const getContent = (en: string | undefined, ja: string) => en || ja;
                         <a
                             href={`/en/lectures/${lecture.id}`}
                             class="lecture-card block group card-tilt"
-                            style={`animation-delay: ${index * 100}ms`}
                         >
                             <div
-                                class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-[#006837] hover:border-opacity-30 hover-lift"
+                                class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 hover-lift"
                                 data-animate
                                 data-animate-delay={index + 1}
                             >
@@ -512,12 +511,6 @@ const getContent = (en: string | undefined, ja: string) => en || ja;
         animation: fade-in-up 0.8s ease-out 0.9s both;
     }
 
-    /* Lecture Card Animations */
-    .lecture-card {
-        animation: fade-in-up 0.6s ease-out both;
-        opacity: 0;
-    }
-
     /* Keyframes */
     @keyframes fade-in-up {
         from {
@@ -596,11 +589,6 @@ const getContent = (en: string | undefined, ja: string) => en || ja;
         }
     }
 
-    /* Scroll Trigger Animations */
-    .lecture-card.in-view {
-        animation: fade-in-up 0.6s ease-out both;
-    }
-
     /* Smooth scroll behavior */
     @media (prefers-reduced-motion: no-preference) {
         html {
@@ -661,28 +649,4 @@ const getContent = (en: string | undefined, ja: string) => en || ja;
             window.removeEventListener("scroll", requestTick);
         });
     })();
-
-    // Scroll-triggered animations using Intersection Observer
-    document.addEventListener("DOMContentLoaded", function () {
-        const observerOptions = {
-            root: null,
-            rootMargin: "0px",
-            threshold: 0.1,
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("in-view");
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        // Observe all lecture cards
-        const cards = document.querySelectorAll(".lecture-card");
-        cards.forEach((card) => {
-            observer.observe(card);
-        });
-    });
 </script>
