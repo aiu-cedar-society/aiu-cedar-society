@@ -43,3 +43,5 @@ if (typeof window !== 'undefined') {
   document.addEventListener('astro:page-load', initScrollReveal);
 }
 
+
+

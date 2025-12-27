@@ -13,19 +13,22 @@ const {
   className = '' 
 } = Astro.props;
 
-const speedMap = {
-  slow: '30s',
-  normal: '20s',
-  fast: '15s',
-};
-
-const animationDirection = direction === 'left' ? 'marquee-left' : 'marquee-right';
+// 速度は「px/秒」で固定（協賛数が増えて距離が伸びても体感速度を一定にする）
+const pxPerSecMap = {
+  slow: 30,
+  normal: 60,
+  fast: 90,
+} as const;
 ---
 
-<div class={`marquee-container ${className}`}>
-  <div class={`marquee-track marquee-${direction}`} style={`--marquee-speed: ${speedMap[speed]}`}>
+<div class={`marquee-container ${className}`} data-marquee-container>
+  <div
+    class={`marquee-track marquee-${direction}`}
+    data-marquee-track
+    style={`--marquee-px-per-sec: ${pxPerSecMap[speed]}`}
+  >
     <!-- 最初のセット -->
-    <div class="marquee-content">
+    <div class="marquee-content" data-marquee-base>
       {items.map((item) => (
         <div class="marquee-item">
           {item.logo ? (
@@ -33,7 +36,10 @@ const animationDirection = direction === 'left' ? 'marquee-left' : 'marquee-righ
               src={item.logo} 
               alt={item.name}
               class="marquee-logo"
-              loading="lazy"
+              width="120"
+              height="60"
+              loading="eager"
+              decoding="async"
             />
           ) : (
             <span class="marquee-text">{item.name}</span>
@@ -50,7 +56,10 @@ const animationDirection = direction === 'left' ? 'marquee-left' : 'marquee-righ
               src={item.logo} 
               alt=""
               class="marquee-logo"
-              loading="lazy"
+              width="120"
+              height="60"
+              loading="eager"
+              decoding="async"
             />
           ) : (
             <span class="marquee-text">{item.name}</span>
@@ -63,6 +72,7 @@ const animationDirection = direction === 'left' ? 'marquee-left' : 'marquee-righ
 
 <style>
   .marquee-container {
+    --marquee-gap: 3rem;
     width: 100%;
     overflow: hidden;
     position: relative;
@@ -78,14 +88,34 @@ const animationDirection = direction === 'left' ? 'marquee-left' : 'marquee-righ
 
   .marquee-track {
     display: flex;
-    width: fit-content;
-    animation: var(--animation-name, marquee-left) var(--marquee-speed, 20s) linear infinite;
+    /* fit-content だと環境によって横幅計算が不安定になることがあるため max-content を使用 */
+    width: max-content;
+    transform: translate3d(0, 0, 0);
+    /* 距離(px)から JS で duration(s) を計算して入れる */
+    animation-duration: var(--marquee-duration, 20s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /*
+    Astro の scoped CSS は @keyframes 名を内部的にリネームすることがあります。
+    animation-name を var() のフォールバックにすると書き換え対象から漏れて
+    アニメーションが動かないケースがあるため、クラスで明示します。
+  */
+  .marquee-track.marquee-left {
+    animation-name: marquee-left;
+  }
+
+  .marquee-track.marquee-right {
+    animation-name: marquee-right;
   }
 
   .marquee-content {
     display: flex;
-    gap: 3rem;
-    padding: 0 2rem;
+    gap: var(--marquee-gap);
+    flex: 0 0 auto;
+    /* セット末尾にも同じ間隔を含める（ループ境界の“間”をゼロにする） */
+    padding-right: var(--marquee-gap);
   }
 
   .marquee-item {
@@ -127,19 +157,19 @@ const animationDirection = direction === 'left' ? 'marquee-left' : 'marquee-righ
 
   @keyframes marquee-left {
     0% {
-      transform: translateX(0);
+      transform: translate3d(0, 0, 0);
     }
     100% {
-      transform: translateX(-50%);
+      transform: translate3d(calc(-1 * var(--marquee-distance, 50%)), 0, 0);
     }
   }
 
   @keyframes marquee-right {
     0% {
-      transform: translateX(-50%);
+      transform: translate3d(calc(-1 * var(--marquee-distance, 50%)), 0, 0);
     }
     100% {
-      transform: translateX(0);
+      transform: translate3d(0, 0, 0);
     }
   }
 
@@ -160,4 +190,116 @@ const animationDirection = direction === 'left' ? 'marquee-left' : 'marquee-righ
     will-change: transform;
   }
 </style>
+
+<script is:inline>
+  // シームレスに見せるために、1セット分の幅(px)で移動距離を決め、
+  // 画面幅を埋めるまでコンテンツを必要数だけ複製する
+  (() => {
+    const containers = document.querySelectorAll("[data-marquee-container]");
+
+    containers.forEach((container) => {
+      if (!(container instanceof HTMLElement)) return;
+      if (container.dataset.marqueeInitialized === "true") return;
+      container.dataset.marqueeInitialized = "true";
+
+      const track = container.querySelector("[data-marquee-track]");
+      const base = container.querySelector("[data-marquee-base]");
+      if (!(track instanceof HTMLElement) || !(base instanceof HTMLElement)) return;
+
+      let resizeObserver = null;
+      let rafId = 0;
+      let lastBaseWidth = 0;
+      let lastContainerWidth = 0;
+
+      const sync = () => {
+        const containerRect = container.getBoundingClientRect();
+        const containerWidth = Math.round(containerRect.width);
+        // scrollWidth は padding を含み、transform の影響も受けにくい
+        const baseWidth = Math.round(base.scrollWidth);
+        if (!baseWidth || !containerWidth) return;
+
+        // 幅が変わっていないなら DOM を触らない（触るとアニメが“巻き戻った”ように見えることがある）
+        const sizeChanged =
+          Math.abs(baseWidth - lastBaseWidth) > 1 ||
+          Math.abs(containerWidth - lastContainerWidth) > 1;
+        if (sizeChanged) {
+          lastBaseWidth = baseWidth;
+          lastContainerWidth = containerWidth;
+          // 1セット分の幅を移動距離にする（% だと端末/画像読み込みでズレやすい）
+          track.style.setProperty("--marquee-distance", `${baseWidth}px`);
+
+          // 協賛数（=距離）に依存せず、速度(px/秒)が一定になるよう duration を計算
+          const pxPerSecRaw = getComputedStyle(track)
+            .getPropertyValue("--marquee-px-per-sec")
+            .trim();
+          const pxPerSec = Number.parseFloat(pxPerSecRaw) || 60;
+          const durationSec = baseWidth / pxPerSec;
+          track.style.setProperty("--marquee-duration", `${durationSec}s`);
+        }
+
+        // アニメーション中、常に画面が埋まるように必要セット数を計算
+        // 条件: totalTrackWidth >= containerWidth + baseWidth
+        const requiredSets = Math.max(2, Math.ceil((containerWidth + baseWidth) / baseWidth));
+
+        const existingSets = track.querySelectorAll(".marquee-content").length;
+        // 必要分だけ追加。減らす必要はない（削除するとアニメがリセットっぽく見えやすい）
+        const needToAdd = Math.max(0, requiredSets - existingSets);
+
+        for (let i = 0; i < needToAdd; i++) {
+          const clone = base.cloneNode(true);
+          if (!(clone instanceof HTMLElement)) continue;
+          clone.setAttribute("aria-hidden", "true");
+          clone.dataset.marqueeClone = "true";
+
+          // クローンはスクリーンリーダー/タブ移動に入れない
+          clone.querySelectorAll("a").forEach((a) => {
+            a.setAttribute("tabindex", "-1");
+          });
+          clone.querySelectorAll("img").forEach((img) => {
+            img.setAttribute("alt", "");
+          });
+
+          track.appendChild(clone);
+        }
+      };
+
+      const scheduleSync = () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          rafId = 0;
+          sync();
+        });
+      };
+
+      // 画像読み込みで幅が変わるので、読み込み完了時にも再計算
+      base.querySelectorAll("img").forEach((img) => {
+        if (!(img instanceof HTMLImageElement)) return;
+        if (img.complete) return;
+        img.addEventListener("load", scheduleSync, { once: true });
+        img.addEventListener("error", scheduleSync, { once: true });
+      });
+
+      // 初回 + リサイズ対応
+      scheduleSync();
+      window.addEventListener("resize", scheduleSync, { passive: true });
+      if ("ResizeObserver" in window) {
+        resizeObserver = new ResizeObserver(scheduleSync);
+        resizeObserver.observe(container);
+      }
+
+      // ページ遷移前に後始末
+      document.addEventListener(
+        "astro:before-preparation",
+        () => {
+          window.removeEventListener("resize", scheduleSync);
+          if (resizeObserver) resizeObserver.disconnect();
+          if (rafId) cancelAnimationFrame(rafId);
+        },
+        { once: true },
+      );
+    });
+  })();
+</script>
+
+
 

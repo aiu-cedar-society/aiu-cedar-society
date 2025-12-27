@@ -1,6 +1,5 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import FluidGradient from "../components/FluidGradient.astro";
 import Marquee from "../components/Marquee.astro";
 import MagneticButton from "../components/MagneticButton.astro";
 import { getLectures, getUpcomingEvents, getPages } from "../library/microcms";
@@ -56,12 +55,7 @@ const seo = {
 ---
 
 <Layout seo={seo}>
-    <div
-        class="bg-gradient-to-b from-gray-50 to-white min-h-screen relative overflow-hidden washi-texture"
-    >
-        {/* Fluid Gradient Background */}
-        <FluidGradient />
-
+    <div class="min-h-screen relative overflow-hidden">
         {/* Hero Section with 3D Depth */}
         <section
             class="relative pt-24 md:pt-28 pb-12 md:pb-16 px-4 md:px-6 hero-3d-container"
@@ -100,7 +94,8 @@ const seo = {
         {/* Upcoming Events Section */}
         {
             upcomingEvents.length > 0 && (
-                <section class="py-12 md:py-16 bg-gradient-to-b from-gray-50 to-white">
+                <!-- 背景はサイト全体の和紙レイヤーに馴染ませ、カードを主役にする -->
+                <section class="py-12 md:py-16 bg-transparent">
                     <div class="container mx-auto px-4 md:px-6 max-w-6xl">
                         {/* Section Header */}
                         <div
@@ -463,7 +458,8 @@ const seo = {
 
         {/* Sponsors Marquee Section */}
         {sponsors.length > 0 && (
-            <section class="py-12 md:py-16 bg-gradient-to-b from-white to-gray-50">
+            <!-- 背景は透明にしてページ背景と繋げる -->
+            <section class="py-12 md:py-16 bg-transparent">
                 <div class="container mx-auto px-4 md:px-6 max-w-6xl">
                     <div class="mb-8 scroll-reveal-slide-up">
                         <h2 class="typography-section text-center mb-4">

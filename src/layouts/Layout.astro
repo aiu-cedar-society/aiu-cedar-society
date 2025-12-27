@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import "../styles/animations.css";
 import "../styles/sophisticated-design.css";
+import FluidGradient from "../components/FluidGradient.astro";
 import SEO from "../components/SEO.astro";
 import SchemaOrganization from "../components/SchemaOrganization.astro";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
@@ -55,9 +56,9 @@ const nav = {
     events: currentLang === "en" ? "Events" : "Events",
     upcoming: currentLang === "en" ? "Upcoming Events" : "今後の予定",
     past: currentLang === "en" ? "Past Lectures" : "過去の講演会",
-    media: "Media",
-    faq: "FAQ",
-    sponsors: "Sponsors",
+    media: currentLang === "en" ? "Media" : "メディア掲載",
+    faq: currentLang === "en" ? "FAQ" : "よくあるご質問",
+    sponsors: currentLang === "en" ? "Sponsors" : "協賛企業・パートナー",
     contact: "Contact",
     speakerRequest:
         currentLang === "en" ? "Request a Speaker" : "講演者リクエスト",
@@ -119,13 +120,20 @@ const nav = {
                     "Helvetica Neue", Arial, sans-serif;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
+                /*
+                  背景が transparent だと、iOS/Safari のオーバースクロール等で
+                  背景が白く“浮いて”見えることがあるため、ベース背景を固定。
+                  背景レイヤー（FluidGradient）は別途 fixed 要素として描画。
+                */
+                background-color: var(--bg-primary, #fef9f4);
             }
 
             body {
-                background-color: #F9F9F7;
+                /* Base background to avoid seams/overscroll artifacts */
                 color: #333333;
                 min-height: 100vh;
                 line-height: 1.75;
+                background-color: var(--bg-primary, #fef9f4);
             }
         </style>
 
@@ -318,10 +326,11 @@ const nav = {
             /* CSS Variables for Dark Mode */
             :root {
                 /* Legacy Dark Mode Variables (保持) */
-                --bg-primary: #ffffff;
-                --bg-secondary: #f9fafb;
-                --bg-gradient-start: #f9fafb;
-                --bg-gradient-end: #ffffff;
+                /* Warm, washi-like base to match the FluidGradient layer */
+                --bg-primary: #fef9f4;
+                --bg-secondary: #faf7f2;
+                --bg-gradient-start: #fef9f4;
+                --bg-gradient-end: #f0ede8;
                 --text-primary: #111827;
                 --text-secondary: #4b5563;
                 --text-tertiary: #6b7280;
@@ -628,8 +637,44 @@ const nav = {
 
             /* Footer */
             [data-theme="dark"] footer {
-                background-color: #1c1c1e !important;
+                background-color: rgba(28, 28, 30, 0.78) !important;
+                backdrop-filter: blur(18px) saturate(160%);
+                -webkit-backdrop-filter: blur(18px) saturate(160%);
                 border-top-color: #38383a !important;
+            }
+
+            /* Header/Footer surfaces should blend with the warm washi background */
+            #site-header.glass-nav {
+                background-color: rgba(254, 249, 244, 0.72);
+                border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+                box-shadow:
+                    0 10px 30px rgba(17, 24, 39, 0.06),
+                    0 1px 0 rgba(255, 255, 255, 0.65) inset;
+                backdrop-filter: blur(18px) saturate(160%);
+                -webkit-backdrop-filter: blur(18px) saturate(160%);
+            }
+
+            /* Footer: slightly more opaque than body, but still lets texture show through */
+            footer.site-footer {
+                padding: 64px 24px;
+                background-color: rgba(254, 249, 244, 0.62);
+                border-top: 1px solid rgba(17, 24, 39, 0.06);
+                backdrop-filter: blur(14px) saturate(150%);
+                -webkit-backdrop-filter: blur(14px) saturate(150%);
+            }
+
+            /* Footer inner dividers should match the softer border */
+            footer.site-footer [style*="border-top: 1px solid #e5e7eb"] {
+                border-top-color: rgba(17, 24, 39, 0.08) !important;
+            }
+
+            /* Dark mode: keep header consistent with the same translucency approach */
+            [data-theme="dark"] #site-header.glass-nav {
+                background-color: rgba(28, 28, 30, 0.78) !important;
+                border-bottom-color: #38383a !important;
+                box-shadow:
+                    0 10px 30px rgba(0, 0, 0, 0.45),
+                    0 1px 0 rgba(255, 255, 255, 0.04) inset;
             }
 
             /* Hover States - Subtle */
@@ -1033,8 +1078,13 @@ const nav = {
     </head>
     <body
         class="text-[#333333] font-sans antialiased min-h-screen flex flex-col tracking-wide font-normal selection:bg-[#006837] selection:text-white relative"
-        style="background: transparent;"
     >
+        <!-- Background Layer (Washi Texture + Fluid Gradient) -->
+        <div class="fixed inset-0 z-[-1] pointer-events-none">
+            <FluidGradient />
+            <div class="absolute inset-0 washi-texture w-full h-full"></div>
+        </div>
+
         <!-- Splash Screen -->
         <div id="splash-screen" class="splash-screen">
             <div class="splash-content">
@@ -1711,9 +1761,6 @@ const nav = {
                                 <div class="mobile-menu-brand-title">
                                     AIU Cedar Society
                                 </div>
-                                <div class="mobile-menu-brand-subtitle">
-                                    {currentLang === "en" ? "Menu" : "メニュー"}
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1735,11 +1782,6 @@ const nav = {
                                 <div class="mobile-grid-title">
                                     {nav.aboutUs}
                                 </div>
-                                <div class="mobile-grid-desc">
-                                    {currentLang === "en"
-                                        ? "Mission & overview"
-                                        : "ミッション・概要"}
-                                </div>
                             </a>
                             <a
                                 href={l("/about/members")}
@@ -1747,11 +1789,6 @@ const nav = {
                             >
                                 <div class="mobile-grid-title">
                                     {nav.members}
-                                </div>
-                                <div class="mobile-grid-desc">
-                                    {currentLang === "en"
-                                        ? "Meet the team"
-                                        : "メンバー紹介"}
                                 </div>
                             </a>
                             <a
@@ -1761,11 +1798,6 @@ const nav = {
                                 <div class="mobile-grid-title">
                                     {nav.upcoming}
                                 </div>
-                                <div class="mobile-grid-desc">
-                                    {currentLang === "en"
-                                        ? "Upcoming schedules & announcements"
-                                        : "今後の予定・開催情報"}
-                                </div>
                             </a>
                             <a
                                 href={l("/events/past")}
@@ -1774,29 +1806,14 @@ const nav = {
                                 <div class="mobile-grid-title">
                                     {nav.past}
                                 </div>
-                                <div class="mobile-grid-desc">
-                                    {currentLang === "en"
-                                        ? "Archive of past lectures"
-                                        : "過去の講演会アーカイブ"}
-                                </div>
                             </a>
                             <a href={l("/media")} class="mobile-grid-item">
                                 <div class="mobile-grid-title">
                                     {nav.media}
                                 </div>
-                                <div class="mobile-grid-desc">
-                                    {currentLang === "en"
-                                        ? "Press & coverage"
-                                        : "メディア掲載"}
-                                </div>
                             </a>
                             <a href={l("/faq")} class="mobile-grid-item">
                                 <div class="mobile-grid-title">{nav.faq}</div>
-                                <div class="mobile-grid-desc">
-                                    {currentLang === "en"
-                                        ? "Frequently asked questions"
-                                        : "よくあるご質問"}
-                                </div>
                             </a>
                             <a
                                 href={l("/sponsors")}
@@ -1804,11 +1821,6 @@ const nav = {
                             >
                                 <div class="mobile-grid-title">
                                     {nav.sponsors}
-                                </div>
-                                <div class="mobile-grid-desc">
-                                    {currentLang === "en"
-                                        ? "Partners supporting our activities"
-                                        : "協賛企業・パートナー"}
                                 </div>
                             </a>
                         </nav>
@@ -2269,16 +2281,18 @@ const nav = {
 
             .mobile-grid-title {
                 font-family: var(--font-geometric);
-                font-size: 15px;
-                font-weight: 650;
+                /* サイト全体のナビ（typography-nav / text-sm）に合わせる */
+                font-size: 14px;
+                font-weight: 500;
                 color: #111827;
                 letter-spacing: var(--letter-spacing-wide);
-                line-height: 1.2;
+                line-height: 1.3;
                 min-width: 0;
             }
 
             .mobile-grid-desc {
-                display: block;
+                /* サブタイトルは使わない（残っていても表示しない） */
+                display: none;
                 font-size: 12px;
                 color: #6b7280;
                 line-height: 1.4;
@@ -2426,12 +2440,12 @@ const nav = {
         </style>
 
         <!-- Main Content -->
-        <main class="flex-grow pt-16" id="top">
+        <main class="flex-grow pt-16 relative z-10" id="top">
             <slot />
         </main>
         <footer
             id="site-footer"
-            style="padding: 64px 24px; border-top: 1px solid #e5e7eb; background-color: #f9fafb; position: relative; z-index: 10;"
+            class="relative z-10 site-footer"
         >
             <div style="max-width: 800px; margin: 0 auto; text-align: center;">
                 <!-- Title -->

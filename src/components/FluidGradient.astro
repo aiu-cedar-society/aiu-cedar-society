@@ -20,14 +20,13 @@ const { className = '' } = Astro.props;
     position: absolute;
     inset: 0;
     overflow: hidden;
-    z-index: 0;
+    /* z-index handled by parent */
+    /* Use global theme variables so the page background stays consistent */
     background: linear-gradient(
       135deg,
-      #fef9f4 0%,
-      #faf7f2 25%,
-      #f5f2ed 50%,
-      #f0ede8 75%,
-      #fef9f4 100%
+      var(--bg-gradient-start, #fef9f4) 0%,
+      var(--bg-secondary, #faf7f2) 35%,
+      var(--bg-gradient-end, #f0ede8) 100%
     );
   }
 
