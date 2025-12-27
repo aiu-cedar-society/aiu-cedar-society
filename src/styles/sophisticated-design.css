@@ -45,12 +45,31 @@
     letter-spacing: 0.05em;
     line-height: 1.4;
     color: var(--color-gray-900);
-    /* Japanese text line break control */
-    word-break: keep-all;
+    /* Japanese text line break control - responsive */
     overflow-wrap: break-word;
     hyphens: none;
-    /* Prevent awkward breaks in Japanese text */
-    line-break: strict;
+}
+
+/* Mobile: Prevent awkward breaks, allow only at natural points */
+@media (max-width: 767px) {
+    .typography-hero {
+        font-size: 2rem; /* Smaller font on mobile to prevent breaks */
+        letter-spacing: 0.03em;
+        word-break: keep-all;
+        line-break: strict;
+        /* Prevent breaks in the middle of phrases */
+        overflow-wrap: break-word;
+        /* Ensure proper wrapping behavior */
+        white-space: normal;
+    }
+}
+
+/* Tablet and above: Strict line break control */
+@media (min-width: 768px) {
+    .typography-hero {
+        word-break: keep-all;
+        line-break: strict;
+    }
 }
 
 @media (min-width: 768px) {
