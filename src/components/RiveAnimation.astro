@@ -1,0 +1,177 @@
+---
+/**
+ * Rive Animation Component
+ * Lightweight vector animations with state machine support
+ * 
+ * IMPORTANT: To use this component, install the Rive package:
+ * npm install @rive-app/canvas
+ * 
+ * If the package is not installed, the component will gracefully hide itself.
+ * The component uses dynamic imports, so it won't cause build errors if unused.
+ */
+interface Props {
+    src?: string;
+    artboard?: string;
+    stateMachine?: string;
+    autoplay?: boolean;
+    className?: string;
+}
+
+const { 
+    src = '',
+    artboard,
+    stateMachine,
+    autoplay = true,
+    className = ''
+} = Astro.props;
+---
+
+<div 
+    class={`rive-container ${className}`}
+    data-rive-src={src}
+    data-rive-artboard={artboard}
+    data-rive-state-machine={stateMachine}
+    data-rive-autoplay={autoplay}
+></div>
+
+<script>
+    /**
+     * Rive Animation Loader
+     * Lightweight integration with lazy loading support
+     * Uses dynamic imports to avoid build-time errors when package is not installed
+     */
+    if (typeof window !== 'undefined') {
+        document.addEventListener('DOMContentLoaded', async () => {
+            const containers = document.querySelectorAll('[data-rive-src]');
+            
+            if (containers.length === 0) return;
+            
+            // Use Intersection Observer for lazy loading
+            const observer = new IntersectionObserver(async (entries) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        const container = entry.target as HTMLElement;
+                        await loadRiveAnimation(container);
+                        observer.unobserve(container);
+                    }
+                }
+            }, {
+                rootMargin: '50px',
+                threshold: 0.1
+            });
+            
+            containers.forEach(container => observer.observe(container));
+        });
+        
+        async function loadRiveAnimation(container: HTMLElement) {
+            const src = container.getAttribute('data-rive-src');
+            if (!src) return;
+            
+            try {
+                // Dynamic import for code splitting
+                // Try multiple possible package names
+                let RiveModule: any = null;
+                const packageNames = [
+                    '@rive-app/canvas',
+                    '@rive-app/rive-js', 
+                    'rive-js'
+                ];
+                
+                // Try each package name until one works
+                // Dynamic import is evaluated at runtime, so it won't cause build errors
+                for (const pkgName of packageNames) {
+                    try {
+                        // Use Function constructor to avoid static analysis of import path
+                        const importFn = new Function('specifier', 'return import(specifier)');
+                        RiveModule = await importFn(pkgName);
+                        break; // Success, exit loop
+                    } catch (err) {
+                        // Continue to next package name
+                        continue;
+                    }
+                }
+                
+                if (!RiveModule) {
+                    // Package not installed - gracefully handle
+                    console.warn(
+                        'Rive package not found. ' +
+                        'To use Rive animations, please install: npm install @rive-app/canvas'
+                    );
+                    // Hide container if package is not available
+                    container.style.display = 'none';
+                    return;
+                }
+                
+                // Extract Rive constructor and utilities
+                const Rive = RiveModule.Rive || RiveModule.default?.Rive || RiveModule.default;
+                const Layout = RiveModule.Layout || RiveModule.default?.Layout;
+                const Fit = RiveModule.Fit || RiveModule.default?.Fit;
+                const Alignment = RiveModule.Alignment || RiveModule.default?.Alignment;
+                
+                if (!Rive) {
+                    throw new Error('Rive constructor not found in package');
+                }
+                
+                // Create canvas element if it doesn't exist
+                let canvas = container.querySelector('canvas') as HTMLCanvasElement;
+                if (!canvas) {
+                    canvas = document.createElement('canvas');
+                    container.appendChild(canvas);
+                }
+                
+                const rive = new Rive({
+                    src: src,
+                    canvas: canvas,
+                    autoplay: container.getAttribute('data-rive-autoplay') !== 'false',
+                    ...(Layout && Fit && Alignment && {
+                        layout: new Layout({
+                            fit: Fit.Contain,
+                            alignment: Alignment.Center,
+                        }),
+                    }),
+                });
+                
+                // Set artboard if specified
+                const artboardAttr = container.getAttribute('data-rive-artboard');
+                if (artboardAttr && rive.artboard !== undefined) {
+                    rive.artboard = artboardAttr;
+                }
+                
+                // Set state machine if specified
+                const stateMachineAttr = container.getAttribute('data-rive-state-machine');
+                if (stateMachineAttr && rive.stateMachineInputs !== undefined) {
+                    rive.stateMachineInputs = [stateMachineAttr];
+                }
+                
+                // Store instance for cleanup
+                (container as any).__riveInstance = rive;
+                
+            } catch (error) {
+                console.warn('Rive animation failed to load:', error);
+                // Fallback: hide container on error
+                container.style.display = 'none';
+            }
+        }
+    }
+</script>
+
+<style>
+    .rive-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 200px;
+    }
+    
+    .rive-container canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .rive-container {
+            display: none;
+        }
+    }
+</style>

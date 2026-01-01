@@ -1,0 +1,258 @@
+/**
+ * Scroll-driven Animations (View Timeline API)
+ * CSS-only scroll animations for better performance
+ */
+
+/* ================================
+   SCROLL-DRIVEN ANIMATIONS - Base
+   ================================ */
+
+/* Parallax effect using scroll timeline */
+@supports (animation-timeline: scroll()) {
+    .scroll-parallax {
+        animation: parallax linear;
+        animation-timeline: scroll(root);
+        animation-range: entry 0% entry 100%;
+    }
+    
+    @keyframes parallax {
+        from {
+            transform: translateY(0);
+        }
+        to {
+            transform: translateY(calc(var(--parallax-speed, 0.5) * -100px));
+        }
+    }
+}
+
+/* Fade in on scroll */
+@supports (animation-timeline: scroll()) {
+    .scroll-fade-in {
+        animation: fadeIn linear;
+        animation-timeline: view();
+        animation-range: entry 0% entry 50%;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* Scale on scroll */
+@supports (animation-timeline: scroll()) {
+    .scroll-scale {
+        animation: scaleIn linear;
+        animation-timeline: view();
+        animation-range: entry 0% entry 80%;
+    }
+    
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+}
+
+/* Slide from left */
+@supports (animation-timeline: scroll()) {
+    .scroll-slide-left {
+        animation: slideLeft linear;
+        animation-timeline: view();
+        animation-range: entry 0% entry 70%;
+    }
+    
+    @keyframes slideLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+}
+
+/* Slide from right */
+@supports (animation-timeline: scroll()) {
+    .scroll-slide-right {
+        animation: slideRight linear;
+        animation-timeline: view();
+        animation-range: entry 0% entry 70%;
+    }
+    
+    @keyframes slideRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+}
+
+/* Progress bar (read indicator) */
+@supports (animation-timeline: scroll()) {
+    .scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, #006837, #00a855);
+        z-index: 9999;
+        animation: progress linear;
+        animation-timeline: scroll(root);
+        animation-range: 0% 100%;
+        transform-origin: left;
+    }
+    
+    @keyframes progress {
+        to {
+            width: 100%;
+        }
+    }
+}
+
+/* ================================
+   SCROLL-TELLING (Story-driven animations)
+   ================================ */
+
+/* Rotate on scroll */
+@supports (animation-timeline: scroll()) {
+    .scroll-rotate {
+        animation: rotate linear;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+    }
+    
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+}
+
+/* Sticky reveal */
+@supports (animation-timeline: scroll()) {
+    .scroll-sticky-reveal {
+        position: sticky;
+        top: 0;
+        animation: stickyReveal linear;
+        animation-timeline: scroll(root);
+    }
+    
+    @keyframes stickyReveal {
+        0% {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        20% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        80% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-100%);
+        }
+    }
+}
+
+/* Blur on scroll */
+@supports (animation-timeline: scroll()) {
+    .scroll-blur {
+        animation: blurIn linear;
+        animation-timeline: view();
+        animation-range: entry 0% entry 60%;
+    }
+    
+    @keyframes blurIn {
+        from {
+            opacity: 0;
+            filter: blur(20px);
+        }
+        to {
+            opacity: 1;
+            filter: blur(0);
+        }
+    }
+}
+
+/* ================================
+   FALLBACK for browsers without scroll timeline support
+   ================================ */
+
+@supports not (animation-timeline: scroll()) {
+    /* Use Intersection Observer fallback (handled by JavaScript) */
+    .scroll-parallax,
+    .scroll-fade-in,
+    .scroll-scale,
+    .scroll-slide-left,
+    .scroll-slide-right {
+        opacity: 0;
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    
+    .scroll-parallax.scroll-visible,
+    .scroll-fade-in.scroll-visible,
+    .scroll-scale.scroll-visible,
+    .scroll-slide-left.scroll-visible,
+    .scroll-slide-right.scroll-visible {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    
+    /* Progress bar fallback using JS */
+    .scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #006837, #00a855);
+        z-index: 9999;
+        transform-origin: left;
+        width: 0%;
+        transition: width 0.1s ease;
+    }
+}
+
+/* ================================
+   ACCESSIBILITY
+   ================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .scroll-parallax,
+    .scroll-fade-in,
+    .scroll-scale,
+    .scroll-slide-left,
+    .scroll-slide-right,
+    .scroll-rotate,
+    .scroll-sticky-reveal,
+    .scroll-blur {
+        animation: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+        filter: none !important;
+    }
+}

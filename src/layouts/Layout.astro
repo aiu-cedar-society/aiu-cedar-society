@@ -2,11 +2,18 @@
 import "../styles/global.css";
 import "../styles/animations.css";
 import "../styles/sophisticated-design.css";
+import "../styles/broken-grid.css";
+import "../styles/dark-mode-2.css";
+import "../styles/scroll-driven-animations.css";
+import "../styles/container-queries.css";
+import "../styles/view-transitions-enhanced.css";
 import FluidGradient from "../components/FluidGradient.astro";
 import SEO from "../components/SEO.astro";
 import SchemaOrganization from "../components/SchemaOrganization.astro";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import { ClientRouter } from "astro:transitions";
+import ReadingProgress from "../components/ReadingProgress.astro";
+
 import {
     getLangFromUrl,
     getLocalizedPath,
@@ -1096,6 +1103,7 @@ const nav = {
     <body
         class="text-[#333333] font-sans antialiased min-h-screen flex flex-col tracking-wide font-normal selection:bg-[#006837] selection:text-white relative"
     >
+        <ReadingProgress />
         <!-- Background Layer (Washi Texture + Fluid Gradient) -->
         <div class="fixed inset-0 z-[-1] pointer-events-none">
             <FluidGradient />
@@ -2549,43 +2557,93 @@ const nav = {
                     </a>
                 </div>
 
+                <!-- AIU Official Link -->
+                <div
+                    style="display: flex; justify-content: center; margin-bottom: 32px;"
+                >
+                    <a
+                        href="https://web.aiu.ac.jp/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style="display: inline-flex; align-items: center; gap: 12px; padding: 12px 20px; background: white; border: 1px solid #e5e7eb; border-radius: 12px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05);"
+                        class="hover:shadow-md hover:border-gray-300"
+                    >
+                        <svg
+                            style="width: 20px; height: 20px; color: #6b7280;"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                            ></path>
+                        </svg>
+                        <span
+                            class="typography-nav"
+                            style="color: #374151; font-size: 0.875rem; font-weight: 600;"
+                        >
+                            {
+                                currentLang === "en"
+                                    ? "Akita International University (Official)"
+                                    : "国際教養大学（公式サイト）"
+                            }
+                        </span>
+                        <svg
+                            style="width: 16px; height: 16px; color: #9ca3af;"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            ></path>
+                        </svg>
+                    </a>
+                </div>
+
                 <!-- Navigation Links -->
                 <div
                     style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin-bottom: 32px;"
                 >
                     <a
                         href={l("/about")}
-                        style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
+                        style="color: #6b7280; font-size: 0.75rem; text-decoration: none;"
                         class="typography-nav hover:text-[#006837]">About</a
                     >
                     <a
                         href={l("/events/upcoming")}
-                        style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
+                        style="color: #6b7280; font-size: 0.75rem; text-decoration: none;"
                         class="typography-nav hover:text-[#006837]">Events</a
                     >
                     <a
                         href={l("/media")}
-                        style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
+                        style="color: #6b7280; font-size: 0.75rem; text-decoration: none;"
                         class="typography-nav hover:text-[#006837]">Media</a
                     >
                     <a
                         href={l("/faq")}
-                        style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
+                        style="color: #6b7280; font-size: 0.75rem; text-decoration: none;"
                         class="typography-nav hover:text-[#006837]">FAQ</a
                     >
                     <a
                         href={l("/sponsors")}
-                        style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
+                        style="color: #6b7280; font-size: 0.75rem; text-decoration: none;"
                         class="typography-nav hover:text-[#006837]">Sponsors</a
                     >
                     <a
                         href={l("/contact")}
-                        style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
+                        style="color: #6b7280; font-size: 0.75rem; text-decoration: none;"
                         class="typography-nav hover:text-[#006837]">Contact</a
                     >
                     <a
                         href={l("/speaker-request")}
-                        style="color: #4b5563; font-size: 0.875rem; text-decoration: none;"
+                        style="color: #6b7280; font-size: 0.75rem; text-decoration: none;"
                         class="typography-nav hover:text-[#006837]">Request</a
                     >
                 </div>

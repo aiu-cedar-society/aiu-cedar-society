@@ -1,0 +1,226 @@
+/**
+ * Enhanced Container Queries
+ * Component-level responsive design
+ */
+
+/* ================================
+   CONTAINER QUERIES - Base Setup
+   ================================ */
+
+/* Define container context */
+.container-query {
+    container-type: inline-size;
+    container-name: content;
+}
+
+/* Named container contexts for different use cases */
+.card-container {
+    container-type: inline-size;
+    container-name: card;
+}
+
+.sidebar-container {
+    container-type: inline-size;
+    container-name: sidebar;
+}
+
+.main-content-container {
+    container-type: inline-size;
+    container-name: main-content;
+}
+
+/* ================================
+   CARD COMPONENT - Container-based Responsive
+   ================================ */
+
+.card-adaptive {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Horizontal layout when container is wide */
+@container card (min-width: 400px) {
+    .card-adaptive {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .card-adaptive-image {
+        width: 40%;
+        flex-shrink: 0;
+    }
+    
+    .card-adaptive-content {
+        flex: 1;
+    }
+}
+
+/* Stack layout when container is narrow */
+@container card (max-width: 399px) {
+    .card-adaptive {
+        flex-direction: column;
+    }
+    
+    .card-adaptive-image {
+        width: 100%;
+    }
+}
+
+/* ================================
+   TYPOGRAPHY - Container-based Scaling
+   ================================ */
+
+.text-container-responsive {
+    font-size: 1rem;
+}
+
+@container content (min-width: 300px) {
+    .text-container-responsive {
+        font-size: 1.125rem;
+    }
+}
+
+@container content (min-width: 500px) {
+    .text-container-responsive {
+        font-size: 1.25rem;
+    }
+}
+
+@container content (min-width: 700px) {
+    .text-container-responsive {
+        font-size: 1.5rem;
+    }
+}
+
+/* ================================
+   GRID LAYOUT - Container-based Columns
+   ================================ */
+
+.grid-container-responsive {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+}
+
+@container content (min-width: 400px) {
+    .grid-container-responsive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@container content (min-width: 600px) {
+    .grid-container-responsive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@container content (min-width: 800px) {
+    .grid-container-responsive {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ================================
+   NAVIGATION - Container-based Menu
+   ================================ */
+
+.nav-container-adaptive {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+@container content (min-width: 600px) {
+    .nav-container-adaptive {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+/* ================================
+   IMAGE GALLERY - Container-based Layout
+   ================================ */
+
+.gallery-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+}
+
+@container content (min-width: 500px) {
+    .gallery-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@container content (min-width: 800px) {
+    .gallery-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ================================
+   BUTTON GROUP - Container-based Direction
+   ================================ */
+
+.button-group-adaptive {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+@container content (min-width: 300px) {
+    .button-group-adaptive {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+/* ================================
+   ASIDE/SIDEBAR - Container-based Visibility
+   ================================ */
+
+.sidebar-adaptive {
+    display: none;
+}
+
+@container sidebar (min-width: 250px) {
+    .sidebar-adaptive {
+        display: block;
+    }
+}
+
+/* ================================
+   FALLBACK for browsers without container query support
+   ================================ */
+
+@supports not (container-type: inline-size) {
+    .card-adaptive {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    @media (min-width: 400px) {
+        .card-adaptive {
+            flex-direction: row;
+        }
+    }
+    
+    .grid-container-responsive {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+    
+    @media (min-width: 400px) {
+        .grid-container-responsive {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (min-width: 600px) {
+        .grid-container-responsive {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+}

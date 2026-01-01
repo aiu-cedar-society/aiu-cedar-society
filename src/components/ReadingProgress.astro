@@ -1,0 +1,50 @@
+---
+
+---
+
+<div class="reading-progress"></div>
+
+<style>
+    .reading-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(
+            to right,
+            #00a859,
+            #006837
+        ); /* Cedar themed green gradient */
+        transform-origin: 0 50%;
+        z-index: 9999;
+        pointer-events: none;
+
+        /* CSS Scroll-driven Animations */
+        animation: grow-progress auto linear;
+        animation-timeline: scroll(root);
+    }
+
+    @keyframes grow-progress {
+        from {
+            transform: scaleX(0);
+        }
+        to {
+            transform: scaleX(1);
+        }
+    }
+
+    /* Fallback for browsers that don't support scroll-driven animations */
+    @supports not (animation-timeline: scroll(root)) {
+        .reading-progress {
+            display: none;
+        }
+    }
+
+    /* Hide on small screens or based on preferences if needed */
+    @media (prefers-reduced-motion: reduce) {
+        .reading-progress {
+            display: none;
+        }
+    }
+</style>

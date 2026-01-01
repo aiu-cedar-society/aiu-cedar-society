@@ -1,0 +1,79 @@
+/**
+ * Enhanced View Transitions
+ * Seamless page transitions with morphing effects
+ */
+
+/* ================================
+   ENHANCED VIEW TRANSITIONS
+   ================================ */
+
+/* Image morphing effect */
+@view-transition {
+    navigation: auto;
+}
+
+/* Smooth cross-fade for root */
+::view-transition-old(root) {
+    animation: fade-out 0.3s ease-in forwards;
+}
+
+::view-transition-new(root) {
+    animation: fade-in 0.4s ease-out forwards;
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Image morphing - smooth scale and position */
+::view-transition-old(thumbnail),
+::view-transition-new(hero-image) {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Persistent elements (header, footer) */
+[data-transition-persist] {
+    view-transition-name: persistent-element;
+}
+
+::view-transition-group(persistent-element) {
+    animation: none;
+}
+
+/* Smooth theme transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.3s;
+}
+
+/* ================================
+   ACCESSIBILITY
+   ================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+        animation-duration: 0ms !important;
+    }
+}

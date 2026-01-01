@@ -1,0 +1,188 @@
+---
+/**
+ * Kinetic Typography Component
+ * SplitType + Motion One for lightweight text animations
+ */
+import { animate, inView } from 'motion';
+import SplitType from 'split-type';
+
+interface Props {
+    text: string;
+    tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+    animation?: 'fadeIn' | 'slideUp' | 'chars' | 'words' | 'lines' | 'reveal';
+    delay?: number;
+    className?: string;
+    splitType?: 'chars' | 'words' | 'lines' | 'chars,words' | 'chars,lines' | 'words,lines' | 'chars,words,lines';
+}
+
+const { 
+    text, 
+    tag = 'div', 
+    animation = 'chars',
+    delay = 0,
+    className = '',
+    splitType = 'chars'
+} = Astro.props;
+
+const TagName = tag;
+---
+
+<TagName 
+    class={`kinetic-typography ${className}`}
+    data-kinetic-text={text}
+    data-kinetic-animation={animation}
+    data-kinetic-delay={delay}
+    data-kinetic-split={splitType}
+>
+    {text}
+</TagName>
+
+<script define:vars={{ text, animation, delay, splitType }}>
+    document.addEventListener('DOMContentLoaded', () => {
+        const elements = document.querySelectorAll('[data-kinetic-text]');
+        
+        elements.forEach((element) => {
+            const animType = element.getAttribute('data-kinetic-animation') || 'chars';
+            const animDelay = parseFloat(element.getAttribute('data-kinetic-delay') || '0');
+            const split = element.getAttribute('data-kinetic-split') || 'chars';
+            
+            // Use Intersection Observer for performance
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target as HTMLElement;
+                        initAnimation(target, animType, animDelay, split);
+                        observer.unobserve(target);
+                    }
+                });
+            }, {
+                rootMargin: '0px 0px -100px 0px',
+                threshold: 0.1
+            });
+            
+            observer.observe(element);
+        });
+    });
+    
+    function initAnimation(element: HTMLElement, animation: string, delay: number, split: string) {
+        // Split text using SplitType
+        const splitOptions: any = {};
+        
+        if (split.includes('chars')) splitOptions.types = 'chars';
+        if (split.includes('words')) splitOptions.types = 'words';
+        if (split.includes('lines')) splitOptions.types = 'lines';
+        
+        const splitInstance = new SplitType(element, splitOptions);
+        
+        // Get elements based on split type
+        const chars = splitInstance.chars || [];
+        const words = splitInstance.words || [];
+        const lines = splitInstance.lines || [];
+        
+        // Apply animation based on type
+        switch (animation) {
+            case 'chars':
+                if (chars.length > 0) {
+                    chars.forEach((char, index) => {
+                        animate(char, {
+                            opacity: [0, 1],
+                            y: [20, 0],
+                        }, {
+                            duration: 0.5,
+                            delay: delay + (index * 0.03),
+                            easing: [0.16, 1, 0.3, 1]
+                        });
+                    });
+                }
+                break;
+                
+            case 'words':
+                if (words.length > 0) {
+                    words.forEach((word, index) => {
+                        animate(word, {
+                            opacity: [0, 1],
+                            y: [30, 0],
+                        }, {
+                            duration: 0.6,
+                            delay: delay + (index * 0.05),
+                            easing: [0.16, 1, 0.3, 1]
+                        });
+                    });
+                }
+                break;
+                
+            case 'lines':
+                if (lines.length > 0) {
+                    lines.forEach((line, index) => {
+                        animate(line, {
+                            opacity: [0, 1],
+                            y: [40, 0],
+                        }, {
+                            duration: 0.8,
+                            delay: delay + (index * 0.1),
+                            easing: [0.16, 1, 0.3, 1]
+                        });
+                    });
+                }
+                break;
+                
+            case 'reveal':
+                // Clip path reveal effect
+                animate(element, {
+                    clipPath: ['inset(0 100% 0 0)', 'inset(0 0% 0 0)'],
+                }, {
+                    duration: 1.2,
+                    delay: delay,
+                    easing: [0.16, 1, 0.3, 1]
+                });
+                
+                if (chars.length > 0) {
+                    chars.forEach((char, index) => {
+                        animate(char, {
+                            opacity: [0, 1],
+                        }, {
+                            duration: 0.3,
+                            delay: delay + (index * 0.02),
+                        });
+                    });
+                }
+                break;
+                
+            case 'fadeIn':
+                animate(element, {
+                    opacity: [0, 1],
+                    y: [20, 0],
+                }, {
+                    duration: 0.8,
+                    delay: delay,
+                    easing: [0.16, 1, 0.3, 1]
+                });
+                break;
+                
+            case 'slideUp':
+                animate(element, {
+                    opacity: [0, 1],
+                    y: [50, 0],
+                }, {
+                    duration: 1.0,
+                    delay: delay,
+                    easing: [0.16, 1, 0.3, 1]
+                });
+                break;
+        }
+    }
+</script>
+
+<style>
+    .kinetic-typography {
+        /* Ensure text is visible before animation */
+        opacity: 1;
+    }
+    
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+        .kinetic-typography {
+            animation: none !important;
+        }
+    }
+</style>

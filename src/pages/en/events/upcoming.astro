@@ -65,7 +65,10 @@ const breadcrumbItems = [
                     <div class="absolute top-0 left-0 w-px h-full bg-[#006837]">
                     </div>
                     <h1 class="typography-hero pl-6">
-                        Upcoming <span class="text-[#006837] typography-hero-accent">Events</span>
+                        Upcoming <span
+                            class="text-[#006837] typography-hero-accent"
+                            >Events</span
+                        >
                     </h1>
                 </div>
                 <p
@@ -164,12 +167,58 @@ const breadcrumbItems = [
                                         </p>
                                     )}
                                     <div
-                                        class="prose prose-sm max-w-none text-gray-700"
+                                        class="prose prose-sm max-w-none text-gray-700 mb-6"
                                         set:html={getContent(
                                             (event as any).description_en,
                                             event.description,
                                         )}
                                     />
+
+                                    {/* Calendar Integration */}
+                                    <div class="flex flex-wrap gap-3">
+                                        <a
+                                            href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(getContent((event as any).title_en, event.title))}&dates=${new Date(event.event_date).toISOString().replace(/-|:|\.\d\d\d/g, "")}/${new Date(new Date(event.event_date).getTime() + 3600000).toISOString().replace(/-|:|\.\d\d\d/g, "")}&details=${encodeURIComponent(getContent((event as any).description_en, event.description).replace(/<[^>]*>?/gm, ""))}&location=${encodeURIComponent(getContent((event as any).location_en, event.location))}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-[#006837] hover:text-[#006837] transition-all text-xs font-bold uppercase tracking-wider shadow-sm"
+                                        >
+                                            <svg
+                                                class="w-4 h-4"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                            >
+                                                <rect
+                                                    x="3"
+                                                    y="4"
+                                                    width="18"
+                                                    height="18"
+                                                    rx="2"
+                                                    ry="2"
+                                                />
+                                                <line
+                                                    x1="16"
+                                                    y1="2"
+                                                    x2="16"
+                                                    y2="6"
+                                                />
+                                                <line
+                                                    x1="8"
+                                                    y1="2"
+                                                    x2="8"
+                                                    y2="6"
+                                                />
+                                                <line
+                                                    x1="3"
+                                                    y1="10"
+                                                    x2="21"
+                                                    y2="10"
+                                                />
+                                            </svg>
+                                            Add to Google Calendar
+                                        </a>
+                                    </div>
                                 </div>
                             ))}
                         </div>

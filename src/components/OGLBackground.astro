@@ -1,0 +1,197 @@
+---
+/**
+ * OGL (Lightweight WebGL) Background Component
+ * Procedural generation for lightweight visual effects
+ */
+
+interface Props {
+    intensity?: number;
+    color?: string;
+    className?: string;
+}
+
+const { intensity = 0.3, color = '#006837', className = '' } = Astro.props;
+---
+
+<canvas 
+    id="ogl-canvas" 
+    class={`ogl-background ${className}`}
+    data-intensity={intensity}
+    data-color={color}
+></canvas>
+
+<script is:inline define:vars={{ intensity, color }}>
+    (function() {
+        // Only run on client
+        if (typeof window === 'undefined') return;
+        
+        // Check for reduced motion
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) return;
+        
+        // Wait for DOM
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initOGL);
+        } else {
+            initOGL();
+        }
+        
+        async function initOGL() {
+            const canvas = document.getElementById('ogl-canvas') as HTMLCanvasElement;
+            if (!canvas) return;
+            
+            try {
+                // Dynamic import to reduce initial bundle size
+                const OGL = await import('ogl');
+                const { Renderer, Camera, Transform, Box, Program, Mesh } = OGL;
+                
+                // Get container
+                const container = canvas.parentElement || document.body;
+                const containerRect = container.getBoundingClientRect();
+                
+                // Initialize renderer
+                const renderer = new Renderer({
+                    canvas,
+                    width: containerRect.width || window.innerWidth,
+                    height: containerRect.height || window.innerHeight,
+                    dpr: Math.min(window.devicePixelRatio, 2), // Limit for performance
+                    alpha: true,
+                });
+                
+                const gl = renderer.gl;
+                
+                // Camera
+                const camera = new Camera(gl, { fov: 45 });
+                camera.position.z = 5;
+                
+                // Scene
+                const scene = new Transform();
+                
+                // Simple procedural shader (noise/distortion effect)
+                const vertexShader = `
+                    attribute vec3 position;
+                    attribute vec2 uv;
+                    uniform mat4 modelViewMatrix;
+                    uniform mat4 projectionMatrix;
+                    uniform float uTime;
+                    varying vec2 vUv;
+                    
+                    void main() {
+                        vUv = uv;
+                        vec3 pos = position;
+                        // Subtle animation
+                        pos.z += sin(pos.x * 0.5 + uTime) * 0.1;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                    }
+                `;
+                
+                const fragmentShader = `
+                    precision highp float;
+                    uniform float uTime;
+                    uniform vec3 uColor;
+                    uniform float uIntensity;
+                    varying vec2 vUv;
+                    
+                    // Simple noise function
+                    float noise(vec2 p) {
+                        return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+                    }
+                    
+                    void main() {
+                        vec2 uv = vUv;
+                        float n = noise(uv * 5.0 + uTime * 0.1);
+                        vec3 color = mix(vec3(0.0), uColor, n * uIntensity);
+                        gl_FragColor = vec4(color, 0.1);
+                    }
+                `;
+                
+                // Create geometry
+                const geometry = new Box(gl, { width: 10, height: 10, depth: 10 });
+                
+                // Create program
+                const program = new Program(gl, {
+                    vertex: vertexShader,
+                    fragment: fragmentShader,
+                    uniforms: {
+                        uTime: { value: 0 },
+                        uColor: { value: hexToRgb(color) },
+                        uIntensity: { value: intensity },
+                    },
+                });
+                
+                // Create mesh
+                const mesh = new Mesh(gl, { geometry, program });
+                mesh.setParent(scene);
+                
+                // Animation loop
+                let time = 0;
+                function update(t: number) {
+                    time = t * 0.001; // Convert to seconds
+                    (program.uniforms.uTime as any).value = time;
+                    
+                    // Rotate slightly
+                    mesh.rotation.x = time * 0.1;
+                    mesh.rotation.y = time * 0.15;
+                    
+                    renderer.render({ scene, camera });
+                    requestAnimationFrame(update);
+                }
+                
+                // Handle resize
+                function handleResize() {
+                    const rect = container.getBoundingClientRect();
+                    renderer.setSize(rect.width || window.innerWidth, rect.height || window.innerHeight);
+                    camera.perspective({ aspect: (rect.width || window.innerWidth) / (rect.height || window.innerHeight) });
+                }
+                
+                window.addEventListener('resize', handleResize, { passive: true });
+                handleResize();
+                
+                // Start animation
+                requestAnimationFrame(update);
+                
+            } catch (error) {
+                console.warn('OGL initialization failed:', error);
+                // Hide canvas on error
+                if (canvas) canvas.style.display = 'none';
+            }
+        }
+        
+        function hexToRgb(hex: string): [number, number, number] {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result
+                ? [
+                      parseInt(result[1], 16) / 255,
+                      parseInt(result[2], 16) / 255,
+                      parseInt(result[3], 16) / 255,
+                  ]
+                : [0, 0.41, 0.22]; // Default green
+        }
+    })();
+</script>
+
+<style>
+    .ogl-background {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.3;
+    }
+    
+    /* Reduce opacity on mobile for performance */
+    @media (max-width: 768px) {
+        .ogl-background {
+            opacity: 0.15;
+        }
+    }
+    
+    /* Hide on reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .ogl-background {
+            display: none;
+        }
+    }
+</style>

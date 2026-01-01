@@ -10,12 +10,16 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
+    "@motionone/dom": "^10.18.0",
     "@tailwindcss/vite": "^4.1.17",
     "@types/nprogress": "^0.2.3",
     "astro": "^5.16.3",
     "microcms-astro-loader": "^0.1.0",
     "microcms-js-sdk": "^3.2.0",
+    "motion": "^12.23.26",
     "nprogress": "^0.2.0",
+    "ogl": "^1.0.11",
+    "split-type": "^0.3.4",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "zod": "^3.25.76"
