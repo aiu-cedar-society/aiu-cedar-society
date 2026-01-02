@@ -67,7 +67,9 @@ const nav = {
     faq: "FAQ",
     sponsors: "Sponsors",
     contact: "Contact",
+    contactMobile: currentLang === "en" ? "Contact" : "お問い合わせ",
     speakerRequest: "Request",
+    speakerRequestMobile: currentLang === "en" ? "Request" : "講演者リクエスト",
 };
 ---
 
@@ -1490,7 +1492,7 @@ const nav = {
                         <!-- Mobile menu button -->
                         <button
                             id="mobile-menu-button"
-                            class="lg:hidden rounded-md p-2 text-gray-500 hover:text-[#006837] hover:bg-gray-100 transition-colors mobile-menu-toggle flex items-center justify-center"
+                            class="lg:hidden rounded-md p-2 text-gray-500 hover:text-[#006837] hover:bg-gray-100 transition-colors mobile-menu-toggle flex items-center justify-center h-9 w-9"
                             aria-label={currentLang === "en"
                                 ? "Open menu"
                                 : "メニューを開く"}
@@ -1756,7 +1758,7 @@ const nav = {
             <div class="absolute inset-0 mobile-menu-bg"></div>
 
             <!-- Content Container -->
-            <div class="relative h-full flex flex-col mobile-menu-panel">
+            <div class="relative flex flex-col mobile-menu-panel">
                 <!-- Header -->
                 <div
                     class="mobile-menu-header"
@@ -1785,7 +1787,7 @@ const nav = {
 
                 <!-- Menu Content -->
                 <div
-                    class="flex-1 overflow-y-auto mobile-menu-content"
+                    class="overflow-y-auto mobile-menu-content"
                 >
                     <div
                         class="menu-section mobile-menu-grid-container"
@@ -1844,23 +1846,46 @@ const nav = {
                     </div>
                 </div>
 
-                <!-- Footer Actions -->
+                <!-- Footer Actions as Cards -->
                 <div class="mobile-menu-footer">
                     <div
-                        class="menu-section mobile-menu-actions"
+                        class="menu-section mobile-menu-actions-cards"
                         style="--delay: 1;"
                     >
+                        <!-- Speaker Request Card -->
                         <a
                             href={l("/speaker-request")}
-                            class="mobile-menu-cta-primary"
+                            class="mobile-menu-action-card"
                         >
-                            {nav.speakerRequest}
+                            <div class="mobile-menu-action-content">
+                                <div class="mobile-menu-action-title">{nav.speakerRequestMobile}</div>
+                                <div class="mobile-menu-action-desc">
+                                    {currentLang === "en" ? "Suggest a speaker" : "講演者を推薦する"}
+                                </div>
+                            </div>
+                            <div class="mobile-menu-action-arrow">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
                         </a>
+                        
+                        <!-- Contact Card -->
                         <a
                             href={l("/contact")}
-                            class="mobile-menu-cta-secondary"
+                            class="mobile-menu-action-card"
                         >
-                            {nav.contact}
+                            <div class="mobile-menu-action-content">
+                                <div class="mobile-menu-action-title">{nav.contactMobile}</div>
+                                <div class="mobile-menu-action-desc">
+                                    {currentLang === "en" ? "Get in touch with us" : "お気軽にご連絡ください"}
+                                </div>
+                            </div>
+                            <div class="mobile-menu-action-arrow">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
                         </a>
                     </div>
                 </div>
@@ -1948,8 +1973,7 @@ const nav = {
                 left: 0;
                 right: 0;
                 top: 0;
-                bottom: 0;
-                max-height: 100%;
+                max-height: 85vh;
                 background: linear-gradient(
                     145deg,
                     rgba(255, 255, 255, 0.98),
@@ -1964,7 +1988,7 @@ const nav = {
                 transition:
                     transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
                     opacity 0.2s ease-out;
-                overflow: hidden;
+                overflow: auto;
             }
 
             #mobile-menu.is-open .mobile-menu-panel {
@@ -2002,9 +2026,8 @@ const nav = {
             }
 
             .mobile-menu-footer {
-                padding: 16px 20px;
-                border-top: 1px solid rgba(0, 0, 0, 0.06);
-                background: rgba(255, 255, 255, 0.55);
+                padding: 20px 20px 24px;
+                background: transparent;
             }
 
             .mobile-menu-header-inner {
@@ -2348,7 +2371,7 @@ const nav = {
             .mobile-menu-actions {
                 display: flex;
                 flex-direction: column;
-                gap: 10px;
+                gap: 16px;
             }
 
             .mobile-menu-cta-primary,
@@ -2399,11 +2422,11 @@ const nav = {
             .mobile-menu-cta-secondary {
                 background: linear-gradient(
                     135deg,
-                    rgba(255, 255, 255, 0.92),
-                    rgba(245, 248, 250, 0.9)
+                    rgba(255, 255, 255, 0.95),
+                    rgba(240, 253, 244, 0.9)
                 );
-                color: #111827;
-                border: 1px solid rgba(0, 104, 55, 0.12);
+                color: #006837;
+                border: 1.5px solid rgba(0, 104, 55, 0.25);
                 backdrop-filter: blur(16px);
                 -webkit-backdrop-filter: blur(16px);
                 box-shadow:
@@ -2474,6 +2497,82 @@ const nav = {
             }
         </style>
 
+        <style>
+            /* Mobile menu action cards */
+            .mobile-menu-actions-cards {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .mobile-menu-action-card {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 16px;
+                border-radius: 16px;
+                text-decoration: none;
+                transition: transform 180ms ease, box-shadow 180ms ease;
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                box-shadow: 0 8px 20px rgba(17, 24, 39, 0.08);
+            }
+
+            .mobile-menu-action-card:active {
+                transform: scale(0.98);
+            }
+
+            .mobile-menu-action-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .mobile-menu-action-title {
+                font-family: var(--font-geometric);
+                font-size: 15px;
+                font-weight: 700;
+                line-height: 1.3;
+                color: #111827;
+            }
+
+            .mobile-menu-action-desc {
+                font-size: 12px;
+                line-height: 1.4;
+                margin-top: 2px;
+                color: #6b7280;
+            }
+
+            .mobile-menu-action-arrow {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                background: rgba(0, 104, 55, 0.08);
+                color: #006837;
+            }
+
+            /* Japanese font weight adjustments for mobile menu */
+            :lang(ja) .mobile-menu-item-title {
+                font-weight: 700;
+            }
+
+            :lang(ja) .mobile-menu-cta-primary,
+            :lang(ja) .mobile-menu-cta-secondary {
+                font-weight: 900;
+            }
+
+            :lang(ja) .mobile-grid-title {
+                font-weight: 700;
+            }
+
+            :lang(ja) .mobile-menu-action-title {
+                font-weight: 800;
+            }
+        </style>
+
         <!-- Main Content -->
         <main class="flex-grow pt-16 relative z-10" id="top">
             <slot />
@@ -2486,7 +2585,7 @@ const nav = {
                 <!-- Title -->
                 <p
                     class="font-mincho-bold"
-                    style="color: #111827; font-weight: 600; font-size: 1.25rem; margin-bottom: 12px; letter-spacing: 0.05em;"
+                    style="color: #111827; font-weight: 600; font-size: 1.25rem; margin-bottom: 12px; letter-spacing: 0.05em; white-space: nowrap;"
                 >
                     AIU Cedar Society
                 </p>
@@ -2564,7 +2663,7 @@ const nav = {
                     <!-- TODO: Re-enable link when newsletter is ready -->
                     <!-- href="https://forms.gle/K2D9X2E7Ji4RBMZ57" -->
                     <div
-                        style="display: inline-flex; align-items: center; gap: 16px; padding: 16px 24px; background: linear-gradient(135deg, rgba(156,163,175,0.05) 0%, rgba(156,163,175,0.1) 100%); border: 1px solid rgba(156,163,175,0.3); border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: default; opacity: 0.7;"
+                        style="display: inline-flex; align-items: center; gap: 16px; padding: 16px 24px; background: white; border: 1px solid #e5e7eb; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: default; opacity: 0.6;"
                     >
                         <!-- Icon Box -->
                         <div
@@ -2607,12 +2706,6 @@ const nav = {
                                 }
                             </p>
                         </div>
-                        <!-- Coming Soon Badge -->
-                        <span
-                            style="padding: 4px 8px; background: #f3f4f6; border-radius: 6px; font-size: 0.625rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;"
-                        >
-                            {currentLang === "en" ? "Soon" : "準備中"}
-                        </span>
                     </div>
                 </div>
 
@@ -2711,10 +2804,9 @@ const nav = {
                 <div style="padding-top: 24px; border-top: 1px solid #e5e7eb;">
                     <p
                         class="typography-label"
-                        style="color: #6b7280; font-size: 0.75rem; letter-spacing: 0.025em;"
+                        style="color: #6b7280; font-size: 0.75rem; letter-spacing: 0.025em; text-align: center;"
                     >
-                        &copy; {new Date().getFullYear()} AIU Cedar Society. All rights
-                        reserved.
+                        &copy; {new Date().getFullYear()} <span style="white-space: nowrap;">AIU Cedar Society</span>
                     </p>
                 </div>
             </div>
