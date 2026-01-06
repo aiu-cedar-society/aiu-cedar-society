@@ -74,7 +74,7 @@ const seo = {
                             class="absolute top-0 left-0 w-px h-full bg-[#006837] hero-line"
                         >
                         </div>
-                        <h1 class="typography-hero pl-6">
+                        <h1 class="typography-hero pl-6 hero-title-single-line">
                             <span class="hero-text-1"
                                 >秋田とAIU生の可能性を</span
                             ><span
@@ -517,6 +517,49 @@ const seo = {
     .hero-text-2 {
         animation: fade-in-right 0.8s ease-out 0.3s both;
         display: inline;
+    }
+
+    /* Hero title - responsive behavior */
+    /* Mobile: Allow line breaks for better readability */
+    .hero-title-single-line {
+        white-space: normal;
+        word-break: keep-all;
+        line-break: strict;
+    }
+
+    /* Mobile font sizing - allows natural line breaks */
+    @media (max-width: 767px) {
+        .hero-title-single-line {
+            font-size: 2rem;
+            line-height: 1.4;
+        }
+    }
+
+    /* Desktop: Single line, no breaks */
+    @media (min-width: 768px) {
+        .hero-title-single-line {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    }
+
+    /* Desktop font sizing to ensure single line */
+    @media (min-width: 768px) and (max-width: 1023px) {
+        .hero-title-single-line {
+            font-size: 3rem !important;
+        }
+    }
+
+    @media (min-width: 1024px) and (max-width: 1279px) {
+        .hero-title-single-line {
+            font-size: 3.5rem !important;
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .hero-title-single-line {
+            font-size: 4rem !important;
+        }
     }
 
     .hero-description {
