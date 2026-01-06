@@ -1,0 +1,148 @@
+---
+/**
+ * CardHoverAnimation - Rive animation for card hover effects
+ * Displays a subtle animation when hovering over cards
+ */
+import RiveAnimation from "./RiveAnimation.astro";
+
+interface Props {
+  riveSrc?: string;
+  className?: string;
+  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "center";
+}
+
+const { 
+  riveSrc = "",
+  className = "",
+  position = "top-right"
+} = Astro.props;
+
+const positionClasses = {
+  "top-right": "card-hover-top-right",
+  "top-left": "card-hover-top-left",
+  "bottom-right": "card-hover-bottom-right",
+  "bottom-left": "card-hover-bottom-left",
+  "center": "card-hover-center"
+};
+---
+
+{riveSrc && (
+  <div class={`card-hover-animation ${positionClasses[position]} ${className}`}>
+    <RiveAnimation 
+      src={riveSrc}
+      className="card-hover-rive"
+      autoplay={false}
+    />
+  </div>
+)}
+
+<style>
+  .card-hover-animation {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  .card-hover-top-right {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .card-hover-top-left {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .card-hover-bottom-right {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .card-hover-bottom-left {
+    bottom: 1rem;
+    left: 1rem;
+  }
+
+  .card-hover-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .card-hover-rive {
+    width: 60px;
+    height: 60px;
+    min-height: 60px;
+  }
+
+  /* Show animation on parent hover */
+  :global(.lecture-card-wrapper:hover) .card-hover-animation,
+  :global(.glass-card:hover) .card-hover-animation {
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-hover-animation {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Trigger Rive animation on card hover
+  if (typeof window !== "undefined" && riveSrc) {
+    document.addEventListener("DOMContentLoaded", () => {
+      const cards = document.querySelectorAll(".lecture-card-wrapper, .glass-card");
+      
+      cards.forEach((card) => {
+        const animationContainer = card.querySelector(".card-hover-animation");
+        if (!animationContainer) return;
+        
+        const riveContainer = animationContainer.querySelector(".rive-container");
+        if (!riveContainer) return;
+        
+        card.addEventListener("mouseenter", () => {
+          const riveInstance = (riveContainer as any).__riveInstance;
+          if (riveInstance) {
+            try {
+              riveInstance.play();
+              // Trigger hover state if state machine is available
+              if (riveInstance.stateMachineInputs && riveInstance.stateMachineInputs.length > 0) {
+                const hoverInput = riveInstance.stateMachineInputs.find(
+                  (input: any) => input.name === "hover" || input.name === "Hover"
+                );
+                if (hoverInput) {
+                  hoverInput.value = true;
+                }
+              }
+            } catch (e) {
+              // Silently fail if animation cannot be played
+            }
+          }
+        });
+        
+        card.addEventListener("mouseleave", () => {
+          const riveInstance = (riveContainer as any).__riveInstance;
+          if (riveInstance) {
+            try {
+              riveInstance.pause();
+              // Reset hover state if state machine is available
+              if (riveInstance.stateMachineInputs && riveInstance.stateMachineInputs.length > 0) {
+                const hoverInput = riveInstance.stateMachineInputs.find(
+                  (input: any) => input.name === "hover" || input.name === "Hover"
+                );
+                if (hoverInput) {
+                  hoverInput.value = false;
+                }
+              }
+            } catch (e) {
+              // Silently fail if animation cannot be paused
+            }
+          }
+        });
+      });
+    });
+  }
+</script>

@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import Marquee from "../components/Marquee.astro";
 import MagneticButton from "../components/MagneticButton.astro";
+import AnimatedIcon from "../components/AnimatedIcon.astro";
+import CardHoverAnimation from "../components/CardHoverAnimation.astro";
 import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
 import { getPages } from "../library/microcms";
@@ -107,19 +109,12 @@ const seo = {
                         >
                             <div class="flex items-center gap-4">
                                 <div class="w-8 h-8 bg-[#006837] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg
-                                        class="w-5 h-5 text-[#006837]"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                        />
-                                    </svg>
+                                    <AnimatedIcon
+                                        riveSrc=""
+                                        fallbackIcon='<svg class="w-5 h-5 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>'
+                                        size="md"
+                                        hoverAnimation={true}
+                                    />
                                 </div>
                                 <h2 class="typography-section">
                                     今後の
@@ -263,19 +258,12 @@ const seo = {
                     <div
                         class="w-6 h-6 bg-[#006837] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0"
                     >
-                        <svg
-                            class="w-4 h-4 text-[#006837]"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                            ></path>
-                        </svg>
+                        <AnimatedIcon
+                            riveSrc=""
+                            fallbackIcon='<svg class="w-4 h-4 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>'
+                            size="sm"
+                            hoverAnimation={true}
+                        />
                     </div>
                     <h2 class="typography-section">
                         直近の講演会
@@ -310,10 +298,14 @@ const seo = {
                             class="lecture-card block group card-tilt"
                         >
                             <div
-                                class={`lecture-card-wrapper bg-white/90 rounded-lg shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1}`}
+                                class={`lecture-card-wrapper bg-white/90 rounded-lg shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} relative`}
                                 data-animate
                                 data-animate-delay={index + 1}
                             >
+                                <CardHoverAnimation
+                                    riveSrc=""
+                                    position="top-right"
+                                />
                                 <div class="lecture-card-inner flex flex-row gap-0">
                                     {/* Image - モバイルでも横並び、サイズを小さく */}
                                     <div class="w-24 sm:w-32 md:w-48 flex-shrink-0 relative overflow-hidden bg-gray-100">
