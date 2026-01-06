@@ -110,9 +110,10 @@ export type MediaCoverageResponse = {
 };
 
 // MicroCMS Client
+// Use fallback values for build time (will fail at runtime if not set)
 export const client = createClient({
-  serviceDomain: import.meta.env.MICROCMS_SERVICE_DOMAIN,
-  apiKey: import.meta.env.MICROCMS_API_KEY,
+  serviceDomain: import.meta.env.MICROCMS_SERVICE_DOMAIN || "dummy",
+  apiKey: import.meta.env.MICROCMS_API_KEY || "dummy",
 });
 
 // Helper functions for Lectures

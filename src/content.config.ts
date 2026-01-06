@@ -1,11 +1,15 @@
 import { defineCollection, z } from "astro:content";
 import { microCMSContentLoader } from "microcms-astro-loader";
 
+// Get environment variables with fallback for build time
+const getServiceDomain = () => import.meta.env.MICROCMS_SERVICE_DOMAIN || "dummy";
+const getApiKey = () => import.meta.env.MICROCMS_API_KEY || "dummy";
+
 // Lecture Collection
 const lectureCollection = defineCollection({
   loader: microCMSContentLoader({
-    serviceDomain: import.meta.env.MICROCMS_SERVICE_DOMAIN,
-    apiKey: import.meta.env.MICROCMS_API_KEY,
+    serviceDomain: getServiceDomain(),
+    apiKey: getApiKey(),
     endpoint: "lectures",
     queries: {
       fields: [
@@ -48,8 +52,8 @@ const lectureCollection = defineCollection({
 // Member Collection
 const memberCollection = defineCollection({
   loader: microCMSContentLoader({
-    serviceDomain: import.meta.env.MICROCMS_SERVICE_DOMAIN,
-    apiKey: import.meta.env.MICROCMS_API_KEY,
+    serviceDomain: getServiceDomain(),
+    apiKey: getApiKey(),
     endpoint: "members",
     queries: {
       fields: [
@@ -98,8 +102,8 @@ const memberCollection = defineCollection({
 // Upcoming Event Collection
 const upcomingEventCollection = defineCollection({
   loader: microCMSContentLoader({
-    serviceDomain: import.meta.env.MICROCMS_SERVICE_DOMAIN,
-    apiKey: import.meta.env.MICROCMS_API_KEY,
+    serviceDomain: getServiceDomain(),
+    apiKey: getApiKey(),
     endpoint: "upcoming_events",
     queries: {
       fields: [
@@ -132,8 +136,8 @@ const upcomingEventCollection = defineCollection({
 // Media Coverage Collection
 const mediaCoverageCollection = defineCollection({
   loader: microCMSContentLoader({
-    serviceDomain: import.meta.env.MICROCMS_SERVICE_DOMAIN,
-    apiKey: import.meta.env.MICROCMS_API_KEY,
+    serviceDomain: getServiceDomain(),
+    apiKey: getApiKey(),
     endpoint: "media_coverage",
     queries: {
       fields: [
