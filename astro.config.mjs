@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://momo1105.com',
+  site: 'https://aiu-cedar-society.com',
   integrations: [sitemap()],
 
   // Internationalization (i18n) configuration
