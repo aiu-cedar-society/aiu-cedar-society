@@ -1,4 +1,6 @@
 ---
+import { getLangFromUrl, getAlternateUrl } from '../i18n/utils';
+
 interface Props {
   title?: string;
   description?: string;
@@ -21,9 +23,16 @@ const {
 } = Astro.props;
 
 // サイト情報
-const siteUrl = Astro.site || 'https://aiu-cedar-society.vercel.app';
+const siteUrl = Astro.site || 'https://aiu-cedar-society.com';
 const siteName = 'AIU Cedar Society';
-const currentUrl = new URL(Astro.url.pathname, siteUrl).href;
+const currentLang = getLangFromUrl(Astro.url);
+const currentPath = Astro.url.pathname;
+const currentUrl = new URL(currentPath, siteUrl).href;
+
+// 代替言語URLを生成
+const alternateLang = currentLang === 'ja' ? 'en' : 'ja';
+const alternatePath = getAlternateUrl(Astro.url, alternateLang);
+const alternateUrl = new URL(alternatePath, siteUrl).href;
 
 // 画像の絶対URL
 const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteUrl).href;
@@ -35,6 +44,11 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteU
 <meta name="description" content={description} />
 <meta name="keywords" content={keywords} />
 <link rel="canonical" href={currentUrl} />
+
+<!-- hreflang tags for multilingual support -->
+<link rel="alternate" hreflang={currentLang} href={currentUrl} />
+<link rel="alternate" hreflang={alternateLang} href={alternateUrl} />
+<link rel="alternate" hreflang="x-default" href={new URL('/', siteUrl).href} />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={ogType} />
@@ -60,6 +74,8 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteU
 <meta name="twitter:image" content={ogImageUrl} />
 
 <!-- Additional SEO -->
-<meta name="robots" content="index, follow" />
-<meta name="googlebot" content="index, follow" />
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+<meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 <meta name="author" content={siteName} />
+<meta name="geo.region" content="JP-05" />
+<meta name="geo.placename" content="秋田市" />
