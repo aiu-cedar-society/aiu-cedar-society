@@ -3,18 +3,20 @@ import Layout from "../../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import Breadcrumb from "../../../components/Breadcrumb.astro";
 import BreadcrumbSchema from "../../../components/BreadcrumbSchema.astro";
-
-// Helper to get English content or fallback to Japanese
-const getContent = (en: string | undefined, ja: string) => en || ja;
+import { getContent } from "../../../i18n/utils";
 
 // Fetch members using Content Layer API
 const allMembers = await getCollection("members");
 const members = allMembers.map((member) => ({
     id: member.id,
     name: member.data.name,
+    name_en: member.data.name_en,
     position: member.data.position,
+    position_en: member.data.position_en,
     year: member.data.year,
+    year_en: member.data.year_en,
     description: member.data.description,
+    description_en: member.data.description_en,
     status: member.data.status,
     image: member.data.image,
 }));
@@ -130,7 +132,7 @@ const breadcrumbItems = [
                                                 src={`${member.image.url}?w=128&fm=webp&q=60`}
                                                 srcset={`${member.image.url}?w=128&fm=webp&q=60 1x, ${member.image.url}?w=256&fm=webp&q=60 2x`}
                                                 alt={getContent(
-                                                    (member as any).name_en,
+                                                    member.name_en,
                                                     member.name,
                                                 )}
                                                 width="64"
@@ -143,7 +145,7 @@ const breadcrumbItems = [
                                             <div class="w-16 h-16 bg-gradient-to-br from-[#006837] to-[#005028] rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                                                 <span class="text-white text-xl font-bold">
                                                     {getContent(
-                                                        (member as any).name_en,
+                                                        member.name_en,
                                                         member.name,
                                                     ).substring(0, 2)}
                                                 </span>
@@ -152,25 +154,24 @@ const breadcrumbItems = [
                                         <div class="flex-1">
                                             <h3 class="text-lg font-bold text-gray-900 mb-1">
                                                 {getContent(
-                                                    (member as any).name_en,
+                                                    member.name_en,
                                                     member.name,
                                                 )}
                                             </h3>
                                             <p class="text-sm text-[#006837] font-medium mb-2">
                                                 {getContent(
-                                                    (member as any).position_en,
+                                                    member.position_en,
                                                     member.position,
                                                 )}{" "}
                                                 /{" "}
                                                 {getContent(
-                                                    (member as any).year_en,
+                                                    member.year_en,
                                                     member.year,
                                                 )}
                                             </p>
                                             <p class="text-sm text-gray-600">
                                                 {getContent(
-                                                    (member as any)
-                                                        .description_en,
+                                                    member.description_en,
                                                     member.description,
                                                 )}
                                             </p>
@@ -226,7 +227,7 @@ const breadcrumbItems = [
                                                 src={`${member.image.url}?w=128&fm=webp&q=60`}
                                                 srcset={`${member.image.url}?w=128&fm=webp&q=60 1x, ${member.image.url}?w=256&fm=webp&q=60 2x`}
                                                 alt={getContent(
-                                                    (member as any).name_en,
+                                                    member.name_en,
                                                     member.name,
                                                 )}
                                                 width="64"
@@ -239,7 +240,7 @@ const breadcrumbItems = [
                                             <div class="w-16 h-16 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                                                 <span class="text-white text-xl font-bold">
                                                     {getContent(
-                                                        (member as any).name_en,
+                                                        member.name_en,
                                                         member.name,
                                                     ).substring(0, 2)}
                                                 </span>

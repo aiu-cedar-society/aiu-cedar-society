@@ -1,0 +1,5 @@
+# Cloudflare Pages redirects for momo1105.com
+# This file should be deployed to the Cloudflare Pages project for momo1105.com
+# Not to the aiu-cedar-society.com project
+
+/* https://aiu-cedar-society.com/:splat 301

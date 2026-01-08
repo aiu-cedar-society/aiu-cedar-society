@@ -4,10 +4,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import BreadcrumbSchema from "../../components/BreadcrumbSchema.astro";
 import EmptyState from "../../components/EmptyState.astro";
 import { getCollection } from "astro:content";
-import { formatDateTime } from "../../i18n/utils";
-
-// Helper to get English content or fallback to Japanese
-const getContent = (en: string | undefined, ja: string) => en || ja;
+import { formatDateTime, getContent } from "../../i18n/utils";
 
 // Fetch media coverage using Content Layer API
 const allMediaCoverage = await getCollection("media_coverage");

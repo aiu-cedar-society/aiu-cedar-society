@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import BreadcrumbSchema from "../../components/BreadcrumbSchema.astro";
 import { getPages, type FAQItem } from "../../library/microcms";
+import { getContent } from "../../i18n/utils";
 
 // Fetch FAQs from Pages API
 let faqs: FAQItem[] = [];
@@ -12,9 +13,6 @@ try {
 } catch (error) {
     console.error("Error fetching FAQs:", error);
 }
-
-// Helper to get English content or fallback to Japanese
-const getContent = (en: string | undefined, ja: string) => en || ja;
 
 // SEO
 const seo = {

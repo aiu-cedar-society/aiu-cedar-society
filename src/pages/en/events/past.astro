@@ -3,10 +3,7 @@ import Layout from "../../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import Breadcrumb from "../../../components/Breadcrumb.astro";
 import BreadcrumbSchema from "../../../components/BreadcrumbSchema.astro";
-import { formatDate } from "../../../i18n/utils";
-
-// Helper to get English content or fallback to Japanese
-const getContent = (en: string | undefined, ja: string) => en || ja;
+import { formatDate, getContent } from "../../../i18n/utils";
 
 // Fetch all lectures (past events) using Content Layer API
 const allLectures = await getCollection("lectures");
@@ -271,7 +268,10 @@ const breadcrumbItems = [
 
                                                 {/* Guest */}
                                                 <p class="text-xs md:text-sm text-gray-600 line-clamp-1">
-                                                    {lecture.guest_name}
+                                                    {getContent(
+                                                        lecture.guest_name_en,
+                                                        lecture.guest_name,
+                                                    )}
                                                 </p>
                                                 {lecture.belonging && (
                                                     <p class="text-xs text-gray-500 mb-2 md:mb-3 line-clamp-1">

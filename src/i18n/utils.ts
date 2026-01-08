@@ -128,3 +128,24 @@ export function formatDateTime(date: Date | string, lang: Lang): string {
         timeZone: 'Asia/Tokyo',
     });
 }
+
+/**
+ * Get English content with fallback to Japanese
+ * Handles undefined, null, and empty strings properly
+ * 
+ * @param en - English content (may be undefined, null, or empty string)
+ * @param ja - Japanese content (fallback)
+ * @returns English content if available and non-empty, otherwise Japanese content
+ * 
+ * @example
+ * getContent("Hello", "こんにちは") // "Hello"
+ * getContent("", "こんにちは") // "こんにちは"
+ * getContent(undefined, "こんにちは") // "こんにちは"
+ */
+export function getContent(en: string | undefined | null, ja: string): string {
+    // Check if English content exists and is not empty (after trimming whitespace)
+    if (en && en.trim().length > 0) {
+        return en;
+    }
+    return ja;
+}

@@ -15,8 +15,11 @@ const lectureCollection = defineCollection({
       fields: [
         "id",
         "title",
+        "title_en",
         "guest_name",
+        "guest_name_en",
         "belonging",
+        "belonging_en",
         "event_date",
         "eyecatch",
         "content",
@@ -31,8 +34,11 @@ const lectureCollection = defineCollection({
   schema: z.object({
     id: z.string(),
     title: z.string(),
+    title_en: z.string().optional(),
     guest_name: z.string(),
+    guest_name_en: z.string().optional(),
     belonging: z.string().optional(),
+    belonging_en: z.string().optional(),
     event_date: z.string(),
     eyecatch: z
       .object({
@@ -59,9 +65,13 @@ const memberCollection = defineCollection({
       fields: [
         "id",
         "name",
+        "name_en",
         "position",
+        "position_en",
         "year",
+        "year_en",
         "description",
+        "description_en",
         "status",
         "image",
         "createdAt",
@@ -75,9 +85,13 @@ const memberCollection = defineCollection({
   schema: z.object({
     id: z.string(),
     name: z.string(),
+    name_en: z.string().optional(),
     position: z.string(),
+    position_en: z.string().optional(),
     year: z.string(),
+    year_en: z.string().optional(),
     description: z.string(),
+    description_en: z.string().optional(),
     status: z
       .union([
         z.literal("current"),
@@ -109,9 +123,12 @@ const upcomingEventCollection = defineCollection({
       fields: [
         "id",
         "title",
+        "title_en",
         "event_date",
         "description",
+        "description_en",
         "location",
+        "location_en",
         "createdAt",
         "updatedAt",
         "publishedAt",
@@ -123,9 +140,12 @@ const upcomingEventCollection = defineCollection({
   schema: z.object({
     id: z.string(),
     title: z.string(),
+    title_en: z.string().optional(),
     event_date: z.string(),
     description: z.string(),
+    description_en: z.string().optional(),
     location: z.string().optional(),
+    location_en: z.string().optional(),
     createdAt: z.string(),
     updatedAt: z.string(),
     publishedAt: z.string(),

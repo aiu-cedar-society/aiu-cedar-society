@@ -3,9 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import BreadcrumbSchema from "../../components/BreadcrumbSchema.astro";
 import { getPages, type SponsorItem } from "../../library/microcms";
-
-// Helper to get English content or fallback to Japanese
-const getContent = (en: string | undefined, ja: string) => en || ja;
+import { getContent } from "../../i18n/utils";
 
 // Fetch sponsors from Pages API
 let sponsors: SponsorItem[] = [];
