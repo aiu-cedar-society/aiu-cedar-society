@@ -174,7 +174,10 @@ const breadcrumbItems = [
 
                         {/* Lectures for this year */}
                         <div class="space-y-4 md:space-y-6">
-                            {lecturesByYear[year].map((lecture) => (
+                            {lecturesByYear[year].map((lecture, lectureIndex) => {
+                                // First lecture of first year should be eager loaded for LCP
+                                const isFirstLecture = year === years[0] && lectureIndex === 0;
+                                return (
                                 <a
                                     href={`/en/lectures/${lecture.id}`}
                                     class="lecture-card-wrapper block group card-tilt smooth-hover"
@@ -192,13 +195,13 @@ const breadcrumbItems = [
                                                 <div class="aspect-[3/4] md:aspect-[210/297]">
                                                     {lecture.eyecatch ? (
                                                         <img
-                                                            src={`${lecture.eyecatch.url}?w=192&fm=webp&q=60`}
+                                                            src={`${lecture.eyecatch.url}?w=192&fm=webp&q=75`}
                                                             srcset={`
-                                                        ${lecture.eyecatch.url}?w=96&fm=webp&q=60 96w,
-                                                        ${lecture.eyecatch.url}?w=128&fm=webp&q=60 128w,
-                                                        ${lecture.eyecatch.url}?w=192&fm=webp&q=60 192w,
-                                                        ${lecture.eyecatch.url}?w=256&fm=webp&q=60 256w,
-                                                        ${lecture.eyecatch.url}?w=384&fm=webp&q=60 384w
+                                                        ${lecture.eyecatch.url}?w=96&fm=webp&q=75 96w,
+                                                        ${lecture.eyecatch.url}?w=128&fm=webp&q=75 128w,
+                                                        ${lecture.eyecatch.url}?w=192&fm=webp&q=75 192w,
+                                                        ${lecture.eyecatch.url}?w=256&fm=webp&q=75 256w,
+                                                        ${lecture.eyecatch.url}?w=384&fm=webp&q=75 384w
                                                     `}
                                                             sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 192px"
                                                             alt={getContent(
@@ -208,7 +211,8 @@ const breadcrumbItems = [
                                                             )}
                                                             width="192"
                                                             height="256"
-                                                            loading="lazy"
+                                                            loading={isFirstLecture ? "eager" : "lazy"}
+                                                            fetchpriority={isFirstLecture ? "high" : "auto"}
                                                             decoding="async"
                                                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                         />
@@ -309,7 +313,7 @@ const breadcrumbItems = [
                                         </div>
                                     </div>
                                 </a>
-                            ))}
+                            )})}
                         </div>
                     </div>
                 ))
@@ -319,119 +323,143 @@ const breadcrumbItems = [
 </Layout>
 
 <script>
-    // Search and Filter Functionality
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.getElementById(
-            "lecture-search",
-        ) as HTMLInputElement;
-        const yearFilters = document.querySelectorAll(".year-filter");
-        const resultCount = document.getElementById("result-count");
-        const lectureCards = document.querySelectorAll(".lecture-card-wrapper");
+    // Search and Filter Functionality - Deferred to reduce TBT
+    // Use requestIdleCallback or setTimeout to defer non-critical JavaScript
+    (function() {
+        function initSearchAndFilter() {
+            const searchInput = document.getElementById(
+                "lecture-search",
+            ) as HTMLInputElement;
+            const yearFilters = document.querySelectorAll(".year-filter");
+            const resultCount = document.getElementById("result-count");
+            const lectureCards = document.querySelectorAll(".lecture-card-wrapper");
 
-        let currentYear = "all";
-        let searchQuery = "";
-
-        // Debounce function
-        function debounce<T extends (...args: any[]) => any>(
-            func: T,
-            delay: number,
-        ) {
-            let timeout: number | undefined;
-            return function (...args: Parameters<T>) {
-                clearTimeout(timeout);
-                timeout = window.setTimeout(() => func(...args), delay);
-            };
-        }
-
-        // Filter lectures
-        function filterLectures() {
-            let visibleCount = 0;
-            const yearSections = document.querySelectorAll(
-                "[data-year-section]",
-            );
-
-            lectureCards.forEach((card) => {
-                const cardElement = card;
-                const title = cardElement.dataset.title?.toLowerCase() || "";
-                const guest = cardElement.dataset.guest?.toLowerCase() || "";
-                const year = cardElement.dataset.year || "";
-
-                const matchesSearch =
-                    !searchQuery ||
-                    title.includes(searchQuery) ||
-                    guest.includes(searchQuery);
-                const matchesYear =
-                    currentYear === "all" || year === currentYear;
-
-                if (matchesSearch && matchesYear) {
-                    cardElement.style.display = "";
-                    visibleCount++;
-                } else {
-                    cardElement.style.display = "none";
-                }
-            });
-
-            // Update year sections visibility
-            yearSections.forEach((section) => {
-                const sectionElement = section;
-                const sectionYear = sectionElement.dataset.yearSection;
-                const visibleInSection = Array.from(lectureCards).filter(
-                    (card) => {
-                        const cardElement = card;
-                        return (
-                            cardElement.dataset.year === sectionYear &&
-                            cardElement.style.display !== "none"
-                        );
-                    },
-                ).length;
-
-                if (visibleInSection > 0) {
-                    sectionElement.style.display = "";
-                } else {
-                    sectionElement.style.display = "none";
-                }
-            });
-
-            // Update result count
-            if (resultCount) {
-                resultCount.textContent = visibleCount.toString();
+            if (!searchInput || !yearFilters.length || !lectureCards.length) {
+                return;
             }
-        }
 
-        // Search input handler
-        if (searchInput) {
+            let currentYear = "all";
+            let searchQuery = "";
+
+            // Debounce function
+            function debounce<T extends (...args: any[]) => any>(
+                func: T,
+                delay: number,
+            ) {
+                let timeout: number | undefined;
+                return function (...args: Parameters<T>) {
+                    clearTimeout(timeout);
+                    timeout = window.setTimeout(() => func(...args), delay);
+                };
+            }
+
+            // Filter lectures
+            function filterLectures() {
+                let visibleCount = 0;
+                const yearSections = document.querySelectorAll(
+                    "[data-year-section]",
+                );
+
+                lectureCards.forEach((card) => {
+                    const cardElement = card;
+                    const title = cardElement.dataset.title?.toLowerCase() || "";
+                    const guest = cardElement.dataset.guest?.toLowerCase() || "";
+                    const year = cardElement.dataset.year || "";
+
+                    const matchesSearch =
+                        !searchQuery ||
+                        title.includes(searchQuery) ||
+                        guest.includes(searchQuery);
+                    const matchesYear =
+                        currentYear === "all" || year === currentYear;
+
+                    if (matchesSearch && matchesYear) {
+                        cardElement.style.display = "";
+                        visibleCount++;
+                    } else {
+                        cardElement.style.display = "none";
+                    }
+                });
+
+                // Update year sections visibility
+                yearSections.forEach((section) => {
+                    const sectionElement = section;
+                    const sectionYear = sectionElement.dataset.yearSection;
+                    const visibleInSection = Array.from(lectureCards).filter(
+                        (card) => {
+                            const cardElement = card;
+                            return (
+                                cardElement.dataset.year === sectionYear &&
+                                cardElement.style.display !== "none"
+                            );
+                        },
+                    ).length;
+
+                    if (visibleInSection > 0) {
+                        sectionElement.style.display = "";
+                    } else {
+                        sectionElement.style.display = "none";
+                    }
+                });
+
+                // Update result count
+                if (resultCount) {
+                    resultCount.textContent = visibleCount.toString();
+                }
+            }
+
+            // Search input handler
             const debouncedFilter = debounce(() => {
                 searchQuery = searchInput.value.toLowerCase();
                 filterLectures();
             }, 300);
 
             searchInput.addEventListener("input", debouncedFilter);
-        }
 
-        // Year filter handlers
-        yearFilters.forEach((button) => {
-            button.addEventListener("click", function (this: HTMLElement) {
-                yearFilters.forEach((btn) => {
-                    btn.classList.remove(
+            // Year filter handlers
+            yearFilters.forEach((button) => {
+                button.addEventListener("click", function (this: HTMLElement) {
+                    yearFilters.forEach((btn) => {
+                        btn.classList.remove(
+                            "active",
+                            "bg-[#006837]",
+                            "text-white",
+                            "border-[#006837]",
+                        );
+                        btn.classList.add("border-gray-300", "text-gray-700");
+                    });
+
+                    this.classList.add(
                         "active",
                         "bg-[#006837]",
                         "text-white",
                         "border-[#006837]",
                     );
-                    btn.classList.add("border-gray-300", "text-gray-700");
+                    this.classList.remove("border-gray-300", "text-gray-700");
+
+                    currentYear = this.dataset.year || "all";
+                    filterLectures();
                 });
-
-                this.classList.add(
-                    "active",
-                    "bg-[#006837]",
-                    "text-white",
-                    "border-[#006837]",
-                );
-                this.classList.remove("border-gray-300", "text-gray-700");
-
-                currentYear = this.dataset.year || "all";
-                filterLectures();
             });
-        });
-    });
+        }
+
+        // Defer initialization to reduce TBT
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                // Use requestIdleCallback if available, otherwise setTimeout
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(initSearchAndFilter, { timeout: 2000 });
+                } else {
+                    setTimeout(initSearchAndFilter, 0);
+                }
+            });
+        } else {
+            // DOM already loaded
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(initSearchAndFilter, { timeout: 2000 });
+            } else {
+                setTimeout(initSearchAndFilter, 0);
+            }
+        }
+    })();
 </script>

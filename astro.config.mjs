@@ -19,6 +19,7 @@ export default defineConfig({
 
   build: {
     inlineStylesheets: 'auto',
+    assets: 'assets',
   },
   prefetch: {
     // Use tap-based prefetching - starts on touch/mousedown for fastest response
@@ -44,6 +45,10 @@ export default defineConfig({
       rollupOptions: {
         output: {
           manualChunks: undefined,
+          // Optimize chunk size for better caching
+          chunkFileNames: 'chunks/[name]-[hash].js',
+          entryFileNames: 'entry-[hash].js',
+          assetFileNames: 'assets/[name]-[hash][extname]',
         },
       },
     },

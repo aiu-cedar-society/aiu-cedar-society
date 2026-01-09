@@ -7,16 +7,20 @@ import { formatDateTime, getContent } from "../../../i18n/utils";
 
 // Fetch upcoming events using Content Layer API
 const allEvents = await getCollection("upcoming_events");
-const events = allEvents.map((event) => ({
-    id: event.id,
-    title: event.data.title,
-    title_en: event.data.title_en,
-    event_date: event.data.event_date,
-    description: event.data.description,
-    description_en: event.data.description_en,
-    location: event.data.location,
-    location_en: event.data.location_en,
-}));
+const events = allEvents.map((event) => {
+    // Debug: Log to verify description_en is being fetched
+    // console.log('Event:', event.id, 'description_en:', event.data.description_en);
+    return {
+        id: event.id,
+        title: event.data.title,
+        title_en: event.data.title_en,
+        event_date: event.data.event_date,
+        description: event.data.description,
+        description_en: event.data.description_en,
+        location: event.data.location,
+        location_en: event.data.location_en,
+    };
+});
 
 // SEO
 const seo = {

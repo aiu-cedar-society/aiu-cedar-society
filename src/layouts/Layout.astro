@@ -93,10 +93,7 @@ const nav = {
         <ClientRouter />
 
         <!-- DNS Prefetch for faster resolution -->
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="dns-prefetch" href="https://images.microcms-assets.io" />
-        <link rel="dns-prefetch" href="https://unpkg.com" />
 
         <!-- Preconnect for critical origins (images are priority) -->
         <link
@@ -105,13 +102,58 @@ const nav = {
             crossorigin
         />
         
-        <!-- Google Fonts: Shippori Mincho (Japanese Mincho) & Lato (Geometric Sans) -->
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <!-- Preload critical self-hosted fonts for faster FCP/LCP -->
         <link
-            href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=Lato:wght@300;400;700&display=swap"
-            rel="stylesheet"
+            rel="preload"
+            href="/fonts/noto-sans-jp-v42-japanese-regular.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin="anonymous"
         />
+        <link
+            rel="preload"
+            href="/fonts/noto-sans-jp-v42-latin-regular.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin="anonymous"
+        />
+        
+        <!-- Google Fonts: Shippori Mincho (Japanese Mincho) & Lato (Geometric Sans) - Load asynchronously after page load -->
+        <script is:inline>
+            // Load Google Fonts asynchronously after page load to improve FCP/LCP
+            (function() {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', loadGoogleFonts);
+                } else {
+                    // Use requestIdleCallback if available, otherwise setTimeout
+                    if ('requestIdleCallback' in window) {
+                        requestIdleCallback(loadGoogleFonts, { timeout: 2000 });
+                    } else {
+                        setTimeout(loadGoogleFonts, 100);
+                    }
+                }
+                
+                function loadGoogleFonts() {
+                    // Preconnect to Google Fonts
+                    const preconnect1 = document.createElement('link');
+                    preconnect1.rel = 'preconnect';
+                    preconnect1.href = 'https://fonts.googleapis.com';
+                    document.head.appendChild(preconnect1);
+                    
+                    const preconnect2 = document.createElement('link');
+                    preconnect2.rel = 'preconnect';
+                    preconnect2.href = 'https://fonts.gstatic.com';
+                    preconnect2.crossOrigin = 'anonymous';
+                    document.head.appendChild(preconnect2);
+                    
+                    // Load stylesheet
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = 'https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=Lato:wght@300;400;700&display=swap';
+                    document.head.appendChild(link);
+                }
+            })();
+        </script>
 
         <!-- Critical CSS Inline for instant render -->
         <style>
@@ -223,9 +265,9 @@ const nav = {
 
         <!-- Google Analytics 4 (Deferred for better performance) -->
         <script is:inline>
-            // Defer GA loading until after page load
-            window.addEventListener("load", function () {
-                setTimeout(function () {
+            // Defer GA loading until after page load and idle time
+            (function() {
+                function loadGA() {
                     var script = document.createElement("script");
                     script.src =
                         "https://www.googletagmanager.com/gtag/js?id=G-V93QY7FJZS";
@@ -239,14 +281,33 @@ const nav = {
                     window.gtag = gtag;
                     gtag("js", new Date());
                     gtag("config", "G-V93QY7FJZS");
-                }, 100);
-            });
+                }
 
-            // Font loading detection
+                // Use requestIdleCallback if available for better TBT
+                if ('requestIdleCallback' in window) {
+                    window.addEventListener("load", function () {
+                        requestIdleCallback(loadGA, { timeout: 3000 });
+                    });
+                } else {
+                    window.addEventListener("load", function () {
+                        setTimeout(loadGA, 2000);
+                    });
+                }
+            })();
+
+            // Font loading detection - non-blocking
             if ("fonts" in document) {
-                document.fonts.ready.then(function () {
-                    document.documentElement.classList.add("fonts-loaded");
-                });
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(function() {
+                        document.fonts.ready.then(function () {
+                            document.documentElement.classList.add("fonts-loaded");
+                        });
+                    });
+                } else {
+                    document.fonts.ready.then(function () {
+                        document.documentElement.classList.add("fonts-loaded");
+                    });
+                }
             }
         </script>
         <style is:global>
