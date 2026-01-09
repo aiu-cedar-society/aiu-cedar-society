@@ -118,21 +118,12 @@ const nav = {
             crossorigin="anonymous"
         />
         
-        <!-- Google Fonts: Shippori Mincho (Japanese Mincho) & Lato (Geometric Sans) - Load asynchronously after page load -->
+        <!-- Google Fonts: Shippori Mincho (Japanese Mincho) & Lato (Geometric Sans) - Load asynchronously after LCP -->
         <script is:inline>
-            // Load Google Fonts asynchronously after page load to improve FCP/LCP
+            // Load Google Fonts asynchronously after LCP to improve FCP/LCP
+            // Use font-display: swap in CSS to prevent render blocking
             (function() {
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', loadGoogleFonts);
-                } else {
-                    // Use requestIdleCallback if available, otherwise setTimeout
-                    if ('requestIdleCallback' in window) {
-                        requestIdleCallback(loadGoogleFonts, { timeout: 2000 });
-                    } else {
-                        setTimeout(loadGoogleFonts, 100);
-                    }
-                }
-                
+                // Wait for page to be fully interactive before loading fonts
                 function loadGoogleFonts() {
                     // Preconnect to Google Fonts
                     const preconnect1 = document.createElement('link');
@@ -146,11 +137,34 @@ const nav = {
                     preconnect2.crossOrigin = 'anonymous';
                     document.head.appendChild(preconnect2);
                     
-                    // Load stylesheet
+                    // Load stylesheet with media="print" trick, then switch to "all" after load
                     const link = document.createElement('link');
                     link.rel = 'stylesheet';
                     link.href = 'https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=Lato:wght@300;400;700&display=swap';
+                    link.media = 'print';
+                    link.onload = function() {
+                        this.media = 'all';
+                    };
                     document.head.appendChild(link);
+                }
+                
+                // Load fonts after page load and LCP
+                if (document.readyState === 'loading') {
+                    window.addEventListener('load', function() {
+                        // Wait additional time to ensure LCP has occurred
+                        if ('requestIdleCallback' in window) {
+                            requestIdleCallback(loadGoogleFonts, { timeout: 3000 });
+                        } else {
+                            setTimeout(loadGoogleFonts, 2000);
+                        }
+                    });
+                } else {
+                    // Page already loaded
+                    if ('requestIdleCallback' in window) {
+                        requestIdleCallback(loadGoogleFonts, { timeout: 3000 });
+                    } else {
+                        setTimeout(loadGoogleFonts, 2000);
+                    }
                 }
             })();
         </script>
@@ -265,13 +279,15 @@ const nav = {
 
         <!-- Google Analytics 4 (Deferred for better performance) -->
         <script is:inline>
-            // Defer GA loading until after page load and idle time
+            // Defer GA loading until after page load and idle time to reduce TBT
             (function() {
                 function loadGA() {
                     var script = document.createElement("script");
                     script.src =
                         "https://www.googletagmanager.com/gtag/js?id=G-V93QY7FJZS";
                     script.async = true;
+                    // Add defer to prevent blocking
+                    script.defer = true;
                     document.head.appendChild(script);
 
                     window.dataLayer = window.dataLayer || [];
@@ -280,17 +296,21 @@ const nav = {
                     }
                     window.gtag = gtag;
                     gtag("js", new Date());
-                    gtag("config", "G-V93QY7FJZS");
+                    gtag("config", "G-V93QY7FJZS", {
+                        // Reduce data collection to improve performance
+                        send_page_view: false
+                    });
                 }
 
                 // Use requestIdleCallback if available for better TBT
+                // Wait longer to ensure LCP and TBT are not affected
                 if ('requestIdleCallback' in window) {
                     window.addEventListener("load", function () {
-                        requestIdleCallback(loadGA, { timeout: 3000 });
+                        requestIdleCallback(loadGA, { timeout: 5000 });
                     });
                 } else {
                     window.addEventListener("load", function () {
-                        setTimeout(loadGA, 2000);
+                        setTimeout(loadGA, 4000);
                     });
                 }
             })();

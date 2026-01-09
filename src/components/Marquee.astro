@@ -33,12 +33,18 @@ const pxPerSecMap = {
         <div class="marquee-item">
           {item.logo ? (
             <img 
-              src={item.logo} 
+              src={`${item.logo}?w=240&fm=webp&q=80`}
+              srcset={`
+                ${item.logo}?w=120&fm=webp&q=80 120w,
+                ${item.logo}?w=240&fm=webp&q=80 240w,
+                ${item.logo}?w=360&fm=webp&q=80 360w
+              `}
+              sizes="(max-width: 640px) 120px, 240px"
               alt={item.name}
               class="marquee-logo"
               width="120"
               height="60"
-              loading="eager"
+              loading="lazy"
               decoding="async"
             />
           ) : (
@@ -53,12 +59,18 @@ const pxPerSecMap = {
         <div class="marquee-item">
           {item.logo ? (
             <img 
-              src={item.logo} 
+              src={`${item.logo}?w=240&fm=webp&q=80`}
+              srcset={`
+                ${item.logo}?w=120&fm=webp&q=80 120w,
+                ${item.logo}?w=240&fm=webp&q=80 240w,
+                ${item.logo}?w=360&fm=webp&q=80 360w
+              `}
+              sizes="(max-width: 640px) 120px, 240px"
               alt=""
               class="marquee-logo"
               width="120"
               height="60"
-              loading="eager"
+              loading="lazy"
               decoding="async"
             />
           ) : (
@@ -194,8 +206,10 @@ const pxPerSecMap = {
 <script is:inline>
   // シームレスに見せるために、1セット分の幅(px)で移動距離を決め、
   // 画面幅を埋めるまでコンテンツを必要数だけ複製する
-  (() => {
-    const containers = document.querySelectorAll("[data-marquee-container]");
+  // Defer initialization to reduce TBT and forced reflows
+  (function() {
+    function initMarquee() {
+      const containers = document.querySelectorAll("[data-marquee-container]");
 
     containers.forEach((container) => {
       if (!(container instanceof HTMLElement)) return;
@@ -298,6 +312,24 @@ const pxPerSecMap = {
         { once: true },
       );
     });
+    }
+    
+    // Defer initialization to reduce TBT
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(initMarquee, { timeout: 2000 });
+        } else {
+          setTimeout(initMarquee, 100);
+        }
+      });
+    } else {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(initMarquee, { timeout: 2000 });
+      } else {
+        setTimeout(initMarquee, 100);
+      }
+    }
   })();
 </script>
 
