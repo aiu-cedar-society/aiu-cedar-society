@@ -241,6 +241,7 @@ p,
 }
 
 /* Organic wavy divider line */
+/* SPEED INDEX FIX: Show immediately, animate only after page is interactive */
 .organic-divider {
     position: relative;
     height: 2px;
@@ -264,6 +265,11 @@ p,
         transparent 100%
     );
     filter: blur(1px);
+    opacity: 1;
+}
+
+/* Animation only starts after page is interactive */
+.organic-divider.animate-ready::before {
     animation: organic-wave 8s ease-in-out infinite;
 }
 
@@ -280,6 +286,11 @@ p,
         rgba(139, 111, 71, 0.15) 50%,
         transparent 100%
     );
+    opacity: 1;
+}
+
+/* Animation only starts after page is interactive */
+.organic-divider.animate-ready::after {
     animation: organic-wave 6s ease-in-out infinite reverse;
 }
 
@@ -315,7 +326,14 @@ p,
    ================================ */
 
 /* Scroll Reveal with staggered timing */
+/* SPEED INDEX FIX: Show content immediately, only animate after page is interactive */
 .scroll-reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animation-ready state - applied via JS after page load */
+.scroll-reveal.scroll-ready {
     opacity: 0;
     transform: translateY(30px);
     transition: 
@@ -328,15 +346,20 @@ p,
     transform: translateY(0);
 }
 
-/* Stagger delays */
-.scroll-reveal-delay-1 { transition-delay: 0.1s; }
-.scroll-reveal-delay-2 { transition-delay: 0.2s; }
-.scroll-reveal-delay-3 { transition-delay: 0.3s; }
-.scroll-reveal-delay-4 { transition-delay: 0.4s; }
-.scroll-reveal-delay-5 { transition-delay: 0.5s; }
+/* Stagger delays - only apply when scroll-ready is present */
+.scroll-reveal.scroll-ready.scroll-reveal-delay-1 { transition-delay: 0.1s; }
+.scroll-reveal.scroll-ready.scroll-reveal-delay-2 { transition-delay: 0.2s; }
+.scroll-reveal.scroll-ready.scroll-reveal-delay-3 { transition-delay: 0.3s; }
+.scroll-reveal.scroll-ready.scroll-reveal-delay-4 { transition-delay: 0.4s; }
+.scroll-reveal.scroll-ready.scroll-reveal-delay-5 { transition-delay: 0.5s; }
 
 /* より多様なアニメーション効果 */
+/* SPEED INDEX FIX: Show immediately by default */
 .scroll-reveal-fade {
+    opacity: 1;
+}
+
+.scroll-reveal-fade.scroll-ready {
     opacity: 0;
     transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -346,6 +369,11 @@ p,
 }
 
 .scroll-reveal-slide-up {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-reveal-slide-up.scroll-ready {
     opacity: 0;
     transform: translateY(40px);
     transition: 
@@ -359,6 +387,11 @@ p,
 }
 
 .scroll-reveal-slide-left {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-reveal-slide-left.scroll-ready {
     opacity: 0;
     transform: translateX(-40px);
     transition: 
@@ -372,6 +405,11 @@ p,
 }
 
 .scroll-reveal-slide-right {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-reveal-slide-right.scroll-ready {
     opacity: 0;
     transform: translateX(40px);
     transition: 
@@ -385,6 +423,11 @@ p,
 }
 
 .scroll-reveal-scale {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.scroll-reveal-scale.scroll-ready {
     opacity: 0;
     transform: scale(0.9);
     transition: 
@@ -398,6 +441,11 @@ p,
 }
 
 .scroll-reveal-rotate {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+.scroll-reveal-rotate.scroll-ready {
     opacity: 0;
     transform: rotate(-5deg) scale(0.95);
     transition: 

@@ -204,12 +204,22 @@
    ================================ */
 
 @supports not (animation-timeline: scroll()) {
-    /* Use Intersection Observer fallback (handled by JavaScript) */
+    /* SPEED INDEX FIX: Show content immediately, only animate after JS adds scroll-ready */
     .scroll-parallax,
     .scroll-fade-in,
     .scroll-scale,
     .scroll-slide-left,
     .scroll-slide-right {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    
+    /* Animation-ready state */
+    .scroll-parallax.scroll-ready,
+    .scroll-fade-in.scroll-ready,
+    .scroll-scale.scroll-ready,
+    .scroll-slide-left.scroll-ready,
+    .scroll-slide-right.scroll-ready {
         opacity: 0;
         transition: opacity 0.8s ease, transform 0.8s ease;
     }

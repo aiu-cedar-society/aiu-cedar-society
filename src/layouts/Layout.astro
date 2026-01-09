@@ -180,7 +180,7 @@ const nav = {
             })();
         </script>
 
-        <!-- Critical CSS Inline for instant render -->
+        <!-- Critical CSS Inline for instant render - SPEED INDEX OPTIMIZED -->
         <style>
             /* Critical above-the-fold styles */
             * {
@@ -195,32 +195,155 @@ const nav = {
                     "Helvetica Neue", Arial, sans-serif;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
-                /* Japanese text line break control */
                 word-break: keep-all;
                 overflow-wrap: break-word;
                 hyphens: none;
-                /*
-                  背景が transparent だと、iOS/Safari のオーバースクロール等で
-                  背景が白く“浮いて”見えることがあるため、ベース背景を固定。
-                  背景レイヤー（FluidGradient）は別途 fixed 要素として描画。
-                */
-                background-color: var(--bg-primary, #fef9f4);
+                background-color: #fef9f4;
             }
 
             body {
-                /* Base background to avoid seams/overscroll artifacts */
                 color: #333333;
                 min-height: 100vh;
                 line-height: 1.75;
-                background-color: var(--bg-primary, #fef9f4);
-                /* Japanese text line break control */
+                background-color: #fef9f4;
                 word-break: keep-all;
                 overflow-wrap: break-word;
                 hyphens: none;
                 line-break: strict;
             }
             
-            /* Critical LCP element styles - inline for faster rendering */
+            /* Container & Layout */
+            .container {
+                width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .min-h-screen {
+                min-height: 100vh;
+            }
+            
+            .relative {
+                position: relative;
+            }
+            
+            .overflow-hidden {
+                overflow: hidden;
+            }
+            
+            /* Hero Section - Critical for LCP */
+            .hero-3d-container,
+            .hero-3d-content {
+                position: relative;
+            }
+            
+            .typography-hero {
+                font-size: 2rem;
+                font-weight: 600;
+                letter-spacing: 0.03em;
+                line-height: 1.4;
+                color: #111827;
+            }
+            
+            @media (min-width: 768px) {
+                .typography-hero {
+                    font-size: 3.5rem;
+                }
+            }
+            
+            .typography-section {
+                font-size: 1.75rem;
+                font-weight: 600;
+                letter-spacing: 0.05em;
+                line-height: 1.6;
+                color: #111827;
+            }
+            
+            @media (min-width: 768px) {
+                .typography-section {
+                    font-size: 2.25rem;
+                }
+            }
+            
+            /* Text Colors */
+            .text-\[\#006837\] {
+                color: #006837;
+            }
+            
+            .text-gray-600 {
+                color: #4b5563;
+            }
+            
+            .text-gray-900 {
+                color: #111827;
+            }
+            
+            /* Background */
+            .bg-white {
+                background-color: #ffffff;
+            }
+            
+            .bg-gray-50 {
+                background-color: #f9fafb;
+            }
+            
+            .bg-gray-100 {
+                background-color: #f3f4f6;
+            }
+            
+            /* Flexbox */
+            .flex {
+                display: flex;
+            }
+            
+            .flex-row {
+                flex-direction: row;
+            }
+            
+            .flex-col {
+                flex-direction: column;
+            }
+            
+            .items-center {
+                align-items: center;
+            }
+            
+            .justify-between {
+                justify-content: space-between;
+            }
+            
+            .flex-shrink-0 {
+                flex-shrink: 0;
+            }
+            
+            /* Grid */
+            .grid {
+                display: grid;
+            }
+            
+            /* Spacing */
+            .gap-4 { gap: 1rem; }
+            .gap-6 { gap: 1.5rem; }
+            .gap-8 { gap: 2rem; }
+            .p-4 { padding: 1rem; }
+            .p-6 { padding: 1.5rem; }
+            .px-4 { padding-left: 1rem; padding-right: 1rem; }
+            .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+            .pt-24 { padding-top: 6rem; }
+            .pb-12 { padding-bottom: 3rem; }
+            .mb-4 { margin-bottom: 1rem; }
+            .mb-6 { margin-bottom: 1.5rem; }
+            .mb-8 { margin-bottom: 2rem; }
+            .mb-12 { margin-bottom: 3rem; }
+            .pl-6 { padding-left: 1.5rem; }
+            
+            /* Rounded corners */
+            .rounded-lg { border-radius: 0.5rem; }
+            
+            /* Shadows */
+            .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+            
+            /* Critical LCP element styles */
             .lecture-card-wrapper {
                 display: block;
             }
@@ -242,6 +365,46 @@ const nav = {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+            }
+            
+            /* Card sizes */
+            .w-24 { width: 6rem; }
+            @media (min-width: 640px) {
+                .sm\:w-32 { width: 8rem; }
+            }
+            @media (min-width: 768px) {
+                .md\:w-48 { width: 12rem; }
+            }
+            
+            /* Aspect ratios */
+            .aspect-\[3\/4\] {
+                aspect-ratio: 3/4;
+            }
+            @media (min-width: 768px) {
+                .md\:aspect-\[210\/297\] {
+                    aspect-ratio: 210/297;
+                }
+            }
+            
+            /* Ring/border */
+            .ring-1 {
+                box-shadow: 0 0 0 1px #f3f4f6;
+            }
+            
+            /* SPEED INDEX FIX: Show content immediately */
+            [data-animate],
+            .scroll-reveal,
+            .scroll-reveal-fade,
+            .scroll-reveal-slide-up,
+            .scroll-reveal-slide-left,
+            .scroll-reveal-slide-right,
+            .scroll-reveal-scale,
+            .scroll-reveal-rotate,
+            .section-divider::before,
+            .organic-divider::before,
+            .organic-divider::after {
+                opacity: 1 !important;
+                transform: none !important;
             }
         </style>
 
@@ -4009,6 +4172,7 @@ const nav = {
 
     // ===========================================
     // SCROLL ANIMATIONS - Intersection Observer
+    // SPEED INDEX FIX: Delay animation setup until after LCP
     // ===========================================
     function initScrollAnimations() {
         const animatedElements = document.querySelectorAll("[data-animate]");
@@ -4027,6 +4191,12 @@ const nav = {
             );
             return;
         }
+
+        // SPEED INDEX FIX: Add animate-ready class to enable animations AFTER page is interactive
+        // This ensures content is visible immediately, then we add animations
+        animatedElements.forEach((el) => {
+            el.classList.add("animate-ready");
+        });
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -4047,9 +4217,17 @@ const nav = {
         animatedElements.forEach((el) => observer.observe(el));
     }
 
-    // Initialize on page load and after View Transitions
-    initScrollAnimations();
-    document.addEventListener("astro:page-load", initScrollAnimations);
+    // SPEED INDEX FIX: Delay initialization to after LCP
+    function delayedInitScrollAnimations() {
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(initScrollAnimations, { timeout: 2000 });
+        } else {
+            setTimeout(initScrollAnimations, 500);
+        }
+    }
+    
+    delayedInitScrollAnimations();
+    document.addEventListener("astro:page-load", delayedInitScrollAnimations);
 
     // ===========================================
     // ENHANCED RIPPLE EFFECT
@@ -4154,6 +4332,7 @@ const nav = {
 
     // ===========================================
     // SCROLL REVEAL - Organic Animation (Enhanced)
+    // SPEED INDEX FIX: Delay animation setup until after LCP
     // ===========================================
     function initScrollReveal() {
         // すべてのscroll-reveal系のクラスを持つ要素を取得
@@ -4169,6 +4348,12 @@ const nav = {
             revealElements.forEach(el => el.classList.add('revealed'));
             return;
         }
+        
+        // SPEED INDEX FIX: Add scroll-ready class to enable animations AFTER page is interactive
+        // This ensures content is visible immediately, then we add animations
+        revealElements.forEach(el => {
+            el.classList.add('scroll-ready');
+        });
         
         const observer = new IntersectionObserver(
             (entries) => {
@@ -4188,8 +4373,33 @@ const nav = {
         revealElements.forEach(el => observer.observe(el));
     }
     
-    initScrollReveal();
-    document.addEventListener('astro:page-load', initScrollReveal);
+    // SPEED INDEX FIX: Delay initialization to after LCP
+    function delayedInitScrollReveal() {
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(initScrollReveal, { timeout: 2000 });
+        } else {
+            setTimeout(initScrollReveal, 500);
+        }
+    }
+    
+    // Enable organic-divider animations after page is interactive
+    function initOrganicDividers() {
+        const dividers = document.querySelectorAll('.organic-divider');
+        dividers.forEach(el => el.classList.add('animate-ready'));
+    }
+    
+    function delayedInitOrganicDividers() {
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(initOrganicDividers, { timeout: 3000 });
+        } else {
+            setTimeout(initOrganicDividers, 1000);
+        }
+    }
+    
+    delayedInitScrollReveal();
+    delayedInitOrganicDividers();
+    document.addEventListener('astro:page-load', delayedInitScrollReveal);
+    document.addEventListener('astro:page-load', delayedInitOrganicDividers);
 
     // ===========================================
     // PARALLAX - Slow Background Movement

@@ -10,7 +10,14 @@
    ================================ */
 
 /* Base state for animated elements */
+/* SPEED INDEX FIX: Show content immediately, animate only after page is interactive */
 [data-animate] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animation state - only applied via JS after page is interactive */
+[data-animate].animate-ready {
     opacity: 0;
     transform: translateY(24px);
     transition: 
@@ -26,6 +33,7 @@
 }
 
 /* Signature section divider */
+/* SPEED INDEX FIX: Show immediately */
 .section-divider {
     position: relative;
     width: 100%;
@@ -46,8 +54,13 @@
             rgba(0, 168, 85, 0.0)
         );
     transform-origin: center;
-    transform: skewY(-3deg) translateY(12px);
+    transform: skewY(-3deg) translateY(0);
+    opacity: 1;
+}
+
+.section-divider.animate-ready::before {
     opacity: 0;
+    transform: skewY(-3deg) translateY(12px);
     transition:
         opacity 1.0s cubic-bezier(0.16, 1, 0.3, 1),
         transform 1.0s cubic-bezier(0.16, 1, 0.3, 1);

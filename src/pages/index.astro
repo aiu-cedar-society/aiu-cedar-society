@@ -504,22 +504,39 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
     }
 
     /* Hero Section Animations */
+    /* SPEED INDEX FIX: Show content immediately, only animate after JS adds hero-animate class */
     .hero-content {
+        opacity: 1;
+    }
+    
+    .hero-content.hero-animate {
         animation: fade-in-up 0.8s ease-out;
     }
 
     .hero-line {
+        opacity: 1;
+    }
+    
+    .hero-line.hero-animate {
         animation: slide-down 0.6s ease-out;
     }
 
     .hero-text-1 {
-        animation: fade-in-right 0.8s ease-out 0.3s both;
         display: inline;
+        opacity: 1;
+    }
+    
+    .hero-text-1.hero-animate {
+        animation: fade-in-right 0.8s ease-out 0.3s both;
     }
 
     .hero-text-2 {
-        animation: fade-in-right 0.8s ease-out 0.3s both;
         display: inline;
+        opacity: 1;
+    }
+    
+    .hero-text-2.hero-animate {
+        animation: fade-in-right 0.8s ease-out 0.3s both;
     }
 
     /* Hero title - responsive behavior */
@@ -566,7 +583,7 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
     }
 
     .hero-description {
-        animation: fade-in 1s ease-out 0.7s both;
+        opacity: 1;
         /* Japanese text line break control - break only after "。" */
         word-break: keep-all;
         overflow-wrap: break-word;
@@ -574,6 +591,10 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
         line-break: strict;
         /* Match the width of hero-text-1 (same as typography-hero) */
         max-width: 100%;
+    }
+    
+    .hero-description.hero-animate {
+        animation: fade-in 1s ease-out 0.7s both;
     }
     
     /* Prevent breaks within sentences - only allow break at <br /> */
@@ -794,6 +815,46 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
         // Cleanup on page navigation
         document.addEventListener("astro:before-preparation", () => {
             window.removeEventListener("scroll", requestTick);
+        });
+    })();
+</script>
+
+<script is:inline>
+    // SPEED INDEX FIX: Enable hero animations after page is interactive
+    (function() {
+        function enableHeroAnimations() {
+            const heroContent = document.querySelector('.hero-content');
+            const heroLine = document.querySelector('.hero-line');
+            const heroText1 = document.querySelector('.hero-text-1');
+            const heroText2 = document.querySelector('.hero-text-2');
+            const heroDesc = document.querySelector('.hero-description');
+            
+            // Check for reduced motion preference
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReducedMotion) return;
+            
+            // Add animation classes
+            if (heroContent) heroContent.classList.add('hero-animate');
+            if (heroLine) heroLine.classList.add('hero-animate');
+            if (heroText1) heroText1.classList.add('hero-animate');
+            if (heroText2) heroText2.classList.add('hero-animate');
+            if (heroDesc) heroDesc.classList.add('hero-animate');
+        }
+        
+        // Delay animation until after LCP (approximately 500ms)
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(enableHeroAnimations, { timeout: 1000 });
+        } else {
+            setTimeout(enableHeroAnimations, 500);
+        }
+        
+        // Re-enable on page transitions
+        document.addEventListener('astro:page-load', function() {
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(enableHeroAnimations, { timeout: 1000 });
+            } else {
+                setTimeout(enableHeroAnimations, 500);
+            }
         });
     })();
 </script>

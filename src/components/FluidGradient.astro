@@ -6,14 +6,12 @@ interface Props {
 const { className = "" } = Astro.props;
 ---
 
-<div class={`warm-background ${className}`}>
-  <div class="warm-bg-blob warm-bg-blob-1"></div>
-  <div class="warm-bg-blob warm-bg-blob-2"></div>
-  <div class="warm-bg-blob warm-bg-blob-3"></div>
-  <div class="warm-bg-blob warm-bg-blob-4"></div>
-  <div class="warm-bg-pattern"></div>
-  <div class="cedar-decor cedar-decor-1"></div>
-  <div class="cedar-decor cedar-decor-2"></div>
+<!-- 
+  Simplified background for better Speed Index
+  Decorative elements are deferred to after LCP
+-->
+<div class={`warm-background ${className}`} data-warm-bg>
+  <!-- Static gradient only - no animations initially -->
 </div>
 
 <style>
@@ -21,23 +19,31 @@ const { className = "" } = Astro.props;
     position: absolute;
     inset: 0;
     overflow: hidden;
-    /* z-index handled by parent */
-    /* Use global theme variables so the page background stays consistent */
+    /* Simple static gradient for instant render */
     background: linear-gradient(
       135deg,
       var(--bg-gradient-start, #fef9f4) 0%,
       var(--bg-secondary, #faf7f2) 35%,
       var(--bg-gradient-end, #f0ede8) 100%
     );
+    /* CSS containment for better performance */
+    contain: strict;
   }
 
+  /* Decorative elements - added via JS after LCP */
   .warm-bg-blob {
     position: absolute;
     border-radius: 50%;
     filter: blur(80px);
+    opacity: 0;
+    pointer-events: none;
+    /* Only animate after page is interactive */
+    transition: opacity 1s ease-out;
+  }
+
+  .warm-background.loaded .warm-bg-blob {
     opacity: 0.4;
     animation: warm-blob-float 20s ease-in-out infinite;
-    pointer-events: none;
   }
 
   .warm-bg-blob-1 {
@@ -50,7 +56,6 @@ const { className = "" } = Astro.props;
     );
     top: -200px;
     left: -200px;
-    animation-delay: 0s;
   }
 
   .warm-bg-blob-2 {
@@ -66,102 +71,63 @@ const { className = "" } = Astro.props;
     animation-delay: 5s;
   }
 
-  .warm-bg-blob-3 {
-    width: 700px;
-    height: 700px;
-    background: radial-gradient(
-      circle,
-      rgba(255, 248, 240, 0.5) 0%,
-      rgba(255, 248, 240, 0) 70%
-    );
-    bottom: -300px;
-    left: 30%;
-    animation-delay: 10s;
-  }
-
-  .warm-bg-blob-4 {
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(
-      circle,
-      rgba(245, 250, 245, 0.4) 0%,
-      rgba(245, 250, 245, 0) 70%
-    );
-    top: 60%;
-    right: 20%;
-    animation-delay: 15s;
-  }
-
   @keyframes warm-blob-float {
-    0%,
-    100% {
-      transform: translate(0, 0) scale(1);
-    }
-    25% {
-      transform: translate(30px, -30px) scale(1.1);
-    }
-    50% {
-      transform: translate(-20px, 20px) scale(0.9);
-    }
-    75% {
-      transform: translate(20px, 30px) scale(1.05);
-    }
-  }
-
-  .warm-bg-pattern {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-      circle at 2px 2px,
-      rgba(0, 104, 55, 0.03) 1px,
-      transparent 0
-    );
-    background-size: 40px 40px;
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  /* Cedar-themed decorative elements */
-  .cedar-decor {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 10 L55 30 L75 30 L60 45 L65 65 L50 50 L35 65 L40 45 L25 30 L45 30 Z' fill='%23006837' opacity='0.03'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    pointer-events: none;
-    z-index: -1;
-    filter: blur(2px);
-  }
-
-  .cedar-decor-1 {
-    top: 10%;
-    left: 5%;
-    transform: rotate(-15deg) scale(1.5);
-    animation: cedar-sway 15s ease-in-out infinite;
-  }
-
-  .cedar-decor-2 {
-    bottom: 15%;
-    right: 5%;
-    transform: rotate(20deg) scale(2);
-    animation: cedar-sway 20s ease-in-out infinite reverse;
-  }
-
-  @keyframes cedar-sway {
-    0%,
-    100% {
-      transform: rotate(-15deg) scale(1.5) translate(0, 0);
-    }
-    50% {
-      transform: rotate(-10deg) scale(1.55) translate(10px, 10px);
-    }
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, 20px) scale(1.05); }
   }
 
   /* アクセシビリティ */
   @media (prefers-reduced-motion: reduce) {
     .warm-bg-blob {
-      animation: none;
+      animation: none !important;
     }
   }
 </style>
+
+<script>
+  // Defer decorative elements until after LCP
+  function initWarmBackground() {
+    const bg = document.querySelector('[data-warm-bg]');
+    if (!bg) return;
+    
+    // Add decorative blobs after page is interactive
+    const blob1 = document.createElement('div');
+    blob1.className = 'warm-bg-blob warm-bg-blob-1';
+    const blob2 = document.createElement('div');
+    blob2.className = 'warm-bg-blob warm-bg-blob-2';
+    
+    bg.appendChild(blob1);
+    bg.appendChild(blob2);
+    
+    // Trigger animation after a small delay
+    requestAnimationFrame(() => {
+      bg.classList.add('loaded');
+    });
+  }
+  
+  // Initialize after LCP (use requestIdleCallback if available)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(initWarmBackground, { timeout: 3000 });
+      } else {
+        setTimeout(initWarmBackground, 2000);
+      }
+    });
+  } else {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(initWarmBackground, { timeout: 3000 });
+    } else {
+      setTimeout(initWarmBackground, 2000);
+    }
+  }
+  
+  // Support Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(initWarmBackground, { timeout: 3000 });
+    } else {
+      setTimeout(initWarmBackground, 2000);
+    }
+  });
+</script>
