@@ -32,9 +32,10 @@ interface Props {
             author?: string;
         };
     };
+    lcpImageUrl?: string; // LCP image URL for preload optimization
 }
 
-const { seo = {} } = Astro.props;
+const { seo = {}, lcpImageUrl } = Astro.props;
 
 // Get current language from URL
 const currentLang = getLangFromUrl(Astro.url);
@@ -117,6 +118,16 @@ const nav = {
             type="font/woff2"
             crossorigin="anonymous"
         />
+        
+        <!-- Preload LCP image for faster LCP -->
+        {lcpImageUrl && (
+            <link
+                rel="preload"
+                as="image"
+                href={`${lcpImageUrl}?w=384&fm=avif&q=80`}
+                fetchpriority="high"
+            />
+        )}
         
         <!-- Google Fonts: Shippori Mincho (Japanese Mincho) & Lato (Geometric Sans) - Load asynchronously after LCP -->
         <script is:inline>
@@ -207,6 +218,30 @@ const nav = {
                 overflow-wrap: break-word;
                 hyphens: none;
                 line-break: strict;
+            }
+            
+            /* Critical LCP element styles - inline for faster rendering */
+            .lecture-card-wrapper {
+                display: block;
+            }
+            
+            .lecture-card-inner {
+                display: flex;
+                flex-direction: row;
+                gap: 0;
+            }
+            
+            .lecture-card-inner > div:first-child {
+                flex-shrink: 0;
+                position: relative;
+                overflow: hidden;
+                background-color: #f3f4f6;
+            }
+            
+            .lecture-card-inner img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
         </style>
 

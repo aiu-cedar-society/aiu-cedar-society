@@ -59,9 +59,12 @@ const seo = {
         "AIU Cedar Society,秋田国際教養大学,AIU,学生団体,講演会,秋田,イベント,キャリア支援,起業家,地域活性化",
     ogType: "website" as const,
 };
+
+// Get LCP image URL for preload (first lecture image)
+const lcpImageUrl = lectures[0]?.eyecatch?.url;
 ---
 
-<Layout seo={seo}>
+<Layout seo={seo} lcpImageUrl={lcpImageUrl}>
     <div class="min-h-screen relative overflow-hidden">
         {/* Hero Section with 3D Depth */}
         <section
@@ -312,12 +315,12 @@ const seo = {
                                         <div class="aspect-[3/4] md:aspect-[210/297]">
                                             {lecture.eyecatch ? (
                                                 <Image
-                                                    src={lecture.eyecatch.url}
+                                                    src={index === 0 ? `${lecture.eyecatch.url}?w=384&fm=avif&q=80` : lecture.eyecatch.url}
                                                     width={lecture.eyecatch.width}
                                                     height={lecture.eyecatch.height}
                                                     alt={lecture.title}
                                                     format="avif"
-                                                    quality="mid"
+                                                    quality={index === 0 ? "high" : "mid"}
                                                     loading={index < 2 ? "eager" : "lazy"}
                                                     fetchpriority={index === 0 ? "high" : "auto"}
                                                     class="w-full h-full object-cover img-organic-hover"
