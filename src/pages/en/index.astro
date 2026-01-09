@@ -583,7 +583,12 @@ const seo = {
     }
 
     /* Section Header Animation */
+    /* SPEED INDEX FIX: Show immediately, animate only after page is interactive */
     .section-header {
+        opacity: 1;
+    }
+    
+    .section-header.hero-animate {
         animation: fade-in-up 0.8s ease-out 0.9s both;
     }
 
@@ -742,11 +747,16 @@ const seo = {
             if (prefersReducedMotion) return;
             
             // Add animation classes
+            // Add animation classes to hero elements
             if (heroContent) heroContent.classList.add('hero-animate');
             if (heroLine) heroLine.classList.add('hero-animate');
             if (heroText1) heroText1.classList.add('hero-animate');
             if (heroText2) heroText2.classList.add('hero-animate');
             if (heroDesc) heroDesc.classList.add('hero-animate');
+            
+            // Add animation classes to section headers
+            const sectionHeaders = document.querySelectorAll('.section-header');
+            sectionHeaders.forEach(el => el.classList.add('hero-animate'));
         }
         
         // Delay animation until after LCP (approximately 500ms)
