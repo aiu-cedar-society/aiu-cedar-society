@@ -18,7 +18,8 @@ export default defineConfig({
   },
 
   build: {
-    inlineStylesheets: 'auto',
+    // Inline small stylesheets for faster initial render
+    inlineStylesheets: 'always',
     assets: 'assets',
   },
   prefetch: {

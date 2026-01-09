@@ -314,17 +314,24 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
                                     <div class="w-24 sm:w-32 md:w-48 flex-shrink-0 relative overflow-hidden bg-gray-100">
                                         <div class="aspect-[3/4] md:aspect-[210/297]">
                                             {lecture.eyecatch ? (
-                                                <Image
-                                                    src={index === 0 ? `${lecture.eyecatch.url}?w=384&fm=avif&q=80` : lecture.eyecatch.url}
-                                                    width={lecture.eyecatch.width}
-                                                    height={lecture.eyecatch.height}
+                                                /* SPEED INDEX FIX: Use smaller image dimensions to reduce download size */
+                                                <img
+                                                    src={`${lecture.eyecatch.url}?w=384&h=512&fm=avif&q=80`}
+                                                    srcset={`
+                                                        ${lecture.eyecatch.url}?w=96&h=128&fm=avif&q=80 96w,
+                                                        ${lecture.eyecatch.url}?w=128&h=171&fm=avif&q=80 128w,
+                                                        ${lecture.eyecatch.url}?w=192&h=256&fm=avif&q=80 192w,
+                                                        ${lecture.eyecatch.url}?w=256&h=341&fm=avif&q=80 256w,
+                                                        ${lecture.eyecatch.url}?w=384&h=512&fm=avif&q=80 384w
+                                                    `}
+                                                    sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 192px"
                                                     alt={lecture.title}
-                                                    format="avif"
-                                                    quality={index === 0 ? "high" : "mid"}
+                                                    width="192"
+                                                    height="256"
                                                     loading={index < 2 ? "eager" : "lazy"}
                                                     fetchpriority={index === 0 ? "high" : "auto"}
+                                                    decoding="async"
                                                     class="w-full h-full object-cover img-organic-hover"
-                                                    sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 192px"
                                                 />
                                             ) : (
                                                 <div class="w-full h-full bg-gradient-to-br from-[#006837] to-[#005028] flex items-center justify-center">
@@ -526,8 +533,9 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
         opacity: 1;
     }
     
+    /* SPEED INDEX FIX: Remove animation-fill-mode: both to prevent opacity: 0 before animation */
     .hero-text-1.hero-animate {
-        animation: fade-in-right 0.8s ease-out 0.3s both;
+        animation: hero-text-fade 0.8s ease-out 0.3s forwards;
     }
 
     .hero-text-2 {
@@ -535,8 +543,21 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
         opacity: 1;
     }
     
+    /* SPEED INDEX FIX: Remove animation-fill-mode: both to prevent opacity: 0 before animation */
     .hero-text-2.hero-animate {
-        animation: fade-in-right 0.8s ease-out 0.3s both;
+        animation: hero-text-fade 0.8s ease-out 0.3s forwards;
+    }
+    
+    /* Custom animation that doesn't hide content initially */
+    @keyframes hero-text-fade {
+        from {
+            opacity: 0.7;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
 
     /* Hero title - responsive behavior */
@@ -593,8 +614,18 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
         max-width: 100%;
     }
     
+    /* SPEED INDEX FIX: Remove animation-fill-mode: both */
     .hero-description.hero-animate {
-        animation: fade-in 1s ease-out 0.7s both;
+        animation: hero-desc-fade 1s ease-out 0.7s forwards;
+    }
+    
+    @keyframes hero-desc-fade {
+        from {
+            opacity: 0.7;
+        }
+        to {
+            opacity: 1;
+        }
     }
     
     /* Prevent breaks within sentences - only allow break at <br /> */
@@ -653,8 +684,20 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
         opacity: 1;
     }
     
+    /* SPEED INDEX FIX: Remove animation-fill-mode: both */
     .section-header.hero-animate {
-        animation: fade-in-up 0.8s ease-out 0.9s both;
+        animation: section-fade-up 0.8s ease-out 0.9s forwards;
+    }
+    
+    @keyframes section-fade-up {
+        from {
+            opacity: 0.7;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Keyframes */

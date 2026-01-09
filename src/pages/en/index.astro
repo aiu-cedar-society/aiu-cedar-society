@@ -562,24 +562,47 @@ const seo = {
         opacity: 1;
     }
     
+    /* SPEED INDEX FIX: Remove animation-fill-mode: both */
     .hero-text-1.hero-animate {
-        animation: fade-in-right 0.8s ease-out 0.3s both;
+        animation: hero-text-fade 0.8s ease-out 0.3s forwards;
     }
 
     .hero-text-2 {
         opacity: 1;
     }
     
+    /* SPEED INDEX FIX: Remove animation-fill-mode: both */
     .hero-text-2.hero-animate {
-        animation: fade-in-right 0.8s ease-out 0.5s both;
+        animation: hero-text-fade 0.8s ease-out 0.5s forwards;
+    }
+    
+    @keyframes hero-text-fade {
+        from {
+            opacity: 0.7;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
 
     .hero-description {
         opacity: 1;
     }
     
+    /* SPEED INDEX FIX: Remove animation-fill-mode: both */
     .hero-description.hero-animate {
-        animation: fade-in 1s ease-out 0.7s both;
+        animation: hero-desc-fade 1s ease-out 0.7s forwards;
+    }
+    
+    @keyframes hero-desc-fade {
+        from {
+            opacity: 0.7;
+        }
+        to {
+            opacity: 1;
+        }
     }
 
     /* Section Header Animation */
@@ -588,8 +611,20 @@ const seo = {
         opacity: 1;
     }
     
+    /* SPEED INDEX FIX: Remove animation-fill-mode: both */
     .section-header.hero-animate {
-        animation: fade-in-up 0.8s ease-out 0.9s both;
+        animation: section-fade-up 0.8s ease-out 0.9s forwards;
+    }
+    
+    @keyframes section-fade-up {
+        from {
+            opacity: 0.7;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Keyframes */
