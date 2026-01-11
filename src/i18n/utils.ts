@@ -35,6 +35,7 @@ export function getAlternateLang(currentLang: Lang): Lang {
 
 /**
  * Get the URL for the alternate language version of the current page
+ * Ensures trailing slash consistency to prevent canonical/hreflang mismatch
  */
 export function getAlternateUrl(url: URL, targetLang: Lang): string {
     const currentLang = getLangFromUrl(url);
@@ -47,7 +48,13 @@ export function getAlternateUrl(url: URL, targetLang: Lang): string {
 
     // Add target language prefix if not default
     if (targetLang === 'en') {
-        pathname = '/en' + (pathname === '/' ? '' : pathname);
+        // Ensure trailing slash for consistency with canonical URLs
+        pathname = '/en' + (pathname === '/' ? '/' : pathname);
+    }
+
+    // Ensure trailing slash for all paths (consistency with Astro's default behavior)
+    if (!pathname.endsWith('/')) {
+        pathname = pathname + '/';
     }
 
     return pathname;

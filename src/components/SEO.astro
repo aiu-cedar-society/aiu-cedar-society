@@ -27,7 +27,10 @@ const siteUrl = Astro.site || 'https://aiu-cedar-society.com';
 const siteName = 'AIU Cedar Society';
 const currentLang = getLangFromUrl(Astro.url);
 const currentPath = Astro.url.pathname;
-const currentUrl = new URL(currentPath, siteUrl).href;
+
+// Ensure trailing slash consistency for canonical URL
+const normalizedPath = currentPath.endsWith('/') ? currentPath : currentPath + '/';
+const currentUrl = new URL(normalizedPath, siteUrl).href;
 
 // 代替言語URLを生成
 const alternateLang = currentLang === 'ja' ? 'en' : 'ja';
@@ -57,7 +60,7 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteU
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImageUrl} />
 <meta property="og:site_name" content={siteName} />
-<meta property="og:locale" content="ja_JP" />
+<meta property="og:locale" content={currentLang === 'ja' ? 'ja_JP' : 'en_US'} />
 
 {article && ogType === 'article' && (
   <>
