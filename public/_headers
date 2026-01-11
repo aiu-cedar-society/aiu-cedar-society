@@ -1,0 +1,59 @@
+# Cloudflare Pages headers configuration
+# https://developers.cloudflare.com/pages/platform/headers
+
+# HTML pages - shorter cache, revalidate on each request
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/about/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/events/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/en/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/lectures/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/media
+  Cache-Control: public, max-age=0, must-revalidate
+
+/faq
+  Cache-Control: public, max-age=0, must-revalidate
+
+/sponsors
+  Cache-Control: public, max-age=0, must-revalidate
+
+/contact
+  Cache-Control: public, max-age=0, must-revalidate
+
+/speaker-request
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Static assets - long cache with immutable
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=86400
+
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# Chunks (hashed filenames)
+/chunks/*
+  Cache-Control: public, max-age=31536000, immutable
