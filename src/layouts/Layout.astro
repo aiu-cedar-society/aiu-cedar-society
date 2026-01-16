@@ -605,13 +605,25 @@ const nav = {
             }
 
             /* Ensure body and all interactive elements remain clickable */
+            /* IMPORTANT: Exclude mobile menu elements to prevent hidden links from intercepting clicks */
             body,
-            a,
-            button,
-            [role="button"],
+            a:not(#mobile-menu a):not(#mobile-menu button),
+            button:not(#mobile-menu button),
+            [role="button"]:not(#mobile-menu [role="button"]),
             input,
             select,
             textarea {
+                pointer-events: auto !important;
+            }
+
+            /* CRITICAL FIX: Ensure mobile menu links are only clickable when menu is open */
+            #mobile-menu:not(.is-open) a,
+            #mobile-menu:not(.is-open) button {
+                pointer-events: none !important;
+            }
+
+            #mobile-menu.is-open a,
+            #mobile-menu.is-open button {
                 pointer-events: auto !important;
             }
 

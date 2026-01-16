@@ -60,7 +60,10 @@ const breadcrumbItems = [
                     <div class="absolute top-0 left-0 w-px h-full bg-[#006837]">
                     </div>
                     <h1 class="typography-hero pl-6">
-                        よくある<span class="text-[#006837] typography-hero-accent">ご質問</span>
+                        よくある<span
+                            class="text-[#006837] typography-hero-accent"
+                            >ご質問</span
+                        >
                     </h1>
                 </div>
                 <p
@@ -86,11 +89,11 @@ const breadcrumbItems = [
                                     aria-controls={`faq-content-${index}`}
                                     data-index={index}
                                 >
-                                    <div class="flex items-start gap-4">
+                                    <div class="flex items-start gap-4 min-w-0 flex-1">
                                         <span class="flex-shrink-0 w-8 h-8 bg-[#006837] bg-opacity-10 text-[#006837] rounded-full flex items-center justify-center font-bold text-sm transition-transform">
                                             Q
                                         </span>
-                                        <span class="font-bold text-gray-900 text-left leading-relaxed">
+                                        <span class="font-bold text-gray-900 text-left leading-relaxed break-words min-w-0">
                                             {faq.question}
                                         </span>
                                     </div>
@@ -114,12 +117,12 @@ const breadcrumbItems = [
                                     data-content={index}
                                     aria-hidden="true"
                                 >
-                                    <div class="faq-content-inner flex items-center gap-4 pl-0">
+                                    <div class="faq-content-inner flex items-start gap-4 pl-0 min-w-0">
                                         <span class="flex-shrink-0 w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center font-bold text-sm">
                                             A
                                         </span>
                                         <div
-                                            class="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+                                            class="prose prose-sm max-w-none text-gray-700 leading-relaxed min-w-0 break-words"
                                             set:html={faq.answer}
                                         />
                                     </div>
@@ -153,13 +156,17 @@ const breadcrumbItems = [
             </div>
 
             {/* Contact CTA */}
-            <div class="mt-12 bg-[#006837] rounded-lg p-6 md:p-8 max-w-3xl mx-auto">
+            <div
+                class="mt-12 bg-[#006837] rounded-lg p-6 md:p-8 max-w-3xl mx-auto"
+            >
                 <div class="md:flex md:items-center md:justify-between gap-4">
                     <div class="mb-4 md:mb-0">
                         <h3 class="text-lg font-bold text-white mb-2">
                             お探しの質問が見つかりませんか？
                         </h3>
-                        <p class="text-white text-opacity-90 text-sm md:text-base">
+                        <p
+                            class="text-white text-opacity-90 text-sm md:text-base"
+                        >
                             その他のご質問やご不明な点がございましたら、お気軽にお問い合わせください。
                         </p>
                     </div>
@@ -233,7 +240,10 @@ const breadcrumbItems = [
                     icon?.classList.remove("rotate-180");
                     // remove open styles after collapse finishes
                     if (card) {
-                        setTimeout(() => card.classList.remove("faq-open"), 280);
+                        setTimeout(
+                            () => card.classList.remove("faq-open"),
+                            280,
+                        );
                     }
                 });
             }
@@ -265,8 +275,14 @@ const breadcrumbItems = [
                             // after animation, release max-height so layout is always correct
                             const onEnd = (ev) => {
                                 if (ev.propertyName !== "max-height") return;
-                                content.removeEventListener("transitionend", onEnd);
-                                if (button.getAttribute("aria-expanded") === "true") {
+                                content.removeEventListener(
+                                    "transitionend",
+                                    onEnd,
+                                );
+                                if (
+                                    button.getAttribute("aria-expanded") ===
+                                    "true"
+                                ) {
                                     content.style.maxHeight = "none";
                                 }
                             };
@@ -303,7 +319,9 @@ const breadcrumbItems = [
 
 <style>
     .faq-card {
-        transition: border-color 0.2s ease, box-shadow 0.2s ease,
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
             background-color 0.2s ease;
     }
 
@@ -351,7 +369,9 @@ const breadcrumbItems = [
     }
 
     .faq-icon {
-        transition: transform 0.25s ease, color 0.2s ease;
+        transition:
+            transform 0.25s ease,
+            color 0.2s ease;
     }
 
     .faq-card.faq-open .faq-icon {

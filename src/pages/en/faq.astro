@@ -58,7 +58,9 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
                     <div class="absolute top-0 left-0 w-px h-full bg-[#006837]">
                     </div>
                     <h1 class="typography-hero pl-6">
-                        Frequently<span class="text-[#006837] typography-hero-accent">
+                        Frequently<span
+                            class="text-[#006837] typography-hero-accent"
+                        >
                             Asked Questions</span
                         >
                     </h1>
@@ -75,20 +77,18 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
                 {
                     faqs.length > 0 ? (
                         faqs.map((faq, index) => (
-                            <div
-                                class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 faq-card"
-                            >
+                            <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 faq-card">
                                 <button
                                     class="faq-button w-full px-6 py-5 text-left flex items-center justify-between transition-colors"
                                     aria-expanded="false"
                                     aria-controls={`faq-content-${index}`}
                                     data-index={index}
                                 >
-                                    <div class="flex items-start gap-4">
+                                    <div class="flex items-start gap-4 min-w-0 flex-1">
                                         <span class="flex-shrink-0 w-8 h-8 bg-[#006837] bg-opacity-10 text-[#006837] rounded-full flex items-center justify-center font-bold text-sm">
                                             Q
                                         </span>
-                                        <span class="font-bold text-gray-900 text-left leading-relaxed">
+                                        <span class="font-bold text-gray-900 text-left leading-relaxed break-words min-w-0">
                                             {getContent(
                                                 (faq as any).question_en,
                                                 faq.question,
@@ -115,12 +115,12 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
                                     data-content={index}
                                     aria-hidden="true"
                                 >
-                                    <div class="faq-content-inner flex items-center gap-4 pl-0">
+                                    <div class="faq-content-inner flex items-start gap-4 pl-0 min-w-0">
                                         <span class="flex-shrink-0 w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center font-bold text-sm">
                                             A
                                         </span>
                                         <div
-                                            class="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+                                            class="prose prose-sm max-w-none text-gray-700 leading-relaxed min-w-0 break-words"
                                             set:html={getContent(
                                                 (faq as any).answer_en,
                                                 faq.answer,
@@ -157,14 +157,19 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
             </div>
 
             {/* Contact CTA */}
-            <div class="mt-12 bg-[#006837] rounded-lg p-6 md:p-8 max-w-3xl mx-auto">
+            <div
+                class="mt-12 bg-[#006837] rounded-lg p-6 md:p-8 max-w-3xl mx-auto"
+            >
                 <div class="md:flex md:items-center md:justify-between gap-4">
                     <div class="mb-4 md:mb-0">
                         <h3 class="text-lg font-bold text-white mb-2">
                             Can't find what you're looking for?
                         </h3>
-                        <p class="text-white text-opacity-90 text-sm md:text-base">
-                            If you have any other questions, please feel free to contact us.
+                        <p
+                            class="text-white text-opacity-90 text-sm md:text-base"
+                        >
+                            If you have any other questions, please feel free to
+                            contact us.
                         </p>
                     </div>
                     <a
@@ -235,7 +240,10 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
                     }
                     icon?.classList.remove("rotate-180");
                     if (card) {
-                        setTimeout(() => card.classList.remove("faq-open"), 280);
+                        setTimeout(
+                            () => card.classList.remove("faq-open"),
+                            280,
+                        );
                     }
                 });
             }
@@ -265,8 +273,14 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
 
                             const onEnd = (ev) => {
                                 if (ev.propertyName !== "max-height") return;
-                                content.removeEventListener("transitionend", onEnd);
-                                if (button.getAttribute("aria-expanded") === "true") {
+                                content.removeEventListener(
+                                    "transitionend",
+                                    onEnd,
+                                );
+                                if (
+                                    button.getAttribute("aria-expanded") ===
+                                    "true"
+                                ) {
                                     content.style.maxHeight = "none";
                                 }
                             };
@@ -302,7 +316,9 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
 
 <style>
     .faq-card {
-        transition: border-color 0.2s ease, box-shadow 0.2s ease,
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
             background-color 0.2s ease;
     }
 
@@ -331,7 +347,9 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
     }
 
     .faq-icon {
-        transition: transform 0.25s ease, color 0.2s ease;
+        transition:
+            transform 0.25s ease,
+            color 0.2s ease;
     }
 
     .faq-card.faq-open .faq-icon {
