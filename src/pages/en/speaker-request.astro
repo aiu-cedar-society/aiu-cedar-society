@@ -51,7 +51,10 @@ const breadcrumbItems = [
                     <div class="absolute top-0 left-0 w-px h-full bg-[#006837]">
                     </div>
                     <h1 class="typography-hero pl-6">
-                        Speaker <span class="text-[#006837] typography-hero-accent">Request</span>
+                        Speaker <span
+                            class="text-[#006837] typography-hero-accent"
+                            >Request</span
+                        >
                     </h1>
                 </div>
                 <p
@@ -133,7 +136,8 @@ const breadcrumbItems = [
                         <p
                             class="text-sm text-red-600 mt-2 hidden"
                             data-error-for="speaker"
-                        ></p>
+                        >
+                        </p>
                         <p class="mt-2 text-xs text-gray-500">
                             e.g., Professor John Smith from XYZ University, CEO
                             Jane Doe of ABC Company
@@ -160,7 +164,8 @@ const breadcrumbItems = [
                         <p
                             class="text-sm text-red-600 mt-2 hidden"
                             data-error-for="reason"
-                        ></p>
+                        >
+                        </p>
                     </div>
 
                     {/* Topic Field */}
@@ -227,8 +232,7 @@ const breadcrumbItems = [
                                     cy="12"
                                     r="10"
                                     stroke="currentColor"
-                                    stroke-width="4"
-                                ></circle>
+                                    stroke-width="4"></circle>
                                 <path
                                     class="opacity-75"
                                     fill="currentColor"
@@ -248,7 +252,8 @@ const breadcrumbItems = [
                         class="text-sm text-gray-600 text-center pt-3 min-h-[1.5rem]"
                         role="status"
                         aria-live="polite"
-                    ></div>
+                    >
+                    </div>
                 </form>
             </div>
 
@@ -257,10 +262,10 @@ const breadcrumbItems = [
                 class="mt-8 bg-gray-50 rounded-lg p-6 md:p-8 border border-gray-200"
             >
                 <h3
-                    class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"
+                    class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2 min-w-0"
                 >
                     <svg
-                        class="w-5 h-5 text-[#006837]"
+                        class="w-5 h-5 text-[#006837] flex-shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -272,27 +277,43 @@ const breadcrumbItems = [
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         ></path>
                     </svg>
-                    About Requests
+                    <span class="min-w-0">About Requests</span>
                 </h3>
-                <div class="space-y-2 text-sm text-gray-600">
-                    <p>
-                        • Your requests will be considered for future lecture
-                        planning
-                    </p>
-                    <p>
-                        • We may not be able to accommodate all requests, but we
-                        value your input
-                    </p>
-                    <p>• We do not provide individual responses to requests</p>
-                    <p>
-                        • For lecture registration or general inquiries, please
-                        use the <a
-                            href="/en/contact"
-                            class="text-[#006837] hover:underline"
-                            >contact page</a
+                <ul
+                    class="space-y-2 text-sm text-gray-600 list-none overflow-hidden"
+                >
+                    <li class="flex gap-2 min-w-0">
+                        <span class="flex-shrink-0">•</span>
+                        <span class="min-w-0"
+                            >Your requests will be considered for future lecture
+                            planning</span
                         >
-                    </p>
-                </div>
+                    </li>
+                    <li class="flex gap-2 min-w-0">
+                        <span class="flex-shrink-0">•</span>
+                        <span class="min-w-0"
+                            >We may not be able to accommodate all requests, but
+                            we value your input</span
+                        >
+                    </li>
+                    <li class="flex gap-2 min-w-0">
+                        <span class="flex-shrink-0">•</span>
+                        <span class="min-w-0"
+                            >We do not provide individual responses to requests</span
+                        >
+                    </li>
+                    <li class="flex gap-2 min-w-0">
+                        <span class="flex-shrink-0">•</span>
+                        <span class="min-w-0"
+                            >For lecture registration or general inquiries,
+                            please use the <a
+                                href="/en/contact"
+                                class="text-[#006837] hover:underline"
+                                >contact page</a
+                            ></span
+                        >
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -332,8 +353,7 @@ const breadcrumbItems = [
 
                 const modal = document.getElementById("form-modal");
                 const titleEl = document.getElementById("form-modal-title");
-                const messageEl =
-                    document.getElementById("form-modal-message");
+                const messageEl = document.getElementById("form-modal-message");
                 if (!modal || !titleEl || !messageEl) return;
 
                 modal.setAttribute("data-type", type);
@@ -369,7 +389,9 @@ const breadcrumbItems = [
             function validate() {
                 let valid = true;
                 const requiredEls = Array.from(
-                    form.querySelectorAll("input[required], textarea[required]"),
+                    form.querySelectorAll(
+                        "input[required], textarea[required]",
+                    ),
                 );
                 requiredEls.forEach((el) => {
                     clearError(el);

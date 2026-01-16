@@ -341,6 +341,20 @@ const breadcrumbItems = [
         gap: 12px;
     }
 
+    /* iOS Safari text overflow fixes */
+    .faq-button > div {
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .faq-button span:not(.flex-shrink-0) {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        -webkit-hyphens: auto;
+        hyphens: auto;
+        max-width: 100%;
+    }
+
     .faq-content {
         transition: max-height 300ms ease-out;
         will-change: max-height;

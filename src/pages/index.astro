@@ -310,9 +310,9 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
                                     position="top-right"
                                 />
                                 <div class="lecture-card-inner flex flex-col md:flex-row gap-0 h-full">
-                                    {/* Image - Mobile/Tablet: Top (Landscape), Desktop: Left (Portrait) */}
+                                    {/* Image - Mobile: stacked top (landscape), Desktop: left side (portrait) */}
                                     <div class="w-full md:w-48 flex-shrink-0 relative overflow-hidden bg-gray-100">
-                                        <div class="aspect-video md:aspect-[210/297] w-full h-full">
+                                        <div class="aspect-video md:aspect-[3/4] w-full">
                                             {lecture.eyecatch ? (
                                                 /* SPEED INDEX FIX: Use smaller image dimensions to reduce download size */
                                                 <img
@@ -320,12 +320,12 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
                                                     srcset={`
                                                         ${lecture.eyecatch.url}?w=320&h=180&fm=avif&q=80 320w,
                                                         ${lecture.eyecatch.url}?w=640&h=360&fm=avif&q=80 640w,
-                                                        ${lecture.eyecatch.url}?w=384&h=512&fm=avif&q=80 768w
-                                                    `}
+                                                        ${lecture.eyecatch.url}?w=192&h=256&fm=avif&q=80 768w
+                                                     `}
                                                     sizes="(max-width: 767px) 100vw, 192px"
                                                     alt={lecture.title}
-                                                    width="192"
-                                                    height="256"
+                                                    width="640"
+                                                    height="360"
                                                     loading={index < 2 ? "eager" : "lazy"}
                                                     fetchpriority={index === 0 ? "high" : "auto"}
                                                     decoding="async"
