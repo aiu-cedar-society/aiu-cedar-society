@@ -5,7 +5,7 @@ interface BentoItem {
   href: string;
   icon?: string;
   image?: string;
-  size?: 'small' | 'medium' | 'large' | 'wide' | 'tall';
+  size?: "small" | "medium" | "large" | "wide" | "tall";
   color?: string;
 }
 
@@ -14,47 +14,54 @@ interface Props {
   className?: string;
 }
 
-const { items, className = '' } = Astro.props;
+const { items, className = "" } = Astro.props;
 
 const sizeClasses = {
-  small: 'bento-small',
-  medium: 'bento-medium',
-  large: 'bento-large',
-  wide: 'bento-wide',
-  tall: 'bento-tall',
+  small: "bento-small",
+  medium: "bento-medium",
+  large: "bento-large",
+  wide: "bento-wide",
+  tall: "bento-tall",
 };
 ---
 
 <div class={`bento-grid ${className}`}>
-  {items.map((item, index) => (
-    <a
-      href={item.href}
-      class={`bento-item ${sizeClasses[item.size || 'medium']} scroll-reveal-slide-up scroll-reveal-stagger-${Math.min(index + 1, 5)}`}
-      style={item.color ? `--bento-accent: ${item.color}` : ''}
-    >
-      {item.image && (
-        <div class="bento-image">
-          <img src={item.image} alt={item.title} loading="lazy" />
-          <div class="bento-image-overlay"></div>
-        </div>
-      )}
-      
-      <div class="bento-content">
-        {item.icon && (
-          <div class="bento-icon" set:html={item.icon}></div>
+  {
+    items.map((item, index) => (
+      <a
+        href={item.href}
+        class={`bento-item ${sizeClasses[item.size || "medium"]} scroll-reveal-slide-up scroll-reveal-stagger-${Math.min(index + 1, 5)}`}
+        style={item.color ? `--bento-accent: ${item.color}` : ""}
+      >
+        {item.image && (
+          <div class="bento-image">
+            <img src={item.image} alt={item.title} loading="lazy" />
+            <div class="bento-image-overlay" />
+          </div>
         )}
-        <h3 class="bento-title">{item.title}</h3>
-        {item.description && (
-          <p class="bento-description">{item.description}</p>
-        )}
-        <div class="bento-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
+
+        <div class="bento-content">
+          {item.icon && <div class="bento-icon" set:html={item.icon} />}
+          <h3 class="bento-title">{item.title}</h3>
+          {item.description && (
+            <p class="bento-description">{item.description}</p>
+          )}
+          <div class="bento-arrow">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
         </div>
-      </div>
-    </a>
-  ))}
+      </a>
+    ))
+  }
 </div>
 
 <style>
@@ -93,7 +100,15 @@ const sizeClasses = {
     will-change: transform;
     transform: translateZ(0);
   }
-  
+
+  /* Focus visible state for accessibility */
+  .bento-item:focus-visible {
+    /* Global style handles the ring, but we make sure z-index is high enough */
+    z-index: 10;
+    /* Ensure border doesn't clash */
+    border-color: #006837;
+  }
+
   /* Subgrid support for browsers that support it (progressive enhancement) */
   @supports (grid-template-columns: subgrid) {
     .bento-item {
@@ -110,7 +125,7 @@ const sizeClasses = {
   }
 
   .bento-item::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -126,10 +141,21 @@ const sizeClasses = {
     transform: scaleY(1);
   }
 
+  /* Prevent focus ring from being clipped by overflow:hidden if possible, but overflow:hidden is needed for image.
+     With global outline, it should be fine as outline sits outside border-box. 
+     However, if card is in a container with overflow hidden, it might be clipped. 
+     BentoGrid container has padding which helps. */
+
   .bento-image {
     position: absolute;
     inset: 0;
     z-index: 0;
+    /* Ensure image scales slightly on hover for effect */
+    transition: transform 0.6s ease;
+  }
+
+  .bento-item:hover .bento-image {
+    transform: scale(1.05);
   }
 
   .bento-image img {
@@ -176,7 +202,7 @@ const sizeClasses = {
   }
 
   .bento-title {
-    font-family: var(--font-mincho, 'Shippori Mincho', serif);
+    font-family: var(--font-mincho, "Shippori Mincho", serif);
     font-size: 1.5rem;
     font-weight: 600;
     color: var(--color-gray-900, #111827);
@@ -189,7 +215,7 @@ const sizeClasses = {
 
   .bento-description {
     font-size: 0.875rem;
-    color: var(--color-gray-600, #4B5563);
+    color: var(--color-gray-600, #4b5563);
     line-height: 1.6;
   }
 
@@ -280,12 +306,13 @@ const sizeClasses = {
     .bento-item {
       transition: none;
     }
-    
+
     .bento-item:hover {
       transform: none;
     }
+
+    .bento-image {
+      transition: none;
+    }
   }
 </style>
-
-
-

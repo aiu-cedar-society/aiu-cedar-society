@@ -1,0 +1,40 @@
+---
+interface Props {
+    targetId?: string;
+    label?: string;
+}
+
+const { targetId = "main-content", label = "メインコンテンツへスキップ" } =
+    Astro.props;
+---
+
+<a href={`#${targetId}`} class="skip-link">
+    {label}
+</a>
+
+<style>
+    .skip-link {
+        position: absolute;
+        top: -9999px;
+        left: 1rem;
+        z-index: 9999;
+        padding: 1rem 1.5rem;
+        background: #006837;
+        color: white;
+        text-decoration: none;
+        border-radius: 0 0 8px 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease-out;
+        opacity: 0;
+    }
+
+    .skip-link:focus {
+        top: 0;
+        opacity: 1;
+        transform: translateY(0);
+        outline: 3px solid #e6b422; /* Yamabuki yellow for high contrast against green */
+        outline-offset: -3px;
+    }
+</style>

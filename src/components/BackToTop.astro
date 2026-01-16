@@ -1,0 +1,126 @@
+---
+
+---
+
+<button
+    id="back-to-top"
+    class="back-to-top"
+    aria-label="ページトップへ戻る"
+    type="button"
+>
+    <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <path d="M12 19V5M5 12l7-7 7 7"></path>
+    </svg>
+</button>
+
+<style>
+    .back-to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 50%;
+        background-color: white;
+        color: #006837;
+        border: 1px solid rgba(0, 104, 55, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 104, 55, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 40;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .back-to-top:hover {
+        background-color: #006837;
+        color: white;
+        box-shadow: 0 8px 24px rgba(0, 104, 55, 0.25);
+        transform: translateY(-4px);
+    }
+
+    .back-to-top:focus-visible {
+        outline: 3px solid #006837;
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 640px) {
+        .back-to-top {
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 3rem;
+            height: 3rem;
+        }
+
+        .back-to-top svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    /* Dark mode support */
+    :global([data-theme="dark"]) .back-to-top {
+        background-color: #2c2c2e;
+        color: #32d74b;
+        border-color: #38383a;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    :global([data-theme="dark"]) .back-to-top:hover {
+        background-color: #32d74b;
+        color: #000000;
+    }
+</style>
+
+<script>
+    function initBackToTop() {
+        const button = document.getElementById("back-to-top");
+        if (!button) return;
+
+        const toggleVisibility = () => {
+            if (window.scrollY > 300) {
+                button.classList.add("visible");
+            } else {
+                button.classList.remove("visible");
+            }
+        };
+
+        const scrollToTop = () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+            });
+        };
+
+        window.addEventListener("scroll", toggleVisibility);
+        button.addEventListener("click", scrollToTop);
+
+        // Initial check
+        toggleVisibility();
+    }
+
+    // Run on initial load
+    initBackToTop();
+
+    // Re-run on View Transitions navigation
+    document.addEventListener("astro:page-load", initBackToTop);
+</script>

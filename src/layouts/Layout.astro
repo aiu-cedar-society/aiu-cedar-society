@@ -10,9 +10,12 @@ import "../styles/view-transitions-enhanced.css";
 import FluidGradient from "../components/FluidGradient.astro";
 import SEO from "../components/SEO.astro";
 import SchemaOrganization from "../components/SchemaOrganization.astro";
+import SchemaWebSite from "../components/SchemaWebSite.astro";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import { ClientRouter } from "astro:transitions";
 import ReadingProgress from "../components/ReadingProgress.astro";
+import SkipLink from "../components/SkipLink.astro";
+import BackToTop from "../components/BackToTop.astro";
 
 import {
     getLangFromUrl,
@@ -1014,33 +1017,37 @@ const nav = {
                 contain: layout;
             }
 
-            /* Enhanced Focus for WCAG 2.2 Compliance */
+            /* Enhanced Focus for WCAG 2.2 Compliance - Digital Agency Standard */
+            /* Double-ring focus indicator for visibility on all backgrounds */
             a:focus-visible,
             button:focus-visible,
             input:focus-visible,
             textarea:focus-visible,
             select:focus-visible {
-                outline: 3px solid #006837;
-                outline-offset: 3px;
+                outline: 2px solid #006837;
+                outline-offset: 2px;
+                box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9);
                 border-radius: 4px;
                 position: relative;
                 z-index: 100; /* Ensure focus is not obscured */
-                transition: outline-offset 0.2s ease;
+                transition: outline-offset 0.1s ease;
             }
 
-            /* Focus Appearance - Enhanced contrast */
+            /* Focus Appearance - Enhanced contrast for Dark Mode */
             [data-theme="dark"] a:focus-visible,
             [data-theme="dark"] button:focus-visible,
             [data-theme="dark"] input:focus-visible,
             [data-theme="dark"] textarea:focus-visible,
             [data-theme="dark"] select:focus-visible {
                 outline-color: #32d74b;
+                box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.9);
             }
 
             /* Remove outline for mouse users */
             a:focus:not(:focus-visible),
             button:focus:not(:focus-visible) {
                 outline: none;
+                box-shadow: none;
             }
 
             /* Touch Target Size Optimization - WCAG 2.2 */
@@ -1442,6 +1449,7 @@ const nav = {
 
         <!-- Structured Data -->
         <SchemaOrganization />
+        <SchemaWebSite />
 
         <!-- MailerLite Universal -->
         <script>
@@ -1470,6 +1478,7 @@ const nav = {
     <body
         class="text-[#333333] font-sans antialiased min-h-screen flex flex-col tracking-wide font-normal selection:bg-[#006837] selection:text-white relative"
     >
+        <SkipLink targetId="main-content" />
         <ReadingProgress />
         <!-- Background Layer (Washi Texture + Fluid Gradient) -->
         <div class="fixed inset-0 z-[-1] pointer-events-none">
@@ -2163,6 +2172,9 @@ const nav = {
                             aria-label={currentLang === "en" ? "Menu" : "メニュー"}
                         >
                             <a href={l("/about")} class="mobile-grid-item">
+                                <svg class="w-6 h-6 mb-2 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 <div class="mobile-grid-title">
                                     {nav.aboutUs}
                                 </div>
@@ -2171,6 +2183,9 @@ const nav = {
                                 href={l("/about/history")}
                                 class="mobile-grid-item"
                             >
+                                <svg class="w-6 h-6 mb-2 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 <div class="mobile-grid-title">
                                     {nav.history}
                                 </div>
@@ -2179,6 +2194,9 @@ const nav = {
                                 href={l("/about/members")}
                                 class="mobile-grid-item"
                             >
+                                <svg class="w-6 h-6 mb-2 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
                                 <div class="mobile-grid-title">
                                     {nav.members}
                                 </div>
@@ -2187,6 +2205,9 @@ const nav = {
                                 href={l("/events/upcoming")}
                                 class="mobile-grid-item"
                             >
+                                <svg class="w-6 h-6 mb-2 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
                                 <div class="mobile-grid-title">
                                     {nav.upcoming}
                                 </div>
@@ -2195,22 +2216,34 @@ const nav = {
                                 href={l("/events/past")}
                                 class="mobile-grid-item"
                             >
+                                <svg class="w-6 h-6 mb-2 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
                                 <div class="mobile-grid-title">
                                     {nav.past}
                                 </div>
                             </a>
                             <a href={l("/media")} class="mobile-grid-item">
+                                <svg class="w-6 h-6 mb-2 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
                                 <div class="mobile-grid-title">
                                     {nav.media}
                                 </div>
                             </a>
                             <a href={l("/faq")} class="mobile-grid-item">
+                                <svg class="w-6 h-6 mb-2 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 <div class="mobile-grid-title">{nav.faq}</div>
                             </a>
                             <a
                                 href={l("/sponsors")}
                                 class="mobile-grid-item"
                             >
+                                <svg class="w-6 h-6 mb-2 text-[#006837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
                                 <div class="mobile-grid-title">
                                     {nav.sponsors}
                                 </div>
@@ -3656,6 +3689,8 @@ const nav = {
                 measureWebVitals();
             });
         </script>
+        <!-- Back to Top Button -->
+        <BackToTop />
     </body>
 </html>
 

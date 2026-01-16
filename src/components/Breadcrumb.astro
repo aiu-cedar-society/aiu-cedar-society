@@ -12,7 +12,10 @@ const { items } = Astro.props;
 
 // ホームアイテムかどうかを判定
 const isHomeItem = (item: BreadcrumbItem, index: number) => {
-    return index === 0 && (item.label === "ホーム" || item.label === "Home" || item.href === "/");
+    return (
+        index === 0 &&
+        (item.label === "ホーム" || item.label === "Home" || item.href === "/")
+    );
 };
 ---
 
@@ -26,7 +29,7 @@ const isHomeItem = (item: BreadcrumbItem, index: number) => {
             items.map((item, index) => {
                 const isHome = isHomeItem(item, index);
                 const isLast = index === items.length - 1;
-                
+
                 return (
                     <li
                         class="breadcrumb-item"
@@ -66,6 +69,7 @@ const isHomeItem = (item: BreadcrumbItem, index: number) => {
                             >
                                 {item.label}
                             </span>
+                            <link itemprop="item" href={new URL(Astro.url.pathname, Astro.site || "https://aiu-cedar-society.com").href} />
                         )}
                         <meta itemprop="position" content={String(index + 1)} />
                         {!isLast && (
@@ -122,7 +126,7 @@ const isHomeItem = (item: BreadcrumbItem, index: number) => {
         gap: 0.375rem;
         padding: 0.375rem 0.625rem;
         border-radius: 0.5rem;
-        color: #6b7280;
+        color: #4b5563; /* Gray-600 for better contrast */
         text-decoration: none;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         font-weight: 500;
@@ -139,16 +143,15 @@ const isHomeItem = (item: BreadcrumbItem, index: number) => {
         transform: translateY(0);
     }
 
+    /* Global focus style will apply, but we ensure radius matches */
     .breadcrumb-link:focus-visible {
-        outline: 2px solid #006837;
-        outline-offset: 2px;
         border-radius: 0.5rem;
     }
 
     /* ホームアイコン */
     .breadcrumb-home-icon {
-        width: 1rem;
-        height: 1rem;
+        width: 1.125rem; /* Slightly larger */
+        height: 1.125rem;
         flex-shrink: 0;
         transition: transform 0.2s ease;
     }
@@ -165,8 +168,8 @@ const isHomeItem = (item: BreadcrumbItem, index: number) => {
         border-radius: 0.5rem;
         color: #111827;
         font-weight: 600;
-        background-color: rgba(0, 104, 55, 0.1);
-        border: 1px solid rgba(0, 104, 55, 0.2);
+        background-color: rgba(0, 104, 55, 0.05); /* Softer background */
+        border: 1px solid rgba(0, 104, 55, 0.15);
         position: relative;
     }
 
@@ -174,13 +177,13 @@ const isHomeItem = (item: BreadcrumbItem, index: number) => {
     .breadcrumb-separator {
         width: 1rem;
         height: 1rem;
-        color: #d1d5db;
+        color: #9ca3af; /* Gray-400 for better visibility */
         flex-shrink: 0;
         transition: color 0.2s ease;
     }
 
     .breadcrumb-item:hover .breadcrumb-separator {
-        color: #9ca3af;
+        color: #6b7280;
     }
 
     /* モバイル対応 */
@@ -202,12 +205,13 @@ const isHomeItem = (item: BreadcrumbItem, index: number) => {
         }
 
         .breadcrumb-home-icon {
-            width: 0.875rem;
-            height: 0.875rem;
+            width: 1rem;
+            height: 1rem;
         }
 
         /* 長いパンくずリストの場合、最初と最後だけ表示 */
-        .breadcrumb-list:has(> :nth-child(5)) .breadcrumb-item:not(:first-child):not(:last-child) {
+        .breadcrumb-list:has(> :nth-child(5))
+            .breadcrumb-item:not(:first-child):not(:last-child) {
             display: none;
         }
 
@@ -235,11 +239,11 @@ const isHomeItem = (item: BreadcrumbItem, index: number) => {
     }
 
     [data-theme="dark"] .breadcrumb-separator {
-        color: #4b5563;
+        color: #6b7280;
     }
 
     [data-theme="dark"] .breadcrumb-item:hover .breadcrumb-separator {
-        color: #6b7280;
+        color: #9ca3af;
     }
 
     /* アニメーション */
@@ -261,19 +265,15 @@ const isHomeItem = (item: BreadcrumbItem, index: number) => {
     .breadcrumb-item:nth-child(1) {
         animation-delay: 0s;
     }
-
     .breadcrumb-item:nth-child(2) {
         animation-delay: 0.05s;
     }
-
     .breadcrumb-item:nth-child(3) {
         animation-delay: 0.1s;
     }
-
     .breadcrumb-item:nth-child(4) {
         animation-delay: 0.15s;
     }
-
     .breadcrumb-item:nth-child(5) {
         animation-delay: 0.2s;
     }
