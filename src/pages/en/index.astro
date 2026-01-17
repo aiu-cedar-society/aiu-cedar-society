@@ -317,48 +317,40 @@ const seo = {
                             class="lecture-card block group card-tilt"
                         >
                             <div
-                                class={`bg-white/90 rounded-lg shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1}`}
+                                class={`lecture-card-wrapper bg-white/90 rounded-xl shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} relative`}
                                 data-animate
                                 data-animate-delay={index + 1}
                             >
-                                <div class="flex flex-row gap-0">
-                                    {/* Image */}
-                                    <div class="w-24 sm:w-32 md:w-48 flex-shrink-0 relative overflow-hidden bg-gray-100">
-                                        <div class="aspect-[3/4] md:aspect-[210/297]">
+                                {/* Mobile: Image top, Text bottom */}
+                                {/* Tablet+: Image left, Text right */}
+                                <div class="lecture-card-inner flex flex-col sm:flex-row h-full">
+                                    {/* Image - 9:16 Portrait */}
+                                    <div class="sm:w-32 md:w-40 lg:w-48 flex-shrink-0 relative overflow-hidden bg-gray-100">
+                                        <div class="aspect-[3/4] sm:aspect-[9/16] w-full h-full">
                                             {lecture.eyecatch ? (
                                                 <img
-                                                    src={`${lecture.eyecatch.url}?w=192&fm=webp&q=60`}
+                                                    src={`${lecture.eyecatch.url}?w=384&h=683&fm=avif&q=80`}
                                                     srcset={`
-                                                        ${lecture.eyecatch.url}?w=96&fm=webp&q=60 96w,
-                                                        ${lecture.eyecatch.url}?w=128&fm=webp&q=60 128w,
-                                                        ${lecture.eyecatch.url}?w=192&fm=webp&q=60 192w,
-                                                        ${lecture.eyecatch.url}?w=256&fm=webp&q=60 256w,
-                                                        ${lecture.eyecatch.url}?w=384&fm=webp&q=60 384w
+                                                        ${lecture.eyecatch.url}?w=192&h=341&fm=avif&q=80 192w,
+                                                        ${lecture.eyecatch.url}?w=256&h=455&fm=avif&q=80 256w,
+                                                        ${lecture.eyecatch.url}?w=384&h=683&fm=avif&q=80 384w
                                                     `}
-                                                    sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 192px"
+                                                    sizes="(max-width: 639px) 100vw, (max-width: 1023px) 160px, 192px"
                                                     alt={getContent(
                                                         lecture.title_en,
                                                         lecture.title,
                                                     )}
-                                                    width="192"
-                                                    height="256"
-                                                    loading={
-                                                        index < 2
-                                                            ? "eager"
-                                                            : "lazy"
-                                                    }
-                                                    fetchpriority={
-                                                        index === 0
-                                                            ? "high"
-                                                            : "auto"
-                                                    }
+                                                    width="384"
+                                                    height="683"
+                                                    loading={index < 2 ? "eager" : "lazy"}
+                                                    fetchpriority={index === 0 ? "high" : "auto"}
                                                     decoding="async"
                                                     class="w-full h-full object-cover img-organic-hover"
                                                 />
                                             ) : (
                                                 <div class="w-full h-full bg-gradient-to-br from-[#006837] to-[#005028] flex items-center justify-center">
                                                     <svg
-                                                        class="w-10 h-10 md:w-16 md:h-16 text-white opacity-40"
+                                                        class="w-12 h-12 text-white opacity-40"
                                                         fill="none"
                                                         viewBox="0 0 24 24"
                                                         stroke="currentColor"
@@ -376,9 +368,10 @@ const seo = {
                                     </div>
 
                                     {/* Content */}
-                                    <div class="flex-1 p-4 sm:p-5 md:p-6 flex flex-col justify-between min-w-0">
+                                    <div class="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
                                         <div>
-                                            <div class="flex items-center gap-2 text-xs text-gray-500 mb-2 md:mb-3">
+                                            {/* Date badge */}
+                                            <div class="inline-flex items-center gap-1.5 text-xs text-[#006837] font-medium bg-[#006837]/5 px-2.5 py-1 rounded-full mb-3">
                                                 <svg
                                                     class="w-3.5 h-3.5 flex-shrink-0"
                                                     fill="none"
@@ -392,43 +385,43 @@ const seo = {
                                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                                     />
                                                 </svg>
-                                                <span class="truncate">
-                                                    {formatDate(
-                                                        lecture.event_date,
-                                                        lang,
-                                                    )}
+                                                <span>
+                                                    {formatDate(lecture.event_date, lang)}
                                                 </span>
                                             </div>
 
-                                            <h3 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1.5 md:mb-2 leading-tight group-hover:text-[#006837] transition-colors line-clamp-2">
+                                            {/* Title */}
+                                            <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#006837] transition-colors line-clamp-2">
                                                 {getContent(
                                                     lecture.title_en,
                                                     lecture.title,
                                                 )}
                                             </h3>
 
-                                            <p class="text-sm sm:text-base text-[#006837] font-semibold truncate">
-                                                {getContent(
-                                                    lecture.guest_name_en,
-                                                    lecture.guest_name,
-                                                )}
-                                            </p>
-                                            {lecture.belonging && (
-                                                <p class="text-xs sm:text-sm text-gray-600 mb-2 md:mb-3 truncate">
+                                            {/* Guest & Affiliation */}
+                                            <div class="space-y-0.5">
+                                                <p class="text-sm text-[#006837] font-semibold truncate">
                                                     {getContent(
-                                                        lecture.belonging_en,
-                                                        lecture.belonging,
+                                                        lecture.guest_name_en,
+                                                        lecture.guest_name,
                                                     )}
                                                 </p>
-                                            )}
+                                                {lecture.belonging && (
+                                                    <p class="text-xs text-gray-500 truncate">
+                                                        {getContent(
+                                                            lecture.belonging_en,
+                                                            lecture.belonging,
+                                                        )}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
 
-                                        <div class="flex items-center text-xs sm:text-sm text-[#006837] font-medium">
-                                            <span class="mr-1">
-                                                View Details
-                                            </span>
+                                        {/* View Details link */}
+                                        <div class="flex items-center text-xs text-[#006837] font-medium mt-3 sm:mt-4">
+                                            <span class="mr-1">View Details</span>
                                             <svg
-                                                class="w-3.5 h-3.5 sm:w-4 sm:h-4 transform group-hover:translate-x-1 transition-transform"
+                                                class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform"
                                                 fill="none"
                                                 viewBox="0 0 24 24"
                                                 stroke="currentColor"
