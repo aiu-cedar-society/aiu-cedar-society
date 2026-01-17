@@ -45,10 +45,7 @@ const seo = {
     keywords: "AIU Cedar Society,Members,Students,Team,Staff",
 };
 
-const breadcrumbItems = [
-    { label: "Home", href: "/en" },
-    { label: "Members" },
-];
+const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Members" }];
 ---
 
 <Layout seo={seo}>
@@ -85,7 +82,9 @@ const breadcrumbItems = [
                     <div class="absolute top-0 left-0 w-px h-full bg-[#006837]">
                     </div>
                     <h1 class="typography-hero pl-6">
-                        Our <span class="text-[#006837] typography-hero-accent">Members</span>
+                        Our <span class="text-[#006837] typography-hero-accent"
+                            >Members</span
+                        >
                     </h1>
                 </div>
                 <p
@@ -284,7 +283,7 @@ const breadcrumbItems = [
             <div
                 class="bg-gradient-to-br from-[#006837] to-[#005028] text-white rounded-lg p-8 md:p-10 shadow-lg"
             >
-                <div class="flex items-start gap-4 mb-6">
+                <div class="flex items-start gap-4 mb-6 min-w-0">
                     <div
                         class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0"
                     >
@@ -302,16 +301,16 @@ const breadcrumbItems = [
                             ></path>
                         </svg>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <h2 class="text-2xl font-bold mb-4">
                             We're Recruiting!
                         </h2>
                         <p class="text-white opacity-90 mb-6 leading-relaxed">
                             AIU Cedar Society is looking for new members to join
-                            our team.<br />
-                            We're recruiting for various roles including planning,
-                            operations, and public relations. If you're interested,
-                            please feel free to contact us.
+                            our team. We're recruiting for various roles
+                            including planning, operations, and public
+                            relations. If you're interested, please feel free to
+                            contact us.
                         </p>
                         <a
                             href="/en/contact"

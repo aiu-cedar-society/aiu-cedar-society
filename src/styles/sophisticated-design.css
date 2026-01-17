@@ -50,25 +50,21 @@
     hyphens: none;
 }
 
-/* Mobile: Prevent awkward breaks, allow only at natural points */
+/* Mobile: Natural text wrapping */
 @media (max-width: 767px) {
     .typography-hero {
-        font-size: 2rem; /* Smaller font on mobile to prevent breaks */
+        font-size: 2rem; /* Smaller font on mobile */
         letter-spacing: 0.03em;
-        word-break: keep-all;
-        line-break: strict;
-        /* Prevent breaks in the middle of phrases */
+        /* Allow natural text wrapping */
         overflow-wrap: break-word;
-        /* Ensure proper wrapping behavior */
         white-space: normal;
     }
 }
 
-/* Tablet and above: Strict line break control */
+/* Tablet and above: Natural wrapping continues */
 @media (min-width: 768px) {
     .typography-hero {
-        word-break: keep-all;
-        line-break: strict;
+        overflow-wrap: break-word;
     }
 }
 
@@ -99,8 +95,7 @@
     letter-spacing: 0.05em;
     line-height: 1.6;
     color: var(--color-gray-900);
-    /* Japanese text line break control */
-    word-break: keep-all;
+    /* Natural text wrapping */
     overflow-wrap: break-word;
     hyphens: none;
 }
@@ -122,14 +117,13 @@
 
 /* ===== GOTHIC - For Body & Sub Headings ===== */
 /* Default: Noto Sans JP (already set in Layout.astro) */
-/* Japanese text line break control for body text */
+/* Natural text wrapping for body text */
 body,
 p,
 .typography-body {
-    word-break: keep-all;
     overflow-wrap: break-word;
+    word-wrap: break-word;
     hyphens: none;
-    line-break: strict;
 }
 
 /* ===== GEOMETRIC - For UI Elements ===== */

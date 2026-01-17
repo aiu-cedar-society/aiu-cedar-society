@@ -82,7 +82,10 @@ const breadcrumbItems = [
                     <div class="absolute top-0 left-0 w-px h-full bg-[#006837]">
                     </div>
                     <h1 class="typography-hero pl-6">
-                        メンバー<span class="text-[#006837] typography-hero-accent">紹介</span>
+                        メンバー<span
+                            class="text-[#006837] typography-hero-accent"
+                            >紹介</span
+                        >
                     </h1>
                 </div>
                 <p
@@ -122,7 +125,9 @@ const breadcrumbItems = [
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {currentMembers.map((member, index) => (
-                                <div class={`bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow member-card glass-card scroll-reveal-slide-up scroll-reveal-stagger-${Math.min(index + 1, 5)}`}>
+                                <div
+                                    class={`bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow member-card glass-card scroll-reveal-slide-up scroll-reveal-stagger-${Math.min(index + 1, 5)}`}
+                                >
                                     <div class="flex items-start gap-4">
                                         {member.image ? (
                                             <Image
@@ -201,7 +206,9 @@ const breadcrumbItems = [
 
                         <div class="grid md:grid-cols-2 gap-6">
                             {graduateMembers.map((member, index) => (
-                                <div class={`bg-gray-50 rounded-lg p-6 border-l-4 border-gray-400 hover:shadow-md transition-shadow smooth-hover glass-card scroll-reveal-slide-up scroll-reveal-stagger-${Math.min(index + 1, 5)}`}>
+                                <div
+                                    class={`bg-gray-50 rounded-lg p-6 border-l-4 border-gray-400 hover:shadow-md transition-shadow smooth-hover glass-card scroll-reveal-slide-up scroll-reveal-stagger-${Math.min(index + 1, 5)}`}
+                                >
                                     <div class="flex items-start gap-4">
                                         {member.image ? (
                                             <Image
@@ -248,7 +255,7 @@ const breadcrumbItems = [
             <div
                 class="bg-gradient-to-br from-[#006837] to-[#005028] text-white rounded-lg p-8 md:p-10 shadow-lg"
             >
-                <div class="flex items-start gap-4 mb-6">
+                <div class="flex items-start gap-4 mb-6 min-w-0">
                     <div
                         class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0"
                     >
@@ -266,13 +273,11 @@ const breadcrumbItems = [
                             ></path>
                         </svg>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <h2 class="text-2xl font-bold mb-4">メンバー募集中</h2>
                         <p class="text-white opacity-90 mb-6 leading-relaxed">
                             AIU Cedar
-                            Societyでは、一緒に活動を盛り上げてくれる仲間を募集しています。<br
-                            />
-                            企画・運営・広報など、様々な役割でメンバーを募集中です。興味のある方は、お気軽にお問い合わせください。
+                            Societyでは、一緒に活動を盛り上げてくれる仲間を募集しています。企画・運営・広報など、様々な役割でメンバーを募集中です。興味のある方は、お気軽にお問い合わせください。
                         </p>
                         <a
                             href="/contact"

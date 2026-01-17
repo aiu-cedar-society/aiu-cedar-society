@@ -89,8 +89,7 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
                     <p
                         class="text-base md:text-lg text-gray-600 leading-relaxed pl-6 hero-description"
                     >
-                        <span class="hero-desc-sentence"><span style="white-space: nowrap;">AIU Cedar Society</span>は、学生の熱意と秋田社会の架け橋となります。</span><br />
-                        <span class="hero-desc-sentence"><span style="white-space: nowrap; margin-left: -0.5em;">「出会い・学び・実践」のサイクルを創り出し、</span>秋田の地で新たな価値を生み出していきます。</span>
+                        AIU Cedar Societyは、学生の熱意と秋田社会の架け橋となります。「出会い・学び・実践」のサイクルを創り出し、秋田の地で新たな価値を生み出していきます。
                     </p>
                 </div>
             </div>
@@ -562,8 +561,7 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
     /* Mobile: Allow line breaks for better readability */
     .hero-title-single-line {
         white-space: normal;
-        word-break: keep-all;
-        line-break: strict;
+        overflow-wrap: break-word;
     }
 
     /* Mobile font sizing - allows natural line breaks */
@@ -603,11 +601,10 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
 
     .hero-description {
         opacity: 1;
-        /* Japanese text line break control - break only after "。" */
-        word-break: keep-all;
+        /* Natural text wrapping */
         overflow-wrap: break-word;
+        word-wrap: break-word;
         hyphens: none;
-        line-break: strict;
         /* Match the width of hero-text-1 (same as typography-hero) */
         max-width: 100%;
     }
@@ -626,35 +623,15 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
         }
     }
     
-    /* Prevent breaks within sentences - only allow break at <br /> */
-    .hero-desc-sentence {
-        display: inline;
-        word-break: keep-all;
-        overflow-wrap: break-word;
-        line-break: strict;
-    }
-    
-    /* Mobile: Break only after "。" - prevent breaks after "、" */
+    /* Mobile: Natural text wrapping */
     @media (max-width: 767px) {
         .hero-description {
-            /* Break only after "。" on mobile - prevent awkward breaks */
-            word-break: keep-all;
+            /* Natural text wrapping on mobile */
             overflow-wrap: break-word;
-            line-break: strict;
-            /* Prevent breaks except after "。" */
+            word-wrap: break-word;
             white-space: normal;
-            /* Reduce font size on very small screens to prevent forced breaks */
+            /* Reduce font size on very small screens */
             font-size: 0.875rem;
-        }
-        
-        /* Prevent breaks within each sentence - only allow break at <br /> */
-        .hero-desc-sentence {
-            display: inline;
-            word-break: keep-all;
-            overflow-wrap: break-word;
-            line-break: strict;
-            /* Prevent breaks within sentence - only break at "。" */
-            white-space: normal;
         }
         
         /* On very small screens, further reduce font size */
@@ -665,14 +642,12 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
         }
     }
     
-    /* Tablet and above: Match hero-text-1 width, break only after "。" */
+    /* Tablet and above: Match hero-text-1 width */
     @media (min-width: 768px) {
         .hero-description {
             /* Match hero-text-1 width - no max-width constraint */
             max-width: none;
-            /* Break only after "。" */
-            word-break: keep-all;
-            line-break: strict;
+            overflow-wrap: break-word;
         }
     }
 

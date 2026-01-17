@@ -201,8 +201,8 @@ const nav = {
                     "Helvetica Neue", Arial, sans-serif;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
-                word-break: keep-all;
                 overflow-wrap: break-word;
+                word-wrap: break-word;
                 hyphens: none;
                 background-color: #fef9f4;
             }
@@ -212,10 +212,9 @@ const nav = {
                 min-height: 100vh;
                 line-height: 1.75;
                 background-color: #fef9f4;
-                word-break: keep-all;
                 overflow-wrap: break-word;
+                word-wrap: break-word;
                 hyphens: none;
-                line-break: strict;
             }
             
             /* Container & Layout */
@@ -3713,18 +3712,17 @@ const nav = {
     }
     html {
         font-family: var(--font-sans);
-        /* Japanese text line break control */
-        word-break: keep-all;
+        /* Natural text wrapping */
         overflow-wrap: break-word;
+        word-wrap: break-word;
         hyphens: none;
     }
     
     body {
-        /* Japanese text line break control */
-        word-break: keep-all;
+        /* Natural text wrapping */
         overflow-wrap: break-word;
+        word-wrap: break-word;
         hyphens: none;
-        line-break: strict;
     }
 
     /* Desktop hover support */
