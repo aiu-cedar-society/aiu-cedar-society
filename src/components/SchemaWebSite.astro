@@ -1,16 +1,47 @@
 ---
-const siteUrl = Astro.site || "https://aiu-cedar-society.com";
-const siteName = "AIU Cedar Society";
+/**
+ * SchemaWebSiteコンポーネント
+ *
+ * このコンポーネントはウェブサイトの構造化データ（JSON-LD形式）を生成します。
+ * Googleの検索結果にサイト内検索ボックスを表示するために使用されます。
+ *
+ * @description
+ * 構造化データとは、検索エンジンにサイトの内容を理解させるための
+ * 標準化されたデータ形式です。
+ *
+ * 参考: https://schema.org/WebSite
+ *
+ * @example
+ * <!-- Layout.astroの<head>内で使用 -->
+ * <SchemaWebSite />
+ */
 
+import { siteConfig } from "../site.config";
+
+// サイト情報を共通設定から取得
+const siteUrl = Astro.site || siteConfig.url;
+const siteName = siteConfig.name;
+
+/**
+ * WebSite構造化データ
+ *
+ * @property @context - Schema.orgの名前空間
+ * @property @type - データタイプ（WebSite）
+ * @property name - サイト名
+ * @property url - サイトURL
+ * @property potentialAction - サイト内検索機能の定義
+ */
 const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: siteName,
     url: siteUrl,
+    // Googleの検索結果にサイト内検索ボックスを表示するための設定
     potentialAction: {
         "@type": "SearchAction",
         target: {
             "@type": "EntryPoint",
+            // 検索クエリのURLテンプレート
             urlTemplate: `${siteUrl}/?q={search_term_string}`,
         },
         "query-input": "required name=search_term_string",
@@ -18,6 +49,12 @@ const websiteSchema = {
 };
 ---
 
+<!-- 
+  構造化データ（JSON-LD形式）
+  
+  is:inline: Astroのビルド最適化をスキップして、そのまま出力
+  set:html: JSON文字列をHTMLとして挿入
+-->
 <script
     type="application/ld+json"
     is:inline

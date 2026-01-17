@@ -1,31 +1,79 @@
 ---
-const siteUrl = Astro.site || "https://aiu-cedar-society.com";
-const siteName = "AIU Cedar Society";
+/**
+ * SchemaOrganizationコンポーネント
+ *
+ * このコンポーネントは組織の構造化データ（JSON-LD形式）を生成します。
+ * Googleが組織情報を理解し、検索結果にナレッジパネルを表示するために使用されます。
+ *
+ * @description
+ * 組織の構造化データを提供することで、Googleは以下の情報を検索結果に表示できます：
+ * - 組織名
+ * - ロゴ
+ * - 所在地
+ * - SNSリンク
+ *
+ * 参考: https://schema.org/Organization
+ *
+ * @example
+ * <!-- Layout.astroの<head>内で使用 -->
+ * <SchemaOrganization />
+ */
 
-// Organization Schema
+import { siteConfig, organizationConfig, seoConfig } from "../site.config";
+
+// サイト情報を共通設定から取得
+const siteUrl = Astro.site || siteConfig.url;
+const siteName = siteConfig.name;
+
+/**
+ * Organization構造化データ
+ *
+ * @property @context - Schema.orgの名前空間
+ * @property @type - データタイプ（Organization）
+ * @property name - 組織名
+ * @property url - 公式サイトURL
+ * @property logo - ロゴ画像情報
+ * @property description - 組織の説明
+ * @property address - 所在地
+ * @property foundingDate - 設立日
+ * @property sameAs - SNSなどの関連リンク
+ */
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: siteName,
   url: siteUrl,
+  // ロゴ画像
   logo: {
     "@type": "ImageObject",
-    url: `${siteUrl}/android-chrome-512x512.png`,
-    width: 512,
-    height: 512,
+    url: `${siteUrl}${organizationConfig.logo.path}`,
+    width: organizationConfig.logo.width,
+    height: organizationConfig.logo.height,
   },
-  description: "秋田とAIU生の可能性をつなぐ学生主導の公認団体",
+  // 組織の説明（日本語）
+  description:
+    seoConfig.defaultTitle.ja.split(" - ")[1] ||
+    "秋田とAIU生の可能性をつなぐ学生主導の公認団体",
+  // 所在地
   address: {
     "@type": "PostalAddress",
-    addressLocality: "秋田市",
-    addressRegion: "秋田県",
-    addressCountry: "JP",
+    addressLocality: organizationConfig.address.locality,
+    addressRegion: organizationConfig.address.region,
+    addressCountry: organizationConfig.address.country,
   },
-  foundingDate: "2024-06",
-  sameAs: ["https://www.instagram.com/aiucedarsociety"],
+  // 設立日（YYYY-MM形式）
+  foundingDate: organizationConfig.foundingDate,
+  // SNSなどの関連リンク（GoogleがSNSとの関連を認識する）
+  sameAs: organizationConfig.socialLinks,
 };
 ---
 
+<!-- 
+  組織の構造化データ（JSON-LD形式）
+  
+  is:inline: Astroのビルド最適化をスキップして、そのまま出力
+  set:html: JSON文字列をHTMLとして挿入
+-->
 <script
   type="application/ld+json"
   is:inline

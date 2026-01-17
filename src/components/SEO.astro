@@ -1,84 +1,165 @@
 ---
-import { getLangFromUrl, getAlternateUrl } from '../i18n/utils';
+/**
+ * SEOコンポーネント
+ *
+ * このコンポーネントはページのSEO（検索エンジン最適化）関連の
+ * メタタグを生成します。各ページの<head>内で使用してください。
+ *
+ * @description
+ * 生成されるメタタグ:
+ * - タイトルタグ
+ * - メタディスクリプション
+ * - キーワード
+ * - canonical URL
+ * - hreflang（多言語対応）
+ * - Open Graph（Facebook、LINEなど）
+ * - Twitter Card
+ *
+ * @example
+ * <SEO
+ *   title="講演会一覧"
+ *   description="AIU Cedar Societyの講演会一覧ページ"
+ * />
+ */
+
+import { getLangFromUrl, getAlternateUrl } from "../i18n/utils";
+import { siteConfig, seoConfig, type Lang } from "../site.config";
+
+// -----------------------------------------------------------------------------
+// Props定義
+// -----------------------------------------------------------------------------
 
 interface Props {
+  /** ページタイトル（指定しない場合はデフォルトタイトルを使用） */
   title?: string;
+
+  /** メタディスクリプション（検索結果に表示される説明文） */
   description?: string;
+
+  /** SEOキーワード（カンマ区切り） */
   keywords?: string;
+
+  /** OGP画像のURL（ソーシャルシェア時に表示される画像） */
   ogImage?: string;
-  ogType?: 'website' | 'article';
+
+  /** OGPタイプ（websiteまたはarticle） */
+  ogType?: "website" | "article";
+
+  /** 記事固有の情報（ogType='article'の場合に使用） */
   article?: {
+    /** 公開日時（ISO 8601形式） */
     publishedTime?: string;
+    /** 著者名 */
     author?: string;
   };
 }
 
+// -----------------------------------------------------------------------------
+// Props取得と設定
+// -----------------------------------------------------------------------------
+
 const {
-  title = 'AIU Cedar Society - 秋田とAIU生の可能性をつなぐ',
-  description = 'AIU Cedar Societyは、秋田国際教養大学の学生主導の公認団体です。著名なゲストを招いた講演会を通じて、学生と秋田社会をつなぎ、「出会い・学び・実践」のサイクルを創り出します。',
-  keywords = 'AIU Cedar Society,秋田国際教養大学,学生団体,講演会,AIU,秋田,イベント,キャリア支援,地域活性化',
-  ogImage = '/ogp-default.jpg',
-  ogType = 'website',
+  title = seoConfig.defaultTitle.ja,
+  description = seoConfig.defaultDescription.ja,
+  keywords = seoConfig.defaultKeywords.ja,
+  ogImage = seoConfig.defaultOgImage,
+  ogType = "website",
   article,
 } = Astro.props;
 
-// サイト情報
-const siteUrl = Astro.site || 'https://aiu-cedar-society.com';
-const siteName = 'AIU Cedar Society';
+// サイト情報を共通設定から取得
+const siteUrl = Astro.site || siteConfig.url;
+const siteName = siteConfig.name;
 const currentLang = getLangFromUrl(Astro.url);
 const currentPath = Astro.url.pathname;
 
-// Ensure trailing slash consistency for canonical URL
-const normalizedPath = currentPath.endsWith('/') ? currentPath : currentPath + '/';
+// -----------------------------------------------------------------------------
+// URL正規化
+//
+// Astroはデフォルトで末尾スラッシュを付与するため、
+// canonicalとhreflangで一貫性を保つために正規化します。
+// -----------------------------------------------------------------------------
+
+const normalizedPath = currentPath.endsWith("/")
+  ? currentPath
+  : currentPath + "/";
 const currentUrl = new URL(normalizedPath, siteUrl).href;
 
-// 代替言語URLを生成
-const alternateLang = currentLang === 'ja' ? 'en' : 'ja';
+// 代替言語URL（多言語対応用）
+const alternateLang: Lang = currentLang === "ja" ? "en" : "ja";
 const alternatePath = getAlternateUrl(Astro.url, alternateLang);
 const alternateUrl = new URL(alternatePath, siteUrl).href;
 
-// 画像の絶対URL
-const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteUrl).href;
+// OGP画像の絶対URL化
+const ogImageUrl = ogImage.startsWith("http")
+  ? ogImage
+  : new URL(ogImage, siteUrl).href;
 ---
 
-<!-- Primary Meta Tags -->
+<!-- Primary Meta Tags / 基本メタタグ -->
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
 <meta name="keywords" content={keywords} />
+
+<!-- Canonical URL / 正規URL -->
+<!-- 重複コンテンツを防ぐための正規URL -->
 <link rel="canonical" href={currentUrl} />
 
-<!-- hreflang tags for multilingual support -->
+<!-- hreflang tags / 多言語対応タグ -->
+<!-- Googleに日本語版と英語版のページを認識させる -->
 <link rel="alternate" hreflang={currentLang} href={currentUrl} />
 <link rel="alternate" hreflang={alternateLang} href={alternateUrl} />
-<link rel="alternate" hreflang="x-default" href={new URL('/', siteUrl).href} />
+<link rel="alternate" hreflang="x-default" href={new URL("/", siteUrl).href} />
 
-<!-- Open Graph / Facebook -->
+<!-- Open Graph / Facebook, LINE, etc. -->
+<!-- ソーシャルメディアでシェアされた際の表示設定 -->
 <meta property="og:type" content={ogType} />
 <meta property="og:url" content={currentUrl} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImageUrl} />
 <meta property="og:site_name" content={siteName} />
-<meta property="og:locale" content={currentLang === 'ja' ? 'ja_JP' : 'en_US'} />
+<meta property="og:locale" content={currentLang === "ja" ? "ja_JP" : "en_US"} />
 
-{article && ogType === 'article' && (
-  <>
-    {article.publishedTime && <meta property="article:published_time" content={article.publishedTime} />}
-    {article.author && <meta property="article:author" content={article.author} />}
-  </>
-)}
+{/* 記事固有のメタタグ（講演会詳細ページなど） */}
+{
+  article && ogType === "article" && (
+    <>
+      {article.publishedTime && (
+        <meta
+          property="article:published_time"
+          content={article.publishedTime}
+        />
+      )}
+      {article.author && (
+        <meta property="article:author" content={article.author} />
+      )}
+    </>
+  )
+}
 
-<!-- Twitter -->
+<!-- Twitter Card -->
+<!-- Twitterでシェアされた際の表示設定 -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:url" content={currentUrl} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImageUrl} />
 
-<!-- Additional SEO -->
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-<meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+<!-- Additional SEO / 追加のSEO設定 -->
+<!-- 検索エンジンへのクロール指示 -->
+<meta
+  name="robots"
+  content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+/>
+<meta
+  name="googlebot"
+  content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+/>
 <meta name="author" content={siteName} />
+
+<!-- Geo Location / 地域情報 -->
+<!-- 日本・秋田県の組織であることを示す -->
 <meta name="geo.region" content="JP-05" />
 <meta name="geo.placename" content="秋田市" />
