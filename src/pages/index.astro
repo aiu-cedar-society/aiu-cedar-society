@@ -13,12 +13,13 @@ const allLectures = await getCollection("lectures");
 
 // Sort by event_date (newest first) and take top 4
 const lectures = allLectures
+    .filter((lecture) => lecture.data.event_date) // 日付がある講演会のみ表示
     .map((lecture) => ({
         id: lecture.id,
-        title: lecture.data.title,
-        guest_name: lecture.data.guest_name,
+        title: lecture.data.title || "無題の講演会",
+        guest_name: lecture.data.guest_name || "講演者未定",
         belonging: lecture.data.belonging,
-        event_date: lecture.data.event_date,
+        event_date: lecture.data.event_date!,
         eyecatch: lecture.data.eyecatch,
     }))
     .sort(
@@ -29,13 +30,15 @@ const lectures = allLectures
 
 // Fetch upcoming events using Content Layer API
 const allUpcomingEvents = await getCollection("upcoming_events");
-const upcomingEvents = allUpcomingEvents.map((event) => ({
-    id: event.id,
-    title: event.data.title,
-    event_date: event.data.event_date,
-    description: event.data.description,
-    location: event.data.location,
-}));
+const upcomingEvents = allUpcomingEvents
+    .filter((event) => event.data.event_date) // 日付があるイベントのみ表示
+    .map((event) => ({
+        id: event.id,
+        title: event.data.title || "イベント詳細未定",
+        event_date: event.data.event_date!,
+        description: event.data.description || "",
+        location: event.data.location,
+    }));
 
 // Fetch sponsors for marquee (pages is singleton, keep using legacy method)
 let sponsors: Array<{ name: string; logo?: string; url?: string }> = [];

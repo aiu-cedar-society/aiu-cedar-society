@@ -103,25 +103,25 @@ const lectureCollection = defineCollection({
   // データのスキーマ定義（型チェックと検証）
   schema: z.object({
     id: z.string(),
-    title: z.string(),
-    title_en: z.string().optional(),     // 英語版は任意
-    guest_name: z.string(),
+    title: z.string().optional(),         // 空の場合は「無題の講演会」を表示
+    title_en: z.string().optional(),
+    guest_name: z.string().optional(),    // 空の場合は「講演者未定」を表示
     guest_name_en: z.string().optional(),
-    belonging: z.string().optional(),     // 所属は任意
+    belonging: z.string().optional(),
     belonging_en: z.string().optional(),
-    event_date: z.string(),               // ISO 8601形式
+    event_date: z.string().optional(),    // ISO 8601形式（空の場合は非表示）
     eyecatch: z
       .object({
-        url: z.string().url(),            // 画像URL
-        height: z.number(),               // 画像の高さ
-        width: z.number(),                // 画像の幅
+        url: z.string().url(),
+        height: z.number(),
+        width: z.number(),
       })
       .optional(),
-    content: z.string().optional(),       // HTML形式の詳細内容
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    publishedAt: z.string(),
-    revisedAt: z.string(),
+    content: z.string().optional(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
+    publishedAt: z.string().optional(),
+    revisedAt: z.string().optional(),
   }),
 });
 
@@ -166,19 +166,19 @@ const memberCollection = defineCollection({
   }),
   schema: z.object({
     id: z.string(),
-    name: z.string(),
+    name: z.string().optional(),          // 空の場合は「名前未設定」を表示
     name_en: z.string().optional(),
-    position: z.string(),
+    position: z.string().optional(),      // 空の場合は非表示
     position_en: z.string().optional(),
-    year: z.string(),
+    year: z.string().optional(),          // 空の場合は非表示
     year_en: z.string().optional(),
-    description: z.string(),
+    description: z.string().optional(),   // 空の場合は非表示
     description_en: z.string().optional(),
     // ステータスは文字列または配列（MicroCMSの設定に依存）
     status: z
       .union([
-        z.literal("current"),   // 在校生
-        z.literal("graduate"),  // 卒業生
+        z.literal("current"),
+        z.literal("graduate"),
         z.array(z.union([z.literal("current"), z.literal("graduate")])),
       ])
       .optional(),
@@ -189,10 +189,10 @@ const memberCollection = defineCollection({
         width: z.number(),
       })
       .optional(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    publishedAt: z.string(),
-    revisedAt: z.string(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
+    publishedAt: z.string().optional(),
+    revisedAt: z.string().optional(),
   }),
 });
 
@@ -234,17 +234,17 @@ const upcomingEventCollection = defineCollection({
   }),
   schema: z.object({
     id: z.string(),
-    title: z.string(),
+    title: z.string().optional(),         // 空の場合は「イベント詳細未定」を表示
     title_en: z.string().optional(),
-    event_date: z.string(),
-    description: z.string(),
+    event_date: z.string().optional(),    // 空の場合は非表示
+    description: z.string().optional(),   // 空の場合は非表示
     description_en: z.string().optional(),
     location: z.string().optional(),
     location_en: z.string().optional(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    publishedAt: z.string(),
-    revisedAt: z.string(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
+    publishedAt: z.string().optional(),
+    revisedAt: z.string().optional(),
   }),
 });
 
@@ -283,15 +283,15 @@ const mediaCoverageCollection = defineCollection({
   }),
   schema: z.object({
     id: z.string(),
-    title: z.string(),
-    media_name: z.string(),
-    publish_date: z.string(),
-    url: z.string().url().optional(), // 記事URLは任意
-    description: z.string(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    publishedAt: z.string(),
-    revisedAt: z.string(),
+    title: z.string().optional(),         // 空の場合は「無題」を表示
+    media_name: z.string().optional(),    // 空の場合は「メディア名未定」を表示
+    publish_date: z.string().optional(),  // 空の場合は非表示
+    url: z.string().url().optional(),
+    description: z.string().optional(),   // 空の場合は非表示
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
+    publishedAt: z.string().optional(),
+    revisedAt: z.string().optional(),
   }),
 });
 

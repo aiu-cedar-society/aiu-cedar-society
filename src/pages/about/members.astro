@@ -9,10 +9,10 @@ import BreadcrumbSchema from "../../components/BreadcrumbSchema.astro";
 const allMembers = await getCollection("members");
 const members = allMembers.map((member) => ({
     id: member.id,
-    name: member.data.name,
-    position: member.data.position,
-    year: member.data.year,
-    description: member.data.description,
+    name: member.data.name || "名前未設定",
+    position: member.data.position || "",
+    year: member.data.year || "",
+    description: member.data.description || "",
     status: member.data.status,
     image: member.data.image,
 }));
@@ -155,12 +155,16 @@ const breadcrumbItems = [
                                                 {member.name}
                                             </h3>
                                             <p class="text-sm text-[#006837] font-medium mb-2">
-                                                {member.position} /{" "}
-                                                {member.year}
+                                                {[member.position, member.year]
+                                                    .filter(Boolean)
+                                                    .join(" / ") ||
+                                                    "情報未設定"}
                                             </p>
-                                            <p class="text-sm text-gray-600">
-                                                {member.description}
-                                            </p>
+                                            {member.description && (
+                                                <p class="text-sm text-gray-600">
+                                                    {member.description}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -236,12 +240,16 @@ const breadcrumbItems = [
                                                 {member.name}
                                             </h3>
                                             <p class="text-sm text-gray-600 font-medium mb-2">
-                                                {member.position} /{" "}
-                                                {member.year}
+                                                {[member.position, member.year]
+                                                    .filter(Boolean)
+                                                    .join(" / ") ||
+                                                    "情報未設定"}
                                             </p>
-                                            <p class="text-sm text-gray-600">
-                                                {member.description}
-                                            </p>
+                                            {member.description && (
+                                                <p class="text-sm text-gray-600">
+                                                    {member.description}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
