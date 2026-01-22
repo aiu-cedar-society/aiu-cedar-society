@@ -27,7 +27,7 @@ const lectures = allLectures
     }))
     .sort(
         (a, b) =>
-            new Date(b.event_date).getTime() - new Date(a.event_date).getTime(),
+            new Date(b.event_date || "").getTime() - new Date(a.event_date || "").getTime(),
     )
     .slice(0, 4);
 
@@ -179,7 +179,7 @@ const seo = {
                                             </svg>
                                             <div class="typography-label text-[#006837]">
                                                 {formatDateTime(
-                                                    event.event_date,
+                                                    event.event_date || "",
                                                     lang,
                                                 )}
                                             </div>
@@ -187,8 +187,8 @@ const seo = {
                                     </div>
                                     <h3 class="text-xl font-bold text-gray-900 mb-2">
                                         {getContent(
-                                            event.title_en,
-                                            event.title,
+                                            event.title_en || "",
+                                            event.title || "",
                                         )}
                                     </h3>
                                     {event.location && (
@@ -221,8 +221,8 @@ const seo = {
                                     <div
                                         class="prose prose-sm max-w-none text-gray-700"
                                         set:html={getContent(
-                                            event.description_en,
-                                            event.description,
+                                            event.description_en || "",
+                                            event.description || "",
                                         )}
                                     />
                                 </div>
@@ -233,7 +233,7 @@ const seo = {
                         <div class="mt-8 sm:hidden text-center">
                             <MagneticButton
                                 href="/en/events/upcoming"
-                                class="inline-flex items-center gap-2 px-6 py-3 bg-[#006837] text-white rounded-lg hover:bg-[#005028] transition-colors duration-300 btn-ripple-enhanced btn-organic typography-button"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-[#006837] text-white rounded-lg hover:bg-[#005028] transition-colors duration-300 btn-ripple-enhanced btn-organic typography-button"
                                 strength={0.25}
                                 ariaLabel="View All Events"
                             >
@@ -336,8 +336,8 @@ const seo = {
                                                 `}
                                                 sizes="(max-width: 639px) 100vw, (max-width: 1023px) 160px, 192px"
                                                 alt={getContent(
-                                                    lecture.title_en,
-                                                    lecture.title,
+                                                    lecture.title_en || "",
+                                                    lecture.title || "",
                                                 )}
                                                 width="384"
                                                 height="384"
@@ -384,15 +384,15 @@ const seo = {
                                                     />
                                                 </svg>
                                                 <span>
-                                                    {formatDate(lecture.event_date, lang)}
+                                                    {formatDate(lecture.event_date || "", lang)}
                                                 </span>
                                             </div>
 
                                             {/* Title */}
                                             <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#006837] transition-colors line-clamp-2">
                                                 {getContent(
-                                                    lecture.title_en,
-                                                    lecture.title,
+                                                    lecture.title_en || "",
+                                                    lecture.title || "",
                                                 )}
                                             </h3>
 
@@ -400,8 +400,8 @@ const seo = {
                                             <div class="space-y-0.5">
                                                 <p class="text-sm text-[#006837] font-semibold truncate">
                                                     {getContent(
-                                                        lecture.guest_name_en,
-                                                        lecture.guest_name,
+                                                        lecture.guest_name_en || "",
+                                                        lecture.guest_name || "",
                                                     )}
                                                 </p>
                                                 {lecture.belonging && (
@@ -444,7 +444,7 @@ const seo = {
             <div class="mt-10 md:mt-12 text-center">
                 <MagneticButton
                     href="/en/events/past"
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-[#006837] text-[#006837] rounded-lg hover:bg-[#006837] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg min-h-[44px] typography-button"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-[#006837] text-[#006837] rounded-lg hover:bg-[#006837] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg min-h-[44px] typography-button"
                     strength={0.25}
                     ariaLabel="See All Lectures"
                 >
