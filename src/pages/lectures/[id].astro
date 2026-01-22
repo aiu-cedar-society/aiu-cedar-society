@@ -176,20 +176,18 @@ const breadcrumbItems = [
         {
           lecture.eyecatch && (
             <div class="mt-8 flex justify-center">
-              <div class="max-w-[240px] shadow-md rounded-lg overflow-hidden">
-                <div class="aspect-[210/297] w-full bg-gray-100">
-                  <Image
-                    src={lecture.eyecatch.url}
-                    width={lecture.eyecatch.width}
-                    height={lecture.eyecatch.height}
-                    alt={lecture.title}
-                    format="avif"
-                    quality="mid"
-                    loading="eager"
-                    fetchpriority="high"
-                    class="w-full h-full object-cover"
-                  />
-                </div>
+              <div class="max-w-[240px] shadow-md rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center p-2">
+                <Image
+                  src={lecture.eyecatch.url}
+                  width={lecture.eyecatch.width}
+                  height={lecture.eyecatch.height}
+                  alt={lecture.title}
+                  format="avif"
+                  quality="mid"
+                  loading="eager"
+                  fetchpriority="high"
+                  class="max-w-full max-h-96 w-auto h-auto object-contain"
+                />
               </div>
             </div>
           )

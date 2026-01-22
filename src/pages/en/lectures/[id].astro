@@ -191,20 +191,18 @@ const breadcrumbItems = [
                 {
                     lecture.eyecatch && (
                         <div class="mt-8 flex justify-center">
-                            <div class="max-w-[240px] shadow-md rounded-lg overflow-hidden">
-                                <div class="aspect-[210/297] w-full bg-gray-100">
-                                    <img
-                                        src={`${lecture.eyecatch.url}?w=480&fm=webp&q=60`}
-                                        srcset={`${lecture.eyecatch.url}?w=480&fm=webp&q=60 1x, ${lecture.eyecatch.url}?w=960&fm=webp&q=60 2x`}
-                                        alt={title}
-                                        width="480"
-                                        height="680"
-                                        loading="eager"
-                                        fetchpriority="high"
-                                        decoding="async"
-                                        class="w-full h-full object-cover"
-                                    />
-                                </div>
+                            <div class="max-w-[240px] shadow-md rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center p-2">
+                                <img
+                                    src={`${lecture.eyecatch.url}?w=480&fm=webp&q=60`}
+                                    srcset={`${lecture.eyecatch.url}?w=480&fm=webp&q=60 1x, ${lecture.eyecatch.url}?w=960&fm=webp&q=60 2x`}
+                                    alt={title}
+                                    width="480"
+                                    height="480"
+                                    loading="eager"
+                                    fetchpriority="high"
+                                    decoding="async"
+                                    class="max-w-full max-h-96 w-auto h-auto object-contain"
+                                />
                             </div>
                         </div>
                     )

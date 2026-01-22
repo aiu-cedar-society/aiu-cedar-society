@@ -314,44 +314,42 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
                                 {/* Mobile: 画像上部 + テキスト下部の縦並び */}
                                 {/* Tablet+: 画像左 + テキスト右の横並び */}
                                 <div class="lecture-card-inner flex flex-col sm:flex-row h-full">
-                                    {/* 画像エリア - 9:16ポートレート対応 */}
-                                    <div class="sm:w-32 md:w-40 lg:w-48 flex-shrink-0 relative overflow-hidden bg-gray-100">
-                                        <div class="aspect-[3/4] sm:aspect-[9/16] w-full h-full">
-                                            {lecture.eyecatch ? (
-                                                <img
-                                                    src={`${lecture.eyecatch.url}?w=384&h=683&fm=avif&q=80`}
-                                                    srcset={`
-                                                        ${lecture.eyecatch.url}?w=192&h=341&fm=avif&q=80 192w,
-                                                        ${lecture.eyecatch.url}?w=256&h=455&fm=avif&q=80 256w,
-                                                        ${lecture.eyecatch.url}?w=384&h=683&fm=avif&q=80 384w
-                                                    `}
-                                                    sizes="(max-width: 639px) 100vw, (max-width: 1023px) 160px, 192px"
-                                                    alt={lecture.title}
-                                                    width="384"
-                                                    height="683"
-                                                    loading={index < 2 ? "eager" : "lazy"}
-                                                    fetchpriority={index === 0 ? "high" : "auto"}
-                                                    decoding="async"
-                                                    class="w-full h-full object-cover img-organic-hover"
-                                                />
-                                            ) : (
-                                                <div class="w-full h-full bg-gradient-to-br from-[#006837] to-[#005028] flex items-center justify-center">
-                                                    <svg
-                                                        class="w-12 h-12 text-white opacity-40"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke="currentColor"
-                                                    >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="1.5"
-                                                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                                                        />
-                                                    </svg>
-                                                </div>
-                                            )}
-                                        </div>
+                                    {/* 画像エリア - 一定の高さの枠内で元画像の比率を維持 */}
+                                    <div class="sm:w-32 md:w-40 lg:w-48 h-32 sm:h-40 md:h-44 flex-shrink-0 relative bg-gray-100 flex items-center justify-center">
+                                        {lecture.eyecatch ? (
+                                            <img
+                                                src={`${lecture.eyecatch.url}?w=384&fm=avif&q=80`}
+                                                srcset={`
+                                                    ${lecture.eyecatch.url}?w=192&fm=avif&q=80 192w,
+                                                    ${lecture.eyecatch.url}?w=256&fm=avif&q=80 256w,
+                                                    ${lecture.eyecatch.url}?w=384&fm=avif&q=80 384w
+                                                `}
+                                                sizes="(max-width: 639px) 100vw, (max-width: 1023px) 160px, 192px"
+                                                alt={lecture.title}
+                                                width="384"
+                                                height="384"
+                                                loading={index < 2 ? "eager" : "lazy"}
+                                                fetchpriority={index === 0 ? "high" : "auto"}
+                                                decoding="async"
+                                                class="max-h-full max-w-full w-auto h-auto object-contain img-organic-hover"
+                                            />
+                                        ) : (
+                                            <div class="w-full h-full min-h-[160px] bg-gradient-to-br from-[#006837] to-[#005028] flex items-center justify-center">
+                                                <svg
+                                                    class="w-12 h-12 text-white opacity-40"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="1.5"
+                                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* コンテンツエリア */}
