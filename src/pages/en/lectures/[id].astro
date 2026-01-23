@@ -13,10 +13,20 @@ const getContent = (item: any, field: string): string => {
 
 // Generate static paths for all lectures
 export const getStaticPaths = (async () => {
-    const lectures = await getCollection("lectures");
-    return lectures.map((lecture) => ({
-        params: { id: lecture.id },
-    }));
+    try {
+        const lectures = await getCollection("lectures");
+        if (lectures.length === 0) {
+            // Return dummy path to prevent build failure when collection is empty
+            return [{ params: { id: "_empty_" } }];
+        }
+        return lectures.map((lecture) => ({
+            params: { id: lecture.id },
+        }));
+    } catch (error) {
+        console.error("Failed to load lectures for static paths:", error);
+        // Return dummy path to prevent build failure
+        return [{ params: { id: "_empty_" } }];
+    }
 }) satisfies GetStaticPaths;
 
 // Get the lecture ID from the URL
@@ -313,11 +323,9 @@ const breadcrumbItems = [
                 document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
 
-      const progressBar = document.querySelector(
-        ".reading-progress-bar",
-      );
+            const progressBar = document.querySelector(".reading-progress-bar");
             if (progressBar) {
-        (progressBar as any).style.width = scrolled + "%";
+                (progressBar as any).style.width = scrolled + "%";
             }
         },
         { passive: true },
