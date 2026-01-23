@@ -111,21 +111,23 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
                                 </button>
                                 <div
                                     id={`faq-content-${index}`}
-                                    class="faq-content px-6 max-h-0 overflow-hidden"
+                                    class="faq-content max-h-0 overflow-hidden"
                                     data-content={index}
                                     aria-hidden="true"
                                 >
-                                    <div class="faq-content-inner flex items-start gap-4 pl-0 min-w-0">
-                                        <span class="flex-shrink-0 w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center font-bold text-sm">
-                                            A
-                                        </span>
-                                        <div
-                                            class="prose prose-sm max-w-none text-gray-700 leading-relaxed min-w-0 break-words"
-                                            set:html={getContent(
-                                                (faq as any).answer_en,
-                                                faq.answer,
-                                            )}
-                                        />
+                                    <div class="faq-answer-wrapper mx-4 md:mx-6 border-t border-gray-200 bg-gray-50/70 rounded-b-lg">
+                                        <div class="faq-content-inner flex items-start gap-4 px-4 py-4 min-w-0">
+                                            <span class="flex-shrink-0 w-8 h-8 bg-white text-gray-600 rounded-full flex items-center justify-center font-bold text-sm shadow-sm border border-gray-200">
+                                                A
+                                            </span>
+                                            <div
+                                                class="prose prose-sm max-w-none text-gray-700 leading-relaxed min-w-0 break-words"
+                                                set:html={getContent(
+                                                    (faq as any).answer_en,
+                                                    faq.answer,
+                                                )}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -375,9 +377,13 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
         will-change: max-height;
     }
 
+    /* Answer wrapper styling */
+    .faq-answer-wrapper {
+        margin-bottom: 0.5rem;
+    }
+
     .faq-content-inner {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
+        /* Padding is now applied via Tailwind classes (px-4 py-4) */
     }
 
     /* Remove default margins from typography plugin for better vertical centering */
