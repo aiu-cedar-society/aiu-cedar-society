@@ -309,7 +309,7 @@ const seo = {
             </div>
 
             {/* Lecture Cards Grid */}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 auto-rows-fr">
                 {
                     lectures.map((lecture, index) => (
                         <a
@@ -317,7 +317,7 @@ const seo = {
                             class="lecture-card block group card-tilt"
                         >
                             <div
-                                class={`lecture-card-wrapper bg-white/90 rounded-xl shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} relative`}
+                                class={`lecture-card-wrapper bg-white/90 rounded-xl shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} relative h-full`}
                                 data-animate
                                 data-animate-delay={index + 1}
                             >
@@ -366,7 +366,7 @@ const seo = {
                                     </div>
 
                                     {/* Content */}
-                                    <div class="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
+                                    <div class="flex-1 p-4 sm:p-5 flex flex-col min-w-0">
                                         <div>
                                             {/* Date badge */}
                                             <div class="inline-flex items-center gap-1.5 text-xs text-[#006837] font-medium bg-[#006837]/5 px-2.5 py-1 rounded-full mb-3">
@@ -414,6 +414,9 @@ const seo = {
                                                 )}
                                             </div>
                                         </div>
+
+                                        {/* Spacer (unify card height) */}
+                                        <div class="flex-1"></div>
 
                                         {/* View Details link */}
                                         <div class="flex items-center text-xs text-[#006837] font-medium mt-3 sm:mt-4">

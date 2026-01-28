@@ -90,7 +90,8 @@ const lectureCollection = defineCollection({
         "belonging_en", // 所属（英語）
         "event_date",   // 開催日時
         "eyecatch",     // アイキャッチ画像
-        "content",      // 詳細内容
+        "content",      // 詳細内容（日本語）
+        "content_en",   // 詳細内容（英語）
         "createdAt",    // 作成日時
         "updatedAt",    // 更新日時
         "publishedAt",  // 公開日時
@@ -118,6 +119,7 @@ const lectureCollection = defineCollection({
       })
       .optional(),
     content: z.string().optional(),
+    content_en: z.string().optional(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),
     publishedAt: z.string().optional(),
