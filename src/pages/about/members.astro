@@ -223,7 +223,7 @@ const breadcrumbItems = [
                                                 format="avif"
                                                 quality="mid"
                                                 loading="lazy"
-                                                class="w-16 h-16 rounded-full object-cover shadow-md flex-shrink-0 grayscale opacity-80"
+                                                class="w-16 h-16 rounded-full object-cover shadow-md flex-shrink-0"
                                             />
                                         ) : (
                                             <div class="w-16 h-16 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
@@ -242,8 +242,7 @@ const breadcrumbItems = [
                                             <p class="text-sm text-gray-600 font-medium mb-2">
                                                 {[member.position, member.year]
                                                     .filter(Boolean)
-                                                    .join(" / ") ||
-                                                    "情報未設定"}
+                                                    .join(" / ")}
                                             </p>
                                             {member.description && (
                                                 <p class="text-sm text-gray-600">
