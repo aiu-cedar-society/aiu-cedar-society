@@ -129,8 +129,7 @@ const seo = {
                                     </svg>
                                 </div>
                                 <h2 class="typography-section">
-                                    Upcoming
-                                    <span class="text-[#006837]">Events</span>
+                                    Upcoming <span class="text-[#006837]">Events</span>
                                 </h2>
                             </div>
                             <a
@@ -157,8 +156,9 @@ const seo = {
                         {/* Events List */}
                         <div class="space-y-6">
                             {upcomingEvents.slice(0, 2).map((event, index) => (
-                                <div
-                                    class={`border-l-4 border-[#006837] bg-gray-50/80 p-6 rounded-r-lg hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} organic-hover`}
+                                <a
+                                    href="/en/events/upcoming"
+                                    class={`block border-l-4 border-[#006837] bg-gray-50/80 p-6 rounded-r-lg hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} organic-hover group cursor-pointer transition-all duration-300 hover:bg-gray-100/80 hover:shadow-md`}
                                     data-animate
                                     data-animate-delay={index + 1}
                                 >
@@ -185,7 +185,7 @@ const seo = {
                                             </div>
                                         </div>
                                     </div>
-                                    <h3 class="text-xl font-bold text-gray-900 mb-2">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#006837] transition-colors">
                                         {getContent(
                                             event.title_en || "",
                                             event.title || "",
@@ -219,13 +219,29 @@ const seo = {
                                         </p>
                                     )}
                                     <div
-                                        class="prose prose-sm max-w-none text-gray-700"
+                                        class="prose prose-sm max-w-none text-gray-700 mb-4"
                                         set:html={getContent(
                                             event.description_en || "",
                                             event.description || "",
                                         )}
                                     />
-                                </div>
+                                    <div class="flex items-center text-xs text-[#006837] font-medium">
+                                        <span class="mr-1">View Details</span>
+                                        <svg
+                                            class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 5l7 7-7 7"
+                                            />
+                                        </svg>
+                                    </div>
+                                </a>
                             ))}
                         </div>
 
