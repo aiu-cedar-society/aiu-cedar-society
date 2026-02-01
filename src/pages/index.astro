@@ -311,121 +311,59 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
             </div>
 
             {/* Lecture Cards Grid */}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 auto-rows-fr">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 {
                     lectures.map((lecture, index) => (
                         <a
                             href={`/lectures/${lecture.id}`}
-                            class="lecture-card block group card-tilt"
+                            class="lecture-card block group"
                         >
                             <div
-                                class={`lecture-card-wrapper bg-white/90 rounded-xl shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} relative h-full`}
+                                class={`bg-white/90 rounded-xl shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} h-full flex flex-col`}
                                 data-animate
                                 data-animate-delay={index + 1}
                             >
-                                <CardHoverAnimation
-                                    riveSrc=""
-                                    position="top-right"
-                                />
-                                {/* Mobile: 画像上部 + テキスト下部の縦並び */}
-                                {/* Tablet+: 画像左 + テキスト右の横並び */}
-                                <div class="lecture-card-inner flex flex-col sm:flex-row h-full">
-                                    {/* 画像エリア - 一定の高さの枠内で元画像の比率を維持 */}
-                                    <div class="sm:w-32 md:w-40 lg:w-48 h-32 sm:h-40 md:h-44 flex-shrink-0 relative bg-gray-100 flex items-center justify-center">
-                                        {lecture.eyecatch ? (
-                                            <img
-                                                src={`${lecture.eyecatch.url}?w=384&fm=avif&q=80`}
-                                                srcset={`
-                                                    ${lecture.eyecatch.url}?w=192&fm=avif&q=80 192w,
-                                                    ${lecture.eyecatch.url}?w=256&fm=avif&q=80 256w,
-                                                    ${lecture.eyecatch.url}?w=384&fm=avif&q=80 384w
-                                                `}
-                                                sizes="(max-width: 639px) 100vw, (max-width: 1023px) 160px, 192px"
-                                                alt={lecture.title}
-                                                width="384"
-                                                height="384"
-                                                loading={index < 2 ? "eager" : "lazy"}
-                                                fetchpriority={index === 0 ? "high" : "auto"}
-                                                decoding="async"
-                                                class="max-h-full max-w-full w-auto h-auto object-contain img-organic-hover"
-                                            />
-                                        ) : (
-                                            <div class="w-full h-full min-h-[160px] bg-gradient-to-br from-[#006837] to-[#005028] flex items-center justify-center">
-                                                <svg
-                                                    class="w-12 h-12 text-white opacity-40"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        stroke-width="1.5"
-                                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                                                    />
-                                                </svg>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* コンテンツエリア */}
-                                    <div class="flex-1 p-4 sm:p-5 flex flex-col min-w-0">
-                                        <div>
-                                            {/* 日付バッジ */}
-                                            <div class="inline-flex items-center gap-1.5 text-xs text-[#006837] font-medium bg-[#006837]/5 px-2.5 py-1 rounded-full mb-3">
-                                                <svg
-                                                    class="w-3.5 h-3.5 flex-shrink-0"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                    />
-                                                </svg>
-                                                <span>
-                                                    {new Date(
-                                                        lecture.event_date,
-                                                    ).toLocaleDateString(
-                                                        "ja-JP",
-                                                        {
-                                                            year: "numeric",
-                                                            month: "short",
-                                                            day: "numeric",
-                                                        },
-                                                    )}
-                                                </span>
-                                            </div>
-
-                                            {/* タイトル */}
-                                            <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#006837] transition-colors line-clamp-2">
-                                                {lecture.title}
-                                            </h3>
-
-                                            {/* ゲスト名 & 所属 */}
-                                            <div class="space-y-0.5">
-                                                <p class="text-sm text-[#006837] font-semibold truncate">
-                                                    {lecture.guest_name}氏
-                                                </p>
-                                                {lecture.belonging && (
-                                                    <p class="text-xs text-gray-500 truncate">
-                                                        {lecture.belonging}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        {/* スペーサー（カードの高さを統一） */}
-                                        <div class="flex-1"></div>
-
-                                        {/* 詳細リンク */}
-                                        <div class="flex items-center text-xs text-[#006837] font-medium mt-3 sm:mt-4">
-                                            <span class="mr-1">詳しく見る</span>
+                                {/* 画像エリア - 横長画像用に16:9比率で大きく表示 */}
+                                <div class="relative w-full aspect-[16/9] bg-gray-100 overflow-hidden">
+                                    {lecture.eyecatch ? (
+                                        <img
+                                            src={`${lecture.eyecatch.url}?w=640&fm=avif&q=80`}
+                                            srcset={`
+                                                ${lecture.eyecatch.url}?w=400&fm=avif&q=80 400w,
+                                                ${lecture.eyecatch.url}?w=640&fm=avif&q=80 640w,
+                                                ${lecture.eyecatch.url}?w=800&fm=avif&q=80 800w
+                                            `}
+                                            sizes="(max-width: 767px) 100vw, 50vw"
+                                            alt={lecture.title}
+                                            width="640"
+                                            height="360"
+                                            loading={index < 2 ? "eager" : "lazy"}
+                                            fetchpriority={index === 0 ? "high" : "auto"}
+                                            decoding="async"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    ) : (
+                                        <div class="w-full h-full bg-gradient-to-br from-[#006837] to-[#005028] flex items-center justify-center">
                                             <svg
-                                                class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform"
+                                                class="w-16 h-16 text-white opacity-30"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="1.5"
+                                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                                />
+                                            </svg>
+                                        </div>
+                                    )}
+                                    {/* 日付オーバーレイ */}
+                                    <div class="absolute top-3 left-3">
+                                        <div class="inline-flex items-center gap-1.5 text-xs text-white font-medium bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                                            <svg
+                                                class="w-3.5 h-3.5 flex-shrink-0"
                                                 fill="none"
                                                 viewBox="0 0 24 24"
                                                 stroke="currentColor"
@@ -434,10 +372,63 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
                                                     stroke-linecap="round"
                                                     stroke-linejoin="round"
                                                     stroke-width="2"
-                                                    d="M9 5l7 7-7 7"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                                 />
                                             </svg>
+                                            <span>
+                                                {new Date(
+                                                    lecture.event_date,
+                                                ).toLocaleDateString(
+                                                    "ja-JP",
+                                                    {
+                                                        year: "numeric",
+                                                        month: "short",
+                                                        day: "numeric",
+                                                    },
+                                                )}
+                                            </span>
                                         </div>
+                                    </div>
+                                </div>
+
+                                {/* コンテンツエリア */}
+                                <div class="flex-1 p-4 sm:p-5 flex flex-col">
+                                    {/* タイトル */}
+                                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#006837] transition-colors line-clamp-2">
+                                        {lecture.title}
+                                    </h3>
+
+                                    {/* ゲスト名 & 所属 */}
+                                    <div class="space-y-0.5 mb-4">
+                                        <p class="text-sm text-[#006837] font-semibold">
+                                            {lecture.guest_name}氏
+                                        </p>
+                                        {lecture.belonging && (
+                                            <p class="text-xs text-gray-500 line-clamp-1">
+                                                {lecture.belonging}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {/* スペーサー */}
+                                    <div class="flex-1"></div>
+
+                                    {/* 詳細リンク */}
+                                    <div class="flex items-center text-sm text-[#006837] font-medium pt-3 border-t border-gray-100">
+                                        <span class="mr-1">詳しく見る</span>
+                                        <svg
+                                            class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 5l7 7-7 7"
+                                            />
+                                        </svg>
                                     </div>
                                 </div>
                             </div>
