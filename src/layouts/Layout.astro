@@ -2313,7 +2313,12 @@ const nav = {
         <style>
             /* Premium Mobile Menu Styles - Bottom Sheet */
             body.mobile-menu-open {
-                overflow: hidden;
+                /* スクロール位置を固定してレイアウトシフトを防止 */
+                position: fixed;
+                left: 0;
+                right: 0;
+                /* topはJavaScriptで動的に設定 */
+                overflow-y: scroll; /* スクロールバーの幅を維持 */
                 /* Prevent layout shift when scrollbar disappears */
                 padding-right: var(--scrollbar-comp, 0px);
             }
@@ -3795,6 +3800,10 @@ const nav = {
                 "--scrollbar-comp",
                 `${scrollbarWidth}px`,
             );
+            // スクロール位置を保存してbodyを固定（ガタつき防止）
+            const scrollY = window.scrollY;
+            document.body.dataset.scrollY = String(scrollY);
+            document.body.style.top = `-${scrollY}px`;
             document.body.classList.add("mobile-menu-open");
             if (freshMenuButton) {
                 freshMenuButton.classList.add("is-open");
@@ -3835,7 +3844,14 @@ const nav = {
                     freshMobileMenu.classList.remove("is-closing");
                     freshMobileMenu.setAttribute("aria-hidden", "true");
                 }
+                // スクロール位置を復元
+                const scrollY = document.body.dataset.scrollY;
                 document.body.classList.remove("mobile-menu-open");
+                document.body.style.top = "";
+                if (scrollY) {
+                    window.scrollTo(0, parseInt(scrollY, 10));
+                    delete document.body.dataset.scrollY;
+                }
                 document.documentElement.style.setProperty(
                     "--scrollbar-comp",
                     "0px",
