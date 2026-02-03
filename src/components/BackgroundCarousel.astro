@@ -2,9 +2,11 @@
 // BackgroundCarousel.astro - Elegant horizontal scrolling background image carousel
 // 自動的にpublic/imagesフォルダ内の画像を読み込んで表示
 // 新しい画像を追加するだけでスライドショーに反映されます
+// 画像は自動的に最適化・圧縮されます
 
 import fs from "node:fs";
 import path from "node:path";
+import { getImage } from "astro:assets";
 
 // public/imagesフォルダから画像ファイルを取得
 const imagesDir = path.join(process.cwd(), "public/images");
@@ -21,16 +23,34 @@ const allowedExtensions = [
     ".GIF",
 ];
 
-let images: string[] = [];
+let optimizedImages: string[] = [];
 
 try {
     const files = fs.readdirSync(imagesDir);
-    images = files
-        .filter((file) => {
-            const ext = path.extname(file);
-            return allowedExtensions.includes(ext) && !file.startsWith(".");
-        })
-        .map((file) => `/images/${file}`);
+    const imageFiles = files.filter((file) => {
+        const ext = path.extname(file);
+        return allowedExtensions.includes(ext) && !file.startsWith(".");
+    });
+
+    // 各画像を最適化（高さ400px、WebP形式、品質60%）
+    // 背景用なので低解像度で十分、ファイルサイズを大幅に削減
+    const optimizationPromises = imageFiles.map(async (file) => {
+        try {
+            const optimized = await getImage({
+                src: `/images/${file}`,
+                height: 400,
+                format: "webp",
+                quality: 60,
+            });
+            return optimized.src;
+        } catch (e) {
+            // 最適化できない場合は元の画像を使用
+            console.warn(`Could not optimize ${file}:`, e);
+            return `/images/${file}`;
+        }
+    });
+
+    optimizedImages = await Promise.all(optimizationPromises);
 } catch (error) {
     console.warn("Could not read images directory:", error);
 }
@@ -41,7 +61,7 @@ try {
         <div class="carousel-track">
             {/* 1セット目の画像 */}
             {
-                images.map((src) => (
+                optimizedImages.map((src: string) => (
                     <img
                         src={src}
                         alt=""
@@ -54,7 +74,7 @@ try {
 
             {/* 2セット目（ループ用に複製） */}
             {
-                images.map((src) => (
+                optimizedImages.map((src: string) => (
                     <img
                         src={src}
                         alt=""
