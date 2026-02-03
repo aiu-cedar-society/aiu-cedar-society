@@ -1,127 +1,69 @@
 ---
 // BackgroundCarousel.astro - Elegant horizontal scrolling background image carousel
-// Displays 8 images with subtle opacity as a decorative background element
-// Optimized for performance with lazy loading
+// 自動的にpublic/imagesフォルダ内の画像を読み込んで表示
+// 新しい画像を追加するだけでスライドショーに反映されます
+
+import fs from "node:fs";
+import path from "node:path";
+
+// public/imagesフォルダから画像ファイルを取得
+const imagesDir = path.join(process.cwd(), "public/images");
+const allowedExtensions = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp",
+    ".gif",
+    ".JPG",
+    ".JPEG",
+    ".PNG",
+    ".WEBP",
+    ".GIF",
+];
+
+let images: string[] = [];
+
+try {
+    const files = fs.readdirSync(imagesDir);
+    images = files
+        .filter((file) => {
+            const ext = path.extname(file);
+            return allowedExtensions.includes(ext) && !file.startsWith(".");
+        })
+        .map((file) => `/images/${file}`);
+} catch (error) {
+    console.warn("Could not read images directory:", error);
+}
 ---
 
 <div class="background-carousel-wrapper">
     <div class="background-carousel">
         <div class="carousel-track">
-            <!-- First set of images - lazy loaded, low priority -->
-            <img
-                src="/images/IMG_2580.jpeg"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_2948.jpeg"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_3623.jpeg"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_3843.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_4550.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_4551.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_5241.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_5394.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
+            {/* 1セット目の画像 */}
+            {
+                images.map((src) => (
+                    <img
+                        src={src}
+                        alt=""
+                        loading="lazy"
+                        fetchpriority="low"
+                        decoding="async"
+                    />
+                ))
+            }
 
-            <!-- Duplicate set for seamless loop -->
-            <img
-                src="/images/IMG_2580.jpeg"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_2948.jpeg"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_3623.jpeg"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_3843.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_4550.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_4551.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_5241.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
-            <img
-                src="/images/IMG_5394.JPG"
-                alt=""
-                loading="lazy"
-                fetchpriority="low"
-                decoding="async"
-            />
+            {/* 2セット目（ループ用に複製） */}
+            {
+                images.map((src) => (
+                    <img
+                        src={src}
+                        alt=""
+                        loading="lazy"
+                        fetchpriority="low"
+                        decoding="async"
+                    />
+                ))
+            }
         </div>
     </div>
     <!-- Fade overlay for elegant edges -->
@@ -162,8 +104,11 @@
     }
 
     .carousel-track img {
+        /* 固定サイズで統一 - どんな縦横比の画像でも同じ大きさで表示 */
         height: 100%;
-        width: auto;
+        width: 300px;
+        min-width: 300px;
+        flex-shrink: 0;
         object-fit: cover;
         object-position: center center;
         opacity: 0.35;
@@ -210,9 +155,10 @@
             contain-intrinsic-size: 100% 50vh;
         }
         .carousel-track img {
+            /* モバイルでは少し小さめの幅に */
+            width: 200px;
+            min-width: 200px;
             opacity: 0.25;
-            object-fit: cover;
-            object-position: center center;
         }
     }
 </style>
