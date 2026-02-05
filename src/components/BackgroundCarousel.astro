@@ -136,17 +136,18 @@ const images = Object.values(imageModules).map((mod) => mod.default);
         }
     }
 
-    /* Mobile: 16:9比率に合わせた高さ */
+    /* Mobile: より大きく表示 */
     @media (max-width: 768px) {
         .background-carousel-wrapper {
-            /* モバイルでは画面幅の56.25%（16:9のフル高さ）の半分程度 */
-            height: 28vw;
-            max-height: 25vh;
-            contain-intrinsic-size: 100% 28vw;
+            /* モバイルでは1枚の画像がしっかり見えるよう大きめに */
+            top: 56px; /* モバイルのヘッダー高さ */
+            height: 50vw;
+            max-height: 35vh;
+            contain-intrinsic-size: 100% 50vw;
         }
         .carousel-track img {
-            /* モバイルでは透明度を調整 */
-            opacity: 0.3;
+            /* モバイルでは透明度を少し上げて見やすく */
+            opacity: 0.35;
         }
     }
 </style>
