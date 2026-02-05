@@ -57,16 +57,19 @@ const images = Object.values(imageModules).map((mod) => mod.default);
 <style>
     .background-carousel-wrapper {
         position: fixed;
-        top: 0;
+        /* ヘッダーの高さ分（約60px）下にずらす */
+        top: 60px;
         left: 0;
         width: 100%;
-        height: 40vh;
+        /* 16:9画像に最適化した高さ（画面幅の約30%で16:9の半分が見える） */
+        height: 30vw;
+        max-height: 35vh;
         overflow: hidden;
         z-index: -1;
         pointer-events: none;
         /* Performance optimization */
         content-visibility: auto;
-        contain-intrinsic-size: 100% 40vh;
+        contain-intrinsic-size: 100% 30vw;
         contain: strict;
     }
 
@@ -81,36 +84,37 @@ const images = Object.values(imageModules).map((mod) => mod.default);
         height: 100%;
         width: max-content;
         /* GPU-accelerated animation using transform3d */
-        animation: scroll 60s linear infinite;
+        /* スクロール速度: 180s = ゆっくり、60s = 速い（数値を大きくすると遅くなる） */
+        animation: scroll 180s linear infinite;
         will-change: transform;
         transform: translateZ(0);
         backface-visibility: hidden;
     }
 
     .carousel-track img {
-        /* 固定サイズで統一 - どんな縦横比の画像でも同じ大きさで表示 */
+        /* 16:9 横画像に最適化 - 高さを基準に幅を自動計算 */
         height: 100%;
-        width: 300px;
-        min-width: 300px;
+        width: auto;
+        aspect-ratio: 16 / 9;
         flex-shrink: 0;
-        object-fit: cover;
+        object-fit: contain;
         object-position: center center;
         opacity: 0.35;
         filter: grayscale(20%);
         display: block;
     }
 
-    /* Fade overlay - only at the bottom for smooth transition */
+    /* Fade overlay - 控えめなグラデーションで画像をより多く表示 */
     .fade-overlay {
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 50%;
+        height: 30%;
         background: linear-gradient(
             to bottom,
             transparent 0%,
-            rgba(255, 255, 255, 0.6) 60%,
+            rgba(255, 255, 255, 0.8) 70%,
             #ffffff 100%
         );
         pointer-events: none;
@@ -132,17 +136,17 @@ const images = Object.values(imageModules).map((mod) => mod.default);
         }
     }
 
-    /* Mobile: larger display area */
+    /* Mobile: 16:9比率に合わせた高さ */
     @media (max-width: 768px) {
         .background-carousel-wrapper {
-            height: 50vh;
-            contain-intrinsic-size: 100% 50vh;
+            /* モバイルでは画面幅の56.25%（16:9のフル高さ）の半分程度 */
+            height: 28vw;
+            max-height: 25vh;
+            contain-intrinsic-size: 100% 28vw;
         }
         .carousel-track img {
-            /* モバイルでは少し小さめの幅に */
-            width: 200px;
-            min-width: 200px;
-            opacity: 0.25;
+            /* モバイルでは透明度を調整 */
+            opacity: 0.3;
         }
     }
 </style>
