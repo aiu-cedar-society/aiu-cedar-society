@@ -31,7 +31,12 @@ const lectures = allLectures
 // Fetch upcoming events using Content Layer API
 const allUpcomingEvents = await getCollection("upcoming_events");
 const upcomingEvents = allUpcomingEvents
-    .filter((event) => event.data.event_date) // 日付があるイベントのみ表示
+    .filter((event) => {
+        // 日付があり、かつタイトルが空ではない（空白のみでもない）イベントのみ表示
+        const hasDate = !!event.data.event_date;
+        const hasTitle = !!event.data.title && event.data.title.trim().length > 0;
+        return hasDate && hasTitle;
+    })
     .map((event) => ({
         id: event.id,
         title: event.data.title || "イベント詳細未定",
@@ -149,9 +154,8 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
                         {/* Events List */}
                         <div class="space-y-6">
                             {upcomingEvents.slice(0, 2).map((event, index) => (
-                                <a
-                                    href="/events/upcoming"
-                                    class={`block border-l-4 border-[#006837] bg-gray-50/80 p-6 rounded-lg hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} organic-hover group cursor-pointer transition-all duration-300 hover:bg-gray-100/80 hover:shadow-md`}
+                                <div
+                                    class={`block border-l-4 border-[#006837] bg-gray-50/80 p-6 rounded-lg hover-lift glass-card scroll-reveal scroll-reveal-delay-${index + 1} organic-hover group transition-all duration-300 hover:bg-gray-100/80 hover:shadow-md`}
                                     data-animate
                                     data-animate-delay={index + 1}
                                 >
@@ -215,7 +219,7 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
                                         class="prose prose-sm max-w-none text-gray-700 mb-4"
                                         set:html={event.description}
                                     />
-                                    <div class="flex items-center text-xs text-[#006837] font-medium">
+                                    <a href="/events/upcoming" class="inline-flex items-center text-xs text-[#006837] font-medium mt-2 hover:underline">
                                         <span class="mr-1">詳しく見る</span>
                                         <svg
                                             class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform"
@@ -230,8 +234,8 @@ const lcpImageUrl = lectures[0]?.eyecatch?.url;
                                                 d="M9 5l7 7-7 7"
                                             />
                                         </svg>
-                                    </div>
-                                </a>
+                                    </a>
+                                </div>
                             ))}
                         </div>
 
