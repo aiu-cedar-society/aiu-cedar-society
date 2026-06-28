@@ -111,7 +111,7 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Sponsors" }];
                                     {sponsor.description && (
                                         <p class="text-sm text-gray-600 line-clamp-2">
                                             {getContent(
-                                                (sponsor as any).description_en,
+                                                sponsor.description_en,
                                                 sponsor.description,
                                             )}
                                         </p>

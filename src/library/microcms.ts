@@ -73,15 +73,19 @@ interface MicroCMSListResponse<T> {
  */
 export type Lecture = MicroCMSBaseFields & {
   title: string;
+  title_en?: string;
   guest_name: string;
+  guest_name_en?: string;
   /** 講演者の所属・肩書き */
   belonging?: string;
+  belonging_en?: string;
   /** 開催日時（ISO 8601形式） */
   event_date: string;
   /** アイキャッチ画像 */
   eyecatch?: MicroCMSImage;
   /** 講演会の詳細内容（HTML形式） */
   content?: string;
+  content_en?: string;
 };
 
 /** 講演会一覧のレスポンス型 */
@@ -99,7 +103,9 @@ export type LectureResponse = MicroCMSListResponse<Lecture>;
  */
 export type FAQItem = {
   question: string;
+  question_en?: string;
   answer: string;
+  answer_en?: string;
 };
 
 /**
@@ -136,6 +142,7 @@ export type SponsorItem = {
   logo?: MicroCMSImage;
   url?: string;
   description?: string;
+  description_en?: string;
 };
 
 /**
@@ -169,7 +176,9 @@ export type Pages = {
   hero_title: string;
   hero_subtitle: string;
   about_content: string;
+  about_content_en?: string;
   history_content: string;
+  history_content_en?: string;
   faqs?: FAQItem[];
   sponsors?: SponsorItem[];
 };
@@ -202,9 +211,13 @@ export type MemberStatus = 'current' | 'graduate' | ('current' | 'graduate')[];
  */
 export type Member = MicroCMSBaseFields & {
   name: string;
+  name_en?: string;
   position: string;
+  position_en?: string;
   year: string;
+  year_en?: string;
   description: string;
+  description_en?: string;
   /** 在校生/卒業生のステータス */
   status?: MemberStatus;
   /** プロフィール画像 */
@@ -230,12 +243,15 @@ export type MemberResponse = MicroCMSListResponse<Member>;
  */
 export type UpcomingEvent = MicroCMSBaseFields & {
   title: string;
+  title_en?: string;
   /** 開催日時（ISO 8601形式） */
   event_date: string;
   /** イベントの説明（HTML形式可） */
   description: string;
+  description_en?: string;
   /** 開催場所 */
   location?: string;
+  location_en?: string;
 };
 
 /** 今後のイベント一覧のレスポンス型 */
@@ -258,6 +274,7 @@ export type UpcomingEventResponse = MicroCMSListResponse<UpcomingEvent>;
  */
 export type MediaCoverage = MicroCMSBaseFields & {
   title: string;
+  title_en?: string;
   /** 掲載メディア名（例: 秋田魁新報）*/
   media_name: string;
   /** 掲載日（ISO 8601形式） */
@@ -266,6 +283,7 @@ export type MediaCoverage = MicroCMSBaseFields & {
   url?: string;
   /** 記事の概要 */
   description: string;
+  description_en?: string;
 };
 
 /** メディア掲載一覧のレスポンス型 */

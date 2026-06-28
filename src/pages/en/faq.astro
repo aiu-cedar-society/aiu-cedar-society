@@ -90,7 +90,7 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
                                         </span>
                                         <span class="font-bold text-gray-900 text-left leading-relaxed break-words min-w-0">
                                             {getContent(
-                                                (faq as any).question_en,
+                                                faq.question_en,
                                                 faq.question,
                                             )}
                                         </span>
@@ -123,7 +123,7 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "FAQ" }];
                                             <div
                                                 class="prose prose-sm max-w-none text-gray-700 leading-relaxed min-w-0 break-words"
                                                 set:html={getContent(
-                                                    (faq as any).answer_en,
+                                                    faq.answer_en,
                                                     faq.answer,
                                                 )}
                                             />

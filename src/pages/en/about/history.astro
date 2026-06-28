@@ -10,7 +10,7 @@ const pages = await getPages();
 
 // Get English content or fallback to Japanese
 const historyContent =
-    (pages as any).history_content_en || pages.history_content;
+    pages.history_content_en || pages.history_content;
 
 // SEO
 const seo = {

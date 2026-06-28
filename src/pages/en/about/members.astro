@@ -248,25 +248,24 @@ const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "Members" }];
                                         <div class="flex-1">
                                             <h3 class="text-lg font-bold text-gray-900 mb-1">
                                                 {getContent(
-                                                    (member as any).name_en,
+                                                    member.name_en,
                                                     member.name,
                                                 )}
                                             </h3>
                                             <p class="text-sm text-gray-600 font-medium mb-2">
                                                 {getContent(
-                                                    (member as any).position_en,
+                                                    member.position_en,
                                                     member.position,
                                                 )}{" "}
                                                 /{" "}
                                                 {getContent(
-                                                    (member as any).year_en,
+                                                    member.year_en,
                                                     member.year,
                                                 )}
                                             </p>
                                             <p class="text-sm text-gray-600">
                                                 {getContent(
-                                                    (member as any)
-                                                        .description_en,
+                                                    member.description_en,
                                                     member.description,
                                                 )}
                                             </p>

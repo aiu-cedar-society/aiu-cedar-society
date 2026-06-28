@@ -47,15 +47,15 @@ if (!lectureEntry) {
 const lecture = {
     id: lectureEntry.id,
     title: lectureEntry.data.title,
-    title_en: (lectureEntry.data as any).title_en,
+    title_en: lectureEntry.data.title_en,
     guest_name: lectureEntry.data.guest_name,
-    guest_name_en: (lectureEntry.data as any).guest_name_en,
+    guest_name_en: lectureEntry.data.guest_name_en,
     belonging: lectureEntry.data.belonging,
-    belonging_en: (lectureEntry.data as any).belonging_en,
+    belonging_en: lectureEntry.data.belonging_en,
     event_date: lectureEntry.data.event_date,
     eyecatch: lectureEntry.data.eyecatch,
     content: lectureEntry.data.content,
-    content_en: (lectureEntry.data as any).content_en,
+    content_en: lectureEntry.data.content_en,
 };
 
 // Get English content with fallback
@@ -309,9 +309,9 @@ const breadcrumbItems = [
                 document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
 
-            const progressBar = document.querySelector(".reading-progress-bar");
+            const progressBar = document.querySelector(".reading-progress-bar") as HTMLElement | null;
             if (progressBar) {
-                (progressBar as any).style.width = scrolled + "%";
+                progressBar.style.width = scrolled + "%";
             }
         },
         { passive: true },

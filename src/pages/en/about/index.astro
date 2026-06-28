@@ -19,7 +19,7 @@ const seo = {
 const breadcrumbItems = [{ label: "Home", href: "/en" }, { label: "About Us" }];
 
 // Get English content or fallback to Japanese
-const aboutContent = (pages as any).about_content_en || pages.about_content;
+const aboutContent = pages.about_content_en || pages.about_content;
 ---
 
 <Layout seo={seo}>

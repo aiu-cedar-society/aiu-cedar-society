@@ -10,11 +10,11 @@ const allLectures = await getCollection("lectures");
 const lectures = allLectures.map((lecture) => ({
     id: lecture.id,
     title: lecture.data.title,
-    title_en: (lecture.data as any).title_en,
+    title_en: lecture.data.title_en,
     guest_name: lecture.data.guest_name,
-    guest_name_en: (lecture.data as any).guest_name_en,
+    guest_name_en: lecture.data.guest_name_en,
     belonging: lecture.data.belonging,
-    belonging_en: (lecture.data as any).belonging_en,
+    belonging_en: lecture.data.belonging_en,
     event_date: lecture.data.event_date,
     eyecatch: lecture.data.eyecatch,
 }));
@@ -161,10 +161,10 @@ const breadcrumbItems = [
                                             href={`/en/lectures/${lecture.id}`}
                                             class="lecture-card-wrapper block group card-tilt smooth-hover"
                                             data-title={getContent(
-                                                (lecture as any).title_en,
-                                                lecture.title,
+                                                lecture.title_en,
+                                                lecture.title || "",
                                             ).toLowerCase()}
-                                            data-guest={lecture.guest_name.toLowerCase()}
+                                            data-guest={(lecture.guest_name || "").toLowerCase()}
                                             data-year={year.toString()}
                                         >
                                             <div class="bg-white/90 rounded-xl shadow-md hover:shadow-xl transition-all duration-500 overflow-hidden ring-1 ring-gray-100 group-hover:ring-[#006837]/30 lecture-card hover-lift glass-card h-full flex flex-col">
@@ -180,9 +180,8 @@ const breadcrumbItems = [
                                                             `}
                                                             sizes="(max-width: 767px) 100vw, 50vw"
                                                             alt={getContent(
-                                                                (lecture as any)
-                                                                    .title_en,
-                                                                lecture.title,
+                                                                lecture.title_en,
+                                                                lecture.title || "",
                                                             )}
                                                             width="640"
                                                             height="360"
@@ -247,9 +246,8 @@ const breadcrumbItems = [
                                                     {/* タイトル */}
                                                     <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#006837] transition-colors line-clamp-2">
                                                         {getContent(
-                                                            (lecture as any)
-                                                                .title_en,
-                                                            lecture.title,
+                                                            lecture.title_en,
+                                                            lecture.title || "",
                                                         )}
                                                     </h3>
 
@@ -264,11 +262,8 @@ const breadcrumbItems = [
                                                         {lecture.belonging && (
                                                             <p class="text-xs text-gray-500 line-clamp-1">
                                                                 {getContent(
-                                                                    (
-                                                                        lecture as any
-                                                                    )
-                                                                        .belonging_en,
-                                                                    lecture.belonging,
+                                                                    lecture.belonging_en,
+                                                                    lecture.belonging || "",
                                                                 )}
                                                             </p>
                                                         )}
