@@ -97,8 +97,6 @@ const lectureCollection = defineCollection({
         "publishedAt",  // 公開日時
         "revisedAt",    // 改訂日時
       ],
-      // 最大100件まで取得
-      limit: 100,
     },
   }),
   // データのスキーマ定義（型チェックと検証）
@@ -163,7 +161,6 @@ const memberCollection = defineCollection({
         "publishedAt",
         "revisedAt",
       ],
-      limit: 100,
     },
   }),
   schema: z.object({
@@ -231,7 +228,6 @@ const upcomingEventCollection = defineCollection({
         "publishedAt",
         "revisedAt",
       ],
-      limit: 100,
     },
   }),
   schema: z.object({
@@ -271,25 +267,28 @@ const mediaCoverageCollection = defineCollection({
       fields: [
         "id",
         "title",        // 記事タイトル
+        "title_en",     // 記事タイトル（英語）
         "media_name",   // メディア名（例: 秋田魁新報）
         "publish_date", // 掲載日
         "url",          // 記事URL（外部リンク）
         "description",  // 記事概要
+        "description_en", // 記事概要（英語）
         "createdAt",
         "updatedAt",
         "publishedAt",
         "revisedAt",
       ],
-      limit: 100,
     },
   }),
   schema: z.object({
     id: z.string(),
     title: z.string().optional(),         // 空の場合は「無題」を表示
+    title_en: z.string().optional(),
     media_name: z.string().optional(),    // 空の場合は「メディア名未定」を表示
     publish_date: z.string().optional(),  // 空の場合は非表示
     url: z.string().url().optional(),
     description: z.string().optional(),   // 空の場合は非表示
+    description_en: z.string().optional(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),
     publishedAt: z.string().optional(),

@@ -67,7 +67,7 @@ const content = getContent(lecture, "content");
 // SEO
 const seo = {
     title: `${title} - ${guestName} | AIU Cedar Society`,
-    description: `Lecture "${title}" by ${guestName}. A lecture series connecting students and society, hosted by AIU Cedar Society. Held on ${new Date(lecture.event_date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}.`,
+    description: `Lecture "${title}" by ${guestName}. A lecture series connecting students and society, hosted by AIU Cedar Society. ${lecture.event_date ? "Held on " + new Date(lecture.event_date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) + "." : "Date to be announced."}`,
     keywords: `${guestName},${title},AIU Cedar Society,lecture,Akita International University,AIU,event`,
     ogImage: lecture.eyecatch?.url || "/ogp-default.jpg",
     ogType: "article" as const,
@@ -161,7 +161,7 @@ const breadcrumbItems = [
                             class="text-sm md:text-base font-semibold text-[#006837]"
                         >
                             {
-                                new Date(lecture.event_date).toLocaleString(
+                                lecture.event_date ? new Date(lecture.event_date).toLocaleString(
                                     "en-US",
                                     {
                                         year: "numeric",
@@ -172,7 +172,7 @@ const breadcrumbItems = [
                                         minute: "2-digit",
                                         timeZone: "Asia/Tokyo",
                                     },
-                                )
+                                ) : "Date to be announced"
                             }
                         </div>
                     </div>

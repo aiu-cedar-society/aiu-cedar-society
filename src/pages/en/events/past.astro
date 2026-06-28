@@ -9,20 +9,20 @@ import { formatDate, getContent } from "../../../i18n/utils";
 const allLectures = await getCollection("lectures");
 const lectures = allLectures.map((lecture) => ({
     id: lecture.id,
-    title: lecture.data.title,
-    title_en: lecture.data.title_en,
-    guest_name: lecture.data.guest_name,
-    guest_name_en: lecture.data.guest_name_en,
-    belonging: lecture.data.belonging,
-    belonging_en: lecture.data.belonging_en,
-    event_date: lecture.data.event_date,
+    title: lecture.data.title || "",
+    title_en: lecture.data.title_en || "",
+    guest_name: lecture.data.guest_name || "",
+    guest_name_en: lecture.data.guest_name_en || "",
+    belonging: lecture.data.belonging || "",
+    belonging_en: lecture.data.belonging_en || "",
+    event_date: lecture.data.event_date || "",
     eyecatch: lecture.data.eyecatch,
 }));
 
 // Group lectures by year
 const lecturesByYear = lectures.reduce(
     (acc, lecture) => {
-        const year = new Date(lecture.event_date).getFullYear();
+        const year = lecture.event_date ? new Date(lecture.event_date).getFullYear() : 0;
         if (!acc[year]) {
             acc[year] = [];
         }
@@ -307,7 +307,7 @@ const breadcrumbItems = [
 
 <script>
     // Year Filter Functionality
-    document.addEventListener("DOMContentLoaded", function () {
+    function initFilters() {
         const yearFilters = document.querySelectorAll(".year-filter");
         const resultCount = document.getElementById("result-count");
         const lectureCards = document.querySelectorAll(
@@ -386,5 +386,8 @@ const breadcrumbItems = [
                 filterLectures();
             });
         });
-    });
+    }
+
+    document.addEventListener("DOMContentLoaded", initFilters);
+    document.addEventListener("astro:page-load", initFilters);
 </script>

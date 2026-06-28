@@ -19,7 +19,7 @@
  * ```
  * 
  * ```css
- * /* CSS */
+ * // CSS
  * .scroll - reveal {
  * opacity: 0;
  * transform: translateY(20px);

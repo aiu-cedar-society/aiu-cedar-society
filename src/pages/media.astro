@@ -7,14 +7,16 @@ import { getCollection } from "astro:content";
 
 // Fetch media coverage using Content Layer API
 const allMediaCoverage = await getCollection("media_coverage");
-const mediaCoverage = allMediaCoverage.map((item) => ({
-    id: item.id,
-    title: item.data.title,
-    media_name: item.data.media_name,
-    publish_date: item.data.publish_date,
-    url: item.data.url,
-    description: item.data.description,
-}));
+const mediaCoverage = allMediaCoverage
+    .filter((item) => item.data.publish_date)
+    .map((item) => ({
+        id: item.id,
+        title: item.data.title || "無題",
+        media_name: item.data.media_name || "メディア名未設定",
+        publish_date: item.data.publish_date!,
+        url: item.data.url,
+        description: item.data.description || "",
+    }));
 
 // SEO
 const seo = {

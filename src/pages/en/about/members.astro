@@ -9,14 +9,14 @@ import { getContent } from "../../../i18n/utils";
 const allMembers = await getCollection("members");
 const members = allMembers.map((member) => ({
     id: member.id,
-    name: member.data.name,
-    name_en: member.data.name_en,
-    position: member.data.position,
-    position_en: member.data.position_en,
-    year: member.data.year,
-    year_en: member.data.year_en,
-    description: member.data.description,
-    description_en: member.data.description_en,
+    name: member.data.name || "",
+    name_en: member.data.name_en || "",
+    position: member.data.position || "",
+    position_en: member.data.position_en || "",
+    year: member.data.year || "",
+    year_en: member.data.year_en || "",
+    description: member.data.description || "",
+    description_en: member.data.description_en || "",
     status: member.data.status,
     image: member.data.image,
 }));

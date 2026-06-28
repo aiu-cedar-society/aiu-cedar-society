@@ -53,7 +53,7 @@ const lecture = {
 // SEO
 const seo = {
   title: `${lecture.title} - ${lecture.guest_name}氏 | AIU Cedar Society`,
-  description: `${lecture.guest_name}氏による講演会「${lecture.title}」。AIU Cedar Societyが主催する学生と社会をつなぐ講演会シリーズ。${new Date(lecture.event_date).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" })}開催。`,
+  description: `${lecture.guest_name}氏による講演会「${lecture.title}」。AIU Cedar Societyが主催する学生と社会をつなぐ講演会シリーズ。${lecture.event_date ? new Date(lecture.event_date).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" }) + "開催。" : "日程未定。"}`,
   keywords: `${lecture.guest_name},${lecture.title},AIU Cedar Society,講演会,秋田国際教養大学,AIU,イベント`,
   ogImage: lecture.eyecatch?.url || "/ogp-default.jpg",
   ogType: "article" as const,

@@ -8,16 +8,18 @@ import { formatDateTime, getContent } from "../../i18n/utils";
 
 // Fetch media coverage using Content Layer API
 const allMediaCoverage = await getCollection("media_coverage");
-const mediaCoverage = allMediaCoverage.map((item) => ({
-    id: item.id,
-    title: item.data.title,
-    title_en: item.data.title_en,
-    media_name: item.data.media_name,
-    publish_date: item.data.publish_date,
-    url: item.data.url,
-    description: item.data.description,
-    description_en: item.data.description_en,
-}));
+const mediaCoverage = allMediaCoverage
+    .filter((item) => item.data.publish_date)
+    .map((item) => ({
+        id: item.id,
+        title: item.data.title || "Untitled",
+        title_en: item.data.title_en || "",
+        media_name: item.data.media_name || "Media unnamed",
+        publish_date: item.data.publish_date!,
+        url: item.data.url,
+        description: item.data.description || "",
+        description_en: item.data.description_en || "",
+    }));
 
 // SEO
 const seo = {

@@ -18,7 +18,7 @@ const lectures = allLectures.map((lecture) => ({
 // Group lectures by year
 const lecturesByYear = lectures.reduce(
     (acc, lecture) => {
-        const year = new Date(lecture.event_date).getFullYear();
+        const year = lecture.event_date ? new Date(lecture.event_date).getFullYear() : 0;
         if (!acc[year]) {
             acc[year] = [];
         }
@@ -218,18 +218,16 @@ const breadcrumbItems = [
                                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                                         />
                                                     </svg>
-                                                    <span>
-                                                        {new Date(
-                                                            lecture.event_date,
-                                                        ).toLocaleDateString(
-                                                            "ja-JP",
-                                                            {
-                                                                year: "numeric",
-                                                                month: "short",
-                                                                day: "numeric",
-                                                            },
-                                                        )}
-                                                    </span>
+                                                    {lecture.event_date ? new Date(
+                                                             lecture.event_date,
+                                                         ).toLocaleDateString(
+                                                             "ja-JP",
+                                                             {
+                                                                 year: "numeric",
+                                                                 month: "short",
+                                                                 day: "numeric",
+                                                             },
+                                                         ) : "日程未定"}
                                                 </div>
                                             </div>
                                         </div>
@@ -289,7 +287,7 @@ const breadcrumbItems = [
 
 <script>
     // Year Filter Functionality
-    document.addEventListener("DOMContentLoaded", function () {
+    function initFilters() {
         const yearFilters = document.querySelectorAll(".year-filter");
         const resultCount = document.getElementById("result-count");
         const lectureCards = document.querySelectorAll(
@@ -368,5 +366,8 @@ const breadcrumbItems = [
                 filterLectures();
             });
         });
-    });
+    }
+
+    document.addEventListener("DOMContentLoaded", initFilters);
+    document.addEventListener("astro:page-load", initFilters);
 </script>
